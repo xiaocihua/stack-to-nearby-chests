@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "stack-to-nearby-chests",
+  "version": "${version}",
+  "name": "Stack to Nearby Chests",
+  "description": "",
+  "authors": [
+    "xiaocihua"
+  ],
+  "contact": {
+    "homepage": "https://github.com/xiaocihua",
+    "sources": "https://github.com/xiaocihua/stack-to-nearby-chests",
+    "issues": "https://github.com/xiaocihua/stack-to-nearby-chests/issues"
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/stack-to-nearby-chests/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "io.github.xiaocihua.stacktonearbychests.StackToNearbyChests"
+    ],
+    "modmenu": [
+      "io.github.xiaocihua.stacktonearbychests.ModMenuApiImpl"
+    ]
+  },
+  "mixins": [
+    "stacktonearbychests.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "~1.19",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

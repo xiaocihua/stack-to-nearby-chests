@@ -1,0 +1,281 @@
+package io.github.xiaocihua.stacktonearbychests;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.xiaocihua.stacktonearbychests.event.OnSlotClickCallback;
+import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
+import io.github.xiaocihua.stacktonearbychests.mixin.MinecraftServerAccessor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
+import net.minecraft.world.GameMode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+
+import static java.util.function.Predicate.not;
+
+// Locked slots contain favorite item stacks
+@Environment(EnvType.CLIENT)
+public class LockedSlots {
+    private static final Path LOCKED_SLOTS_FOLDER = ModOptions.MOD_OPTIONS_DIR.resolve("locked-slots");
+    private static final Identifier LOCKED_SLOT_TEXTURE = new Identifier(ModOptions.MOD_ID, "locked_slot");
+
+    @Nullable
+    private static Path currentFile;
+    private static HashSet<Integer> currentLockedSlots = new HashSet<>();
+    private static boolean isMovingFavoriteItemStack = false;
+    private static Slot quickMoveDestination;
+    @Nullable
+    private static SlotActionType actionBeingExecuted;
+
+    public static void init() {
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> read(handler, client));
+
+        OnSlotClickCallback.BEFORE.register(LockedSlots::beforeSlotClick);
+        OnSlotClickCallback.AFTER.register(LockedSlots::afterSlotClick);
+
+        ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
+                .register((atlasTexture, registry) -> registry.register(LOCKED_SLOT_TEXTURE));
+
+        ModOptions.get().keymap.markAsFavoriteKey.registerOnScreen(HandledScreen.class, screen -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            double x = client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth();
+            double y = client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight();
+            Slot slot = ((HandledScreenAccessor) screen).invokeGetSlotAt(x, y);
+            if (!unLock(slot) && slot != null && slot.hasStack()) {
+                lock(slot);
+            }
+        }, ActionResult.FAIL);
+
+        ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+            if (screen instanceof HandledScreen<?> handledScreen) {
+                refresh(handledScreen.getScreenHandler());
+                ScreenEvents.remove(screen).register(s -> isMovingFavoriteItemStack = false);
+            }
+        });
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            write();
+            currentLockedSlots.clear();
+        });
+    }
+
+    private static void read(ClientPlayNetworkHandler handler, @NotNull MinecraftClient client) {
+        IntegratedServer integratedServer = client.getServer();
+        ServerInfo currentServerEntry = client.getCurrentServerEntry();
+        String fileName;
+        if (integratedServer != null) {
+            fileName = ((MinecraftServerAccessor) integratedServer).getSession().getDirectoryName().concat(".json");
+        } else if (currentServerEntry != null){
+            fileName = currentServerEntry.address.concat(".json").replace(":", "colon");
+        } else {
+            StackToNearbyChests.LOGGER.info("Could not get level name or server address");
+            return;
+        }
+        currentFile = LOCKED_SLOTS_FOLDER.resolve(fileName);
+
+        try (BufferedReader reader = Files.newBufferedReader(currentFile)) {
+            Type type = new TypeToken<HashSet<Integer>>() {}.getType();
+            currentLockedSlots = new Gson().fromJson(reader, type);
+        } catch (IOException e) {
+            StackToNearbyChests.LOGGER.info("Locked slots file does not exist");
+        }
+    }
+
+    private static void write() {
+        if (currentFile == null) {
+            return;
+        }
+
+        try {
+            Files.createDirectories(LOCKED_SLOTS_FOLDER);
+            String json = new Gson().toJson(currentLockedSlots);
+            Files.writeString(currentFile, json, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            StackToNearbyChests.LOGGER.error("Failed to write locked slots file", e);
+        }
+    }
+
+    private static boolean lock(@Nullable Slot slot) {
+        return isLockable(slot) && lock(slot.getIndex());
+    }
+
+    private static boolean lock(int slotIndex) {
+        return isLockable(slotIndex) && currentLockedSlots.add(slotIndex);
+    }
+
+    private static boolean unLock(@Nullable Slot slot) {
+        return isLockable(slot) && unLock(slot.getIndex());
+    }
+
+    private static boolean unLock(int slotIndex) {
+        return isLockable(slotIndex) && currentLockedSlots.remove(slotIndex);
+    }
+
+    public static boolean isLocked(@Nullable Slot slot) {
+        return isLockable(slot) && currentLockedSlots.contains(slot.getIndex());
+    }
+
+    private static boolean isLockable(@Nullable Slot slot) {
+        return slot != null
+                && slot.inventory instanceof PlayerInventory
+                && !MinecraftClient.getInstance().player.getAbilities().creativeMode;
+    }
+
+    private static boolean isLockable(int slotIndex) {
+        return slotIndex >= 0
+                && slotIndex != 39 // Head
+                && slotIndex != 38 // Chest
+                && slotIndex != 37 // Legs
+                && slotIndex != 36;// Feet
+    }
+
+    private static ActionResult beforeSlotClick(@Nullable Slot slot, int slotId, int button, SlotActionType actionType, ScreenHandler screenHandler) {
+        if (isLocked(slot) && (
+                actionType == SlotActionType.QUICK_MOVE && ModOptions.get().behavior.favoriteItemStacksCannotBeQuickMoved.booleanValue() ||
+                actionType == SlotActionType.SWAP && ModOptions.get().behavior.favoriteItemStacksCannotBeSwapped.booleanValue() ||
+                actionType == SlotActionType.THROW && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()
+        )) {
+            return ActionResult.FAIL;
+        }
+
+        actionBeingExecuted = actionType;
+
+        return ActionResult.PASS;
+    }
+
+    public static void onSetStack(int slotIndex, ItemStack stack) {
+        if (stack.isEmpty()) {
+            if (actionBeingExecuted == null || actionBeingExecuted == SlotActionType.THROW) {
+                unLock(slotIndex);
+            } else if (actionBeingExecuted == SlotActionType.PICKUP_ALL) {
+                if (unLock(slotIndex)) {
+                    isMovingFavoriteItemStack = true;
+                }
+            }
+        }
+    }
+
+    public static void onInsertItem(Slot destination) {
+        quickMoveDestination = destination;
+    }
+
+    private static ActionResult afterSlotClick(@Nullable Slot slot, int slotId, int button, SlotActionType actionType, ScreenHandler screenHandler) {
+        switch (actionType) {
+            case PICKUP -> {
+                if (slotId == -999) { // Throw
+                    isMovingFavoriteItemStack = false;
+                }
+                if (slot == null) {
+                    break;
+                }
+
+                ItemStack cursorStack = screenHandler.getCursorStack();
+                ItemStack slotStack = slot.getStack();
+                if (isMovingFavoriteItemStack) {
+                    if (cursorStack.isEmpty()) {
+                        lock(slot);
+                        isMovingFavoriteItemStack = false;
+                    } else if (!ItemStack.canCombine(cursorStack, slotStack)) { // Swap the slot with the cursor
+                        if (!isLocked(slot)) {
+                            isMovingFavoriteItemStack = false;
+                        }
+                        lock(slot);
+                    }
+                } else {
+                    if (isLocked(slot) && slotStack.isEmpty()) {
+                        unLock(slot);
+                        isMovingFavoriteItemStack = true;
+                    } else if (!ItemStack.canCombine(cursorStack, slotStack)) { // Swap the slot with the cursor
+                        if (isLocked(slot)) {
+                            isMovingFavoriteItemStack = true;
+                        }
+                        unLock(slot);
+                    }
+                }
+            }
+            case QUICK_MOVE -> {
+                if (isLocked(slot) && !slot.hasStack()) {
+                    unLock(slot);
+                    lock(quickMoveDestination);
+                }
+            }
+            case SWAP -> {
+                boolean isFromSlotLocked = unLock(slot);
+                boolean isToSlotLocked = unLock(button); // The variable button holds the index of hotbar slot when swapping
+                if (isFromSlotLocked) {
+                    lock(button);
+                }
+                if (isToSlotLocked) {
+                    lock(slot);
+                }
+            }
+            case QUICK_CRAFT -> {
+                if (screenHandler.getCursorStack().isEmpty()) {
+                    isMovingFavoriteItemStack = false;
+                } else if (isMovingFavoriteItemStack) {
+                    lock(slot);
+                }
+            }
+        }
+
+        actionBeingExecuted = null;
+
+        return ActionResult.PASS;
+    }
+
+    /**
+     * Unfavorite all empty slots.
+     * @return If any slots have been unmarked as favorites.
+     */
+    private static boolean refresh(ScreenHandler screenHandler) {
+        return screenHandler.slots.stream()
+                .filter(not(Slot::hasStack))
+                .map(LockedSlots::unLock)
+                .reduce(Boolean::logicalOr)
+                .orElse(false);
+    }
+
+    public static void onSetGameMode(GameMode gameMode) {
+        if (gameMode == GameMode.CREATIVE) {
+            currentLockedSlots.clear();
+        }
+    }
+
+    public static void onDrawSlot(HandledScreen<?> screen, MatrixStack matrices, Slot slot) {
+        if (isLocked(slot)) {
+            Sprite sprite = MinecraftClient.getInstance()
+                    .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
+                    .apply(LOCKED_SLOT_TEXTURE);
+            RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
+            DrawableHelper.drawSprite(matrices, slot.x, slot.y, 300, 16, 16, sprite);
+        }
+    }
+}
