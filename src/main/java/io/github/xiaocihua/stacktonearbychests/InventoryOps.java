@@ -48,7 +48,16 @@ public class InventoryOps {
     public static void init() {
         SetScreenCallback.EVENT.register(screen -> isRunning() ? ActionResult.FAIL : ActionResult.PASS);
 
-        OnKeyCallback.PRESS.register(key -> isRunning() && key != GLFW.GLFW_KEY_ESCAPE ? ActionResult.FAIL : ActionResult.PASS);
+        OnKeyCallback.PRESS.register(key -> {
+            if (isRunning()){
+                if (key == GLFW.GLFW_KEY_ESCAPE) {
+                    interruptCurrentOperation();
+                }
+
+                return ActionResult.FAIL;
+            }
+            return ActionResult.PASS;
+        });
     }
 
     public static boolean isRunning() {

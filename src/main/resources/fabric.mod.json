@@ -3,7 +3,7 @@
   "id": "stack-to-nearby-chests",
   "version": "${version}",
   "name": "Stack to Nearby Chests",
-  "description": "",
+  "description": "A client-side ONLY mod, adds the quick stacking and restocking features from Terraria into Minecraft.",
   "authors": [
     "xiaocihua"
   ],
