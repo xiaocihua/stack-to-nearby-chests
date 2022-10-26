@@ -2,6 +2,8 @@
 # Stack to Nearby Chests
 A client-side ONLY mod, adds the quick stacking and restocking features from Terraria into Minecraft.
 
+The code to iterate over all nearby containers is from [clientcommands](https://github.com/Earthcomputer/clientcommands)
+
 ## Installation
 1. Download the [Fabric API](https://minecraft.curseforge.com/projects/fabric)
 2. Download this mod from the [releases page](https://github.com/xiaocihua/stack-to-nearby-chests/releases)
@@ -27,5 +29,3 @@ Containers as stacking targets and restocking sources can be specified in the mo
 - **Favorite items** Hold Left Alt down right-clicking the item to favorite it. Favorite items cannot be Quick Stacked, otherwise behave like normal items.
 Quick-move, swap and throw with Q key (in the inventory screen), can be disabled separately for favorite items in the mod options. Items will be uncollected after being removed from the player inventory.
 This feature is not available in creative mode, switching to creative mode from another mode will clear the flags of all favorite items.
-
-The code to iterate over all nearby containers is from [clientcommands](https://github.com/Earthcomputer/clientcommands)
