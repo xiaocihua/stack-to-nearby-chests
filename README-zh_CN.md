@@ -3,6 +3,8 @@
 # 堆叠到附近的箱子
 一个客户端模组，将《泰拉瑞亚》中的快速堆叠和补货功能添加到《我的世界》。
 
+遍历附近所有容器的代码来自 [clientcommands](https://github.com/Earthcomputer/clientcommands) 模组。 
+
 ## 安装
 1. 下载 [Fabric API](https://minecraft.curseforge.com/projects/fabric) 。  
 2. 从 [发布页面](https://github.com/xiaocihua/stack-to-nearby-chests/releases) 下载本模组。  
