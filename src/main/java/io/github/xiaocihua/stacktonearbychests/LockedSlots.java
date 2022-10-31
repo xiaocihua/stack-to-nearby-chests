@@ -105,12 +105,13 @@ public class LockedSlots {
             Type type = new TypeToken<HashSet<Integer>>() {}.getType();
             currentLockedSlots = new Gson().fromJson(reader, type);
         } catch (IOException e) {
-            StackToNearbyChests.LOGGER.info("Locked slots file does not exist");
+            StackToNearbyChests.LOGGER.info("Locked slots file does not exist", e);
         }
     }
 
     private static void write() {
         if (currentFile == null) {
+            StackToNearbyChests.LOGGER.error("currentFile is null!");
             return;
         }
 
