@@ -2,6 +2,8 @@
 # Stack to Nearby Chests
 A client-side ONLY mod, adds the quick stacking and restocking features from Terraria into Minecraft.
 
+The code to iterate over all nearby containers is from [clientcommands](https://github.com/Earthcomputer/clientcommands) mod.
+
 ## Installation
 1. Download the [Fabric API](https://minecraft.curseforge.com/projects/fabric)
 2. Download this mod from the [releases page](https://github.com/xiaocihua/stack-to-nearby-chests/releases)
@@ -17,13 +19,13 @@ A client-side ONLY mod, adds the quick stacking and restocking features from Ter
 Items that will not be stacked and items that will not be restocked can be specified in the mod options (default: shulker box items).
 
 
-- **Stack to nearby containers** Perform Quick Stack on all openable containers within the player's reach。
-- **Restock from nearby containers** Restock with all openable containers within the player's reach。
+- **Stack to nearby containers** Perform Quick Stack on all openable containers within the player's reach.
+- **Restock from nearby containers** Restock with all openable containers within the player's reach.
 - The above two operations can be performed using buttons or shortcut keys in the player inventory screen, 
 or using shortcut keys when no screen is open.
 Containers as stacking targets and restocking sources can be specified in the mod options (default: chests, trapped chests, barrels, shulker boxes, ender chests).
 
 
 - **Favorite items** Hold Left Alt down right-clicking the item to favorite it. Favorite items cannot be Quick Stacked, otherwise behave like normal items.
-Quick-move, swap and throw with Q key (in the inventory screen), can be disabled separately for favorite items in the mod options. Items will be uncollected after being removed from the player inventory.
+Quick-move, swap and throw with Q key (in the inventory screen), can be disabled separately for favorite items in the mod options. Items will be unfavorited after being removed from the player inventory.
 This feature is not available in creative mode, switching to creative mode from another mode will clear the flags of all favorite items.
