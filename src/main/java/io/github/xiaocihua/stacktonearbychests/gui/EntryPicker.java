@@ -7,9 +7,7 @@ import io.github.cottonmc.cotton.gui.widget.WTextField;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -18,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
@@ -150,21 +147,6 @@ public abstract class EntryPicker extends WBox {
     }
 
     public static class ContainerPicker extends EntryPicker {
-
-        private static final Set<Block> CONTAINERS = Set.of(
-                Blocks.BARREL,
-                Blocks.CHEST,
-                Blocks.TRAPPED_CHEST,
-                Blocks.ENDER_CHEST,
-                Blocks.SHULKER_BOX,
-                Blocks.DISPENSER,
-                Blocks.DROPPER,
-                Blocks.HOPPER,
-                Blocks.BREWING_STAND,
-                Blocks.FURNACE,
-                Blocks.BLAST_FURNACE,
-                Blocks.SMOKER
-        );
 
         public ContainerPicker(Consumer<List<Identifier>> consumer) {
             super(consumer);

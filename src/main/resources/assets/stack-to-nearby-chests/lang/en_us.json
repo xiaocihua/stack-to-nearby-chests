@@ -7,6 +7,7 @@
 
   "stack-to-nearby-chests.message.interruptedByTimeout": "The operation was interrupted, reason: Timed out",
   "stack-to-nearby-chests.message.interruptedByEscape": "The operation was interrupted, reason: Escape key pressed",
+  "stack-to-nearby-chests.message.interruptedByException": "An exception occurred while clicking a slot, please check the log",
 
   "stack-to-nearby-chests.options.title": "Stack to Nearby Chests Mod Options",
   "stack-to-nearby-chests.options.appearance": "Appearance",

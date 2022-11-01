@@ -21,6 +21,7 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -148,8 +149,9 @@ public class InventoryOps {
                             getTheOtherHalfOfLargeChest(world, pos).ifPresent(searchedBlocks::add);
                         }
 
+                        ScreenHandler screenHandler = null;
                         try {
-                            ScreenHandler screenHandler = REQUEST_QUEUE.poll(4, TimeUnit.SECONDS);
+                            screenHandler = REQUEST_QUEUE.poll(4, TimeUnit.SECONDS);
                             if (screenHandler == null) {
                                 player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByTimeout"));
                                 break OUT;
@@ -159,6 +161,10 @@ public class InventoryOps {
                             Thread.sleep(ModOptions.get().behavior.searchInterval.intValue());
                         } catch (InterruptedException e) {
                             player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByEscape"));
+                            break OUT;
+                        } catch (CrashException e) {
+                            player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByException"));
+                            StackToNearbyChests.LOGGER.error(e.getMessage() + "\nscreenHandler " + screenHandler);
                             break OUT;
                         }
                     }
