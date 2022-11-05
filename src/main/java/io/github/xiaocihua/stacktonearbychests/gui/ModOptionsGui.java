@@ -2,20 +2,25 @@ package io.github.xiaocihua.stacktonearbychests.gui;
 
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
+import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.Axis;
-import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
-import io.github.cottonmc.cotton.gui.widget.data.Insets;
-import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
+import io.github.cottonmc.cotton.gui.widget.data.*;
+import io.github.cottonmc.cotton.gui.widget.icon.TextureIcon;
+import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import io.github.xiaocihua.stacktonearbychests.ModOptions;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
 
@@ -62,6 +67,40 @@ public class ModOptionsGui extends LightweightGuiDescription {
     @NotNull
     private WBox createAppearance() {
         var appearance = createCard();
+
+        var favoriteItemStyleLabel = Text.translatable(PREFIX + "favoriteItemStyle");
+
+        var favoriteItemStyle = new FlatColorButton() {
+            private int index = LockedSlots.FAVORITE_ITEM_TAGS.indexOf(options.appearance.favoriteItemStyle);
+
+            {
+                setCurrent(options.appearance.favoriteItemStyle);
+            }
+
+            @Override
+            public InputResult onClick(int x, int y, int button) {
+                int amount = Screen.hasShiftDown() ? -1 : 1;
+                index = MathHelper.floorMod(index + amount, LockedSlots.FAVORITE_ITEM_TAGS.size());
+                setCurrent(LockedSlots.FAVORITE_ITEM_TAGS.get(index));
+                return super.onClick(x, y, button);
+            }
+
+            public void setCurrent(Identifier id) {
+                super.setLabel(Text.translatable(MOD_ID + ".resource." + id.getPath()));
+                super.setIcon(new TextureIcon(new Identifier(id.getNamespace(), String.format(Locale.ROOT, "textures/%s%s", id.getPath(), ".png"))));
+                options.appearance.favoriteItemStyle = id;
+            }
+
+            @Override
+            public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+                ScreenDrawing.texturedRect(matrices, x + 1, y + 1, 18, 18, new Identifier(MOD_ID, "textures/slot_background.png"), 0xFF_FFFFFF);
+                super.paint(matrices, x, y, mouseX, mouseY);
+            }
+        };
+
+        favoriteItemStyle.setBorder();
+        appearance.add(createLabeled(favoriteItemStyleLabel, favoriteItemStyle, 160), 350, 20);
+
         appearance.add(createCheckbox("showStackToNearbyContainersButton", options.appearance.showStackToNearbyContainersButton));
         appearance.add(createCheckbox("showRestockFromNearbyContainersButton", options.appearance.showRestockFromNearbyContainersButton));
         appearance.add(createCheckbox("showQuickStackButton", options.appearance.showQuickStackButton));
@@ -82,6 +121,8 @@ public class ModOptionsGui extends LightweightGuiDescription {
         searchInterval.getTextField().setTextPredicate(text -> NumberUtils.toInt(text, -1) >= 0);
         behavior.add(searchInterval, 230, 20);
 
+        behavior.add(createCheckbox("doNotQuickStackItemsFromTheHotbar", options.behavior.doNotQuickStackItemsFromTheHotbar));
+        behavior.add(createCheckbox("blockAnyActionsOnFavorites", options.behavior.blockAnyActionsOnFavorites));
         behavior.add(createCheckbox("favoriteItemStacksCannotBeQuickMoved", options.behavior.favoriteItemStacksCannotBeQuickMoved));
         behavior.add(createCheckbox("favoriteItemStacksCannotBeSwapped", options.behavior.favoriteItemStacksCannotBeSwapped));
         behavior.add(createCheckbox("favoriteItemStacksCannotBeThrown", options.behavior.favoriteItemStacksCannotBeThrown));
@@ -150,6 +191,14 @@ public class ModOptionsGui extends LightweightGuiDescription {
 
     private WBox createCard() {
         return new WBox(Axis.VERTICAL).setInsets(Insets.ROOT_PANEL).setSpacing(10);
+    }
+
+    private WBox createLabeled(Text label, WWidget widget, int widgetWidth) {
+        var wBox = new WBoxCustom(Axis.HORIZONTAL);
+        wBox.add(new WLabel(label, TEXT_COLOR).setVerticalAlignment(VerticalAlignment.CENTER),
+                MinecraftClient.getInstance().textRenderer.getWidth(label.asOrderedText()));
+        wBox.add(widget, widgetWidth);
+        return wBox;
     }
 
     private WToggleButton createCheckbox(String s, MutableBoolean isOn) {

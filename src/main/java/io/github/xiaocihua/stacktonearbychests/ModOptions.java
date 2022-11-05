@@ -1,11 +1,14 @@
 package io.github.xiaocihua.stacktonearbychests;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
@@ -40,9 +43,11 @@ public class ModOptions {
 
     private static ModOptions read() {
         try (BufferedReader reader = Files.newBufferedReader(OPTIONS_FILE, StandardCharsets.UTF_8)) {
-            return new Gson().fromJson(reader, ModOptions.class);
+            return new GsonBuilder().registerTypeAdapter(Identifier.class, new IdentifierAdapter().nullSafe())
+                    .create()
+                    .fromJson(reader, ModOptions.class);
         } catch (IOException | JsonSyntaxException e) {
-            StackToNearbyChests.LOGGER.info("Failed to read options file, creating a new one");
+            StackToNearbyChests.LOGGER.info("Failed to read options file, creating a new one", e);
             ModOptions modOptions = getDefault();
             modOptions.write();
             return modOptions;
@@ -52,7 +57,8 @@ public class ModOptions {
     public void write() {
         try {
             Files.createDirectories(OPTIONS_FILE.getParent());
-            String json = new GsonBuilder().setPrettyPrinting()
+            String json = new GsonBuilder().registerTypeAdapter(Identifier.class, new IdentifierAdapter().nullSafe())
+                    .setPrettyPrinting()
                     .create()
                     .toJson(this);
             Files.writeString(OPTIONS_FILE, json, StandardCharsets.UTF_8);
@@ -72,11 +78,15 @@ public class ModOptions {
 
         public IntOption restockFromNearbyContainersButtonPosX = new IntOption(160);
         public IntOption restockFromNearbyContainersButtonPosY  = new IntOption(170);
+
+        public Identifier favoriteItemStyle = new Identifier(ModOptions.MOD_ID, "gold_badge");
     }
 
     public static class Behavior {
         public IntOption searchInterval = new IntOption(0);
 
+        public MutableBoolean doNotQuickStackItemsFromTheHotbar = new MutableBoolean(false);
+        public MutableBoolean blockAnyActionsOnFavorites = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeThrown = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeQuickMoved = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeSwapped = new MutableBoolean(false);
@@ -235,7 +245,7 @@ public class ModOptions {
     }
 
     public static class IntOption extends MutableInt {
-        private int defaultValue;
+        private final int defaultValue;
 
         public IntOption(int value) {
             super(value);
@@ -245,6 +255,19 @@ public class ModOptions {
         public int reset() {
             setValue(defaultValue);
             return defaultValue;
+        }
+    }
+
+    public static class IdentifierAdapter extends TypeAdapter<Identifier> {
+
+        @Override
+        public Identifier read(JsonReader in) throws IOException {
+            return new Identifier(in.nextString());
+        }
+
+        @Override
+        public void write(JsonWriter out, Identifier value) throws IOException {
+            out.value(value.toString());
         }
     }
 }

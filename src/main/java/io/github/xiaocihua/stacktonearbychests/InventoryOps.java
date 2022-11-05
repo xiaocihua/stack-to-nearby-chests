@@ -223,6 +223,8 @@ public class InventoryOps {
                 .collect(toSet());
 
         slots.playerSlots().stream()
+                .filter(slot -> !(ModOptions.get().behavior.doNotQuickStackItemsFromTheHotbar.booleanValue()
+                        && PlayerInventory.isValidHotbarIndex(slot.getIndex())))
                 .filter(not(LockedSlots::isLocked))
                 .filter(slot -> itemsInContainer.contains(slot.getStack().getItem()))
                 .filter(slot -> slot.canTakeItems(MinecraftClient.getInstance().player))

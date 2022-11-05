@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 
 import static java.util.function.Predicate.not;
 
@@ -45,7 +46,10 @@ import static java.util.function.Predicate.not;
 @Environment(EnvType.CLIENT)
 public class LockedSlots {
     private static final Path LOCKED_SLOTS_FOLDER = ModOptions.MOD_OPTIONS_DIR.resolve("locked-slots");
-    private static final Identifier LOCKED_SLOT_TEXTURE = new Identifier(ModOptions.MOD_ID, "locked_slot");
+    public static final List<Identifier> FAVORITE_ITEM_TAGS = List.of(new Identifier(ModOptions.MOD_ID, "gold_badge"),
+            new Identifier(ModOptions.MOD_ID, "red_background"),
+            new Identifier(ModOptions.MOD_ID, "gold_border"),
+            new Identifier(ModOptions.MOD_ID, "iron_border"));
 
     @Nullable
     private static Path currentFile;
@@ -61,8 +65,9 @@ public class LockedSlots {
         OnSlotClickCallback.BEFORE.register(LockedSlots::beforeSlotClick);
         OnSlotClickCallback.AFTER.register(LockedSlots::afterSlotClick);
 
-        ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-                .register((atlasTexture, registry) -> registry.register(LOCKED_SLOT_TEXTURE));
+        FAVORITE_ITEM_TAGS.forEach(identifier ->
+                ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
+                        .register((atlasTexture, registry) -> registry.register(identifier)));
 
         ModOptions.get().keymap.markAsFavoriteKey.registerOnScreen(HandledScreen.class, screen -> {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -160,9 +165,10 @@ public class LockedSlots {
 
     private static ActionResult beforeSlotClick(@Nullable Slot slot, int slotId, int button, SlotActionType actionType, ScreenHandler screenHandler) {
         if (isLocked(slot) && (
-                actionType == SlotActionType.QUICK_MOVE && ModOptions.get().behavior.favoriteItemStacksCannotBeQuickMoved.booleanValue() ||
-                actionType == SlotActionType.SWAP && ModOptions.get().behavior.favoriteItemStacksCannotBeSwapped.booleanValue() ||
-                actionType == SlotActionType.THROW && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()
+                ModOptions.get().behavior.blockAnyActionsOnFavorites.booleanValue()
+                        || actionType == SlotActionType.QUICK_MOVE && ModOptions.get().behavior.favoriteItemStacksCannotBeQuickMoved.booleanValue()
+                        || actionType == SlotActionType.SWAP && ModOptions.get().behavior.favoriteItemStacksCannotBeSwapped.booleanValue()
+                        || actionType == SlotActionType.THROW && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()
         )) {
             return ActionResult.FAIL;
         }
@@ -223,6 +229,9 @@ public class LockedSlots {
                 }
             }
             case QUICK_MOVE -> {
+                if (slot == null) {
+                    break;
+                }
                 if (isLocked(slot) && !slot.hasStack()) {
                     unLock(slot);
                     lock(quickMoveDestination);
@@ -270,13 +279,14 @@ public class LockedSlots {
         }
     }
 
-    public static void onDrawSlot(HandledScreen<?> screen, MatrixStack matrices, Slot slot) {
-        if (isLocked(slot)) {
+    public static void drawfavoriteItemStyle(MatrixStack matrices, Slot slot, boolean isForeground) {
+        Identifier id = ModOptions.get().appearance.favoriteItemStyle;
+        if (isLocked(slot) && isForeground == id.getPath().equals("gold_badge")) {
             Sprite sprite = MinecraftClient.getInstance()
                     .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-                    .apply(LOCKED_SLOT_TEXTURE);
+                    .apply(id);
             RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
-            DrawableHelper.drawSprite(matrices, slot.x, slot.y, 300, 16, 16, sprite);
+            DrawableHelper.drawSprite(matrices, slot.x, slot.y, isForeground ? 300 : 200, 16, 16, sprite);
         }
     }
 }

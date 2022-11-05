@@ -23,6 +23,10 @@ public class FlatColorButton extends WButton {
         super(text);
     }
 
+    public FlatColorButton(Icon icon, Text text) {
+        super(icon, text);
+    }
+
     public FlatColorButton(int regularColor, int hoveredColor, int disabledColor) {
         this.regularColor = regularColor;
         this.hoveredColor = hoveredColor;
@@ -69,7 +73,7 @@ public class FlatColorButton extends WButton {
         borderColor.ifPresent(color -> drawBorder(matrices, x, y, width, height, color));
 
         if (icon != null) {
-            icon.paint(matrices, x + 1, y + 1, 16);
+            icon.paint(matrices, x + 2, y + 2, 16);
         }
 
         if (label != null) {

@@ -9,8 +9,14 @@
   "stack-to-nearby-chests.message.interruptedByEscape": "操作已中断，原因：Esc 键被按下",
   "stack-to-nearby-chests.message.interruptedByException": "点击物品槽位时发生异常, 请检查日志",
 
+  "stack-to-nearby-chests.resource.gold_badge": "金徽章",
+  "stack-to-nearby-chests.resource.gold_border": "金边框",
+  "stack-to-nearby-chests.resource.iron_border": "铁边框",
+  "stack-to-nearby-chests.resource.red_background": "红色背景",
+
   "stack-to-nearby-chests.options.title": "堆叠到附近的箱子 模组设置",
   "stack-to-nearby-chests.options.appearance": "外观",
+  "stack-to-nearby-chests.options.favoriteItemStyle": "已收藏物品标记样式",
   "stack-to-nearby-chests.options.showStackToNearbyContainersButton": "显示堆叠到附近的容器按钮",
   "stack-to-nearby-chests.options.showRestockFromNearbyContainersButton": "显示从附近的容器中补货按钮",
   "stack-to-nearby-chests.options.showQuickStackButton": "显示快速堆叠按钮",
@@ -21,6 +27,8 @@
   "stack-to-nearby-chests.options.restockFromNearbyContainersButtonPosY": "从附近的容器中补货按钮位置 Y",
   "stack-to-nearby-chests.options.behavior": "行为",
   "stack-to-nearby-chests.options.searchInterval": "搜索间隔",
+  "stack-to-nearby-chests.options.doNotQuickStackItemsFromTheHotbar": "禁止快速堆叠快捷栏中的物品",
+  "stack-to-nearby-chests.options.blockAnyActionsOnFavorites": "屏蔽对标记为收藏的物品的任何操作",
   "stack-to-nearby-chests.options.favoriteItemStacksCannotBeQuickMoved": "禁止快速移动标记为收藏的物品",
   "stack-to-nearby-chests.options.favoriteItemStacksCannotBeSwapped": "禁止交换标记为收藏的物品",
   "stack-to-nearby-chests.options.favoriteItemStacksCannotBeThrown": "禁止丢弃标记为收藏的物品",

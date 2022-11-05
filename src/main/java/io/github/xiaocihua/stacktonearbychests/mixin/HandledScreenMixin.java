@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(HandledScreen.class)
 public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen implements ScreenHandlerProvider<T> {
@@ -28,9 +29,18 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     @Shadow
     public abstract T getScreenHandler();
 
-    @Inject(method = "drawSlot", at = @At(value = "TAIL"))
-    private void onDrawSlot(MatrixStack matrices, Slot slot, CallbackInfo ci) {
-        LockedSlots.onDrawSlot((HandledScreen<?>) (Object) this, matrices, slot);
+    @Inject(method = "render",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/screen/slot/Slot;)V"),
+            locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+    private void beforeDrawSlot(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, int i, int j, MatrixStack matrixStack, int k, Slot slot) {
+        LockedSlots.drawfavoriteItemStyle(matrices, slot, false);
+    }
+
+    @Inject(method = "render",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER),
+            locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+    private void afterDrawSlot(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, int i, int j, MatrixStack matrixStack, int k, Slot slot) {
+        LockedSlots.drawfavoriteItemStyle(matrices, slot, true);
     }
 
     @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
