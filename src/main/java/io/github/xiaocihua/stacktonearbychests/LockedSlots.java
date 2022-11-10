@@ -3,7 +3,6 @@ package io.github.xiaocihua.stacktonearbychests;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.xiaocihua.stacktonearbychests.event.OnSlotClickCallback;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import io.github.xiaocihua.stacktonearbychests.mixin.MinecraftServerAccessor;
 import net.fabricmc.api.EnvType;
@@ -18,6 +17,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -61,9 +61,6 @@ public class LockedSlots {
 
     public static void init() {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> read(handler, client));
-
-        OnSlotClickCallback.BEFORE.register(LockedSlots::beforeSlotClick);
-        OnSlotClickCallback.AFTER.register(LockedSlots::afterSlotClick);
 
         FAVORITE_ITEM_TAGS.forEach(identifier ->
                 ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
@@ -145,8 +142,16 @@ public class LockedSlots {
         return isLockable(slotIndex) && currentLockedSlots.remove(slotIndex);
     }
 
+    private static boolean setLocked(int slotIndex, boolean locked) {
+        return locked ? lock(slotIndex) : unLock(slotIndex);
+    }
+
     public static boolean isLocked(@Nullable Slot slot) {
-        return isLockable(slot) && currentLockedSlots.contains(slot.getIndex());
+        return isLockable(slot) && isLocked(slot.getIndex());
+    }
+
+    public static boolean isLocked(int slotIndex) {
+        return isLockable(slotIndex) && currentLockedSlots.contains(slotIndex);
     }
 
     private static boolean isLockable(@Nullable Slot slot) {
@@ -163,9 +168,11 @@ public class LockedSlots {
                 && slotIndex != 36;// Feet
     }
 
-    private static ActionResult beforeSlotClick(@Nullable Slot slot, int slotId, int button, SlotActionType actionType, ScreenHandler screenHandler) {
+    public static ActionResult beforeClickSlot(int slotId, int button, SlotActionType actionType, PlayerEntity player) {
+        @Nullable
+        Slot slot = slotId < 0 ? null : player.currentScreenHandler.getSlot(slotId);
         if (isLocked(slot) && (
-                ModOptions.get().behavior.blockAnyActionsOnFavorites.booleanValue()
+                actionType == SlotActionType.PICKUP && ModOptions.get().behavior.favoriteItemsCannotBePickedUp.booleanValue()
                         || actionType == SlotActionType.QUICK_MOVE && ModOptions.get().behavior.favoriteItemStacksCannotBeQuickMoved.booleanValue()
                         || actionType == SlotActionType.SWAP && ModOptions.get().behavior.favoriteItemStacksCannotBeSwapped.booleanValue()
                         || actionType == SlotActionType.THROW && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()
@@ -194,7 +201,10 @@ public class LockedSlots {
         quickMoveDestination = destination;
     }
 
-    private static ActionResult afterSlotClick(@Nullable Slot slot, int slotId, int button, SlotActionType actionType, ScreenHandler screenHandler) {
+    public static void afterClickSlot(int slotId, int button, SlotActionType actionType, PlayerEntity player) {
+        ScreenHandler screenHandler = player.currentScreenHandler;
+        @Nullable
+        Slot slot = slotId < 0 ? null : screenHandler.getSlot(slotId);
         switch (actionType) {
             case PICKUP -> {
                 if (slotId == -999) { // Throw
@@ -257,8 +267,6 @@ public class LockedSlots {
         }
 
         actionBeingExecuted = null;
-
-        return ActionResult.PASS;
     }
 
     /**
@@ -279,7 +287,7 @@ public class LockedSlots {
         }
     }
 
-    public static void drawfavoriteItemStyle(MatrixStack matrices, Slot slot, boolean isForeground) {
+    public static void drawFavoriteItemStyle(MatrixStack matrices, Slot slot, boolean isForeground) {
         Identifier id = ModOptions.get().appearance.favoriteItemStyle;
         if (isLocked(slot) && isForeground == id.getPath().equals("gold_badge")) {
             Sprite sprite = MinecraftClient.getInstance()
@@ -288,5 +296,34 @@ public class LockedSlots {
             RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
             DrawableHelper.drawSprite(matrices, slot.x, slot.y, isForeground ? 300 : 200, 16, 16, sprite);
         }
+    }
+
+    public static ActionResult beforeDropSelectedItem(int selectedSlotIndex) {
+        if (isLocked(selectedSlotIndex) && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()) {
+            return ActionResult.FAIL;
+        }
+
+        return ActionResult.PASS;
+    }
+
+    public static void afterDropSelectedItem(int selectedSlotIndex) {
+        if (isLocked(selectedSlotIndex)
+                && !MinecraftClient.getInstance().player.playerScreenHandler.slots.get(selectedSlotIndex).hasStack()) {
+            unLock(selectedSlotIndex);
+        }
+    }
+
+    public static ActionResult onSwapItemWithOffhand() {
+        int selectedSlotIndex = MinecraftClient.getInstance().player.getInventory().selectedSlot;
+        boolean isSelectedSlotLocked = isLocked(selectedSlotIndex);
+
+        if (isSelectedSlotLocked && ModOptions.get().behavior.favoriteItemsCannotBeSwappedWithOffhand.booleanValue()) {
+            return ActionResult.FAIL;
+        }
+
+        setLocked(selectedSlotIndex, isLocked(PlayerInventory.OFF_HAND_SLOT));
+        setLocked(PlayerInventory.OFF_HAND_SLOT, isSelectedSlotLocked);
+
+        return ActionResult.PASS;
     }
 }

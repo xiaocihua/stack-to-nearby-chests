@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(RecipeBookWidget.class)
-public class RecipeBookWidgetMixin {
+public abstract class RecipeBookWidgetMixin {
 
     @Inject(method = "update", at = @At("HEAD"), cancellable = true)
     private void onUpdate(CallbackInfo ci) {

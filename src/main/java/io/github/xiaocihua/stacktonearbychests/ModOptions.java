@@ -86,10 +86,11 @@ public class ModOptions {
         public IntOption searchInterval = new IntOption(0);
 
         public MutableBoolean doNotQuickStackItemsFromTheHotbar = new MutableBoolean(false);
-        public MutableBoolean blockAnyActionsOnFavorites = new MutableBoolean(false);
+        public MutableBoolean favoriteItemsCannotBePickedUp = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeThrown = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeQuickMoved = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeSwapped = new MutableBoolean(false);
+        public MutableBoolean favoriteItemsCannotBeSwappedWithOffhand = new MutableBoolean(false);
 
         public Set<String> stackingTargets = Set.of("minecraft:shulker_box",
                 "minecraft:brown_shulker_box",

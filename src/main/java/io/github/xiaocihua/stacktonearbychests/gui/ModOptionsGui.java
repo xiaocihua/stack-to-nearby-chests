@@ -11,6 +11,7 @@ import io.github.xiaocihua.stacktonearbychests.ModOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -66,9 +67,9 @@ public class ModOptionsGui extends LightweightGuiDescription {
 
     @NotNull
     private WBox createAppearance() {
-        var appearance = createCard();
+        WBox appearance = createCard();
 
-        var favoriteItemStyleLabel = Text.translatable(PREFIX + "favoriteItemStyle");
+        MutableText favoriteItemStyleLabel = Text.translatable(PREFIX + "favoriteItemStyle");
 
         var favoriteItemStyle = new FlatColorButton() {
             private int index = LockedSlots.FAVORITE_ITEM_TAGS.indexOf(options.appearance.favoriteItemStyle);
@@ -114,18 +115,20 @@ public class ModOptionsGui extends LightweightGuiDescription {
 
     @NotNull
     private WBox createBehavior() {
-        var behavior = createCard();
+        WBox behavior = createCard();
 
-        var searchInterval = createIntTextField("searchInterval", options.behavior.searchInterval)
+        TextFieldWithLabel searchInterval = createIntTextField("searchInterval", options.behavior.searchInterval)
                 .withTooltip(PREFIX + "searchInterval.tooltip");
         searchInterval.getTextField().setTextPredicate(text -> NumberUtils.toInt(text, -1) >= 0);
         behavior.add(searchInterval, 230, 20);
 
         behavior.add(createCheckbox("doNotQuickStackItemsFromTheHotbar", options.behavior.doNotQuickStackItemsFromTheHotbar));
-        behavior.add(createCheckbox("blockAnyActionsOnFavorites", options.behavior.blockAnyActionsOnFavorites));
+
+        behavior.add(createCheckbox("favoriteItemsCannotBePickedUp", options.behavior.favoriteItemsCannotBePickedUp));
         behavior.add(createCheckbox("favoriteItemStacksCannotBeQuickMoved", options.behavior.favoriteItemStacksCannotBeQuickMoved));
         behavior.add(createCheckbox("favoriteItemStacksCannotBeSwapped", options.behavior.favoriteItemStacksCannotBeSwapped));
         behavior.add(createCheckbox("favoriteItemStacksCannotBeThrown", options.behavior.favoriteItemStacksCannotBeThrown));
+        behavior.add(createCheckbox("favoriteItemsCannotBeSwappedWithOffhand", options.behavior.favoriteItemsCannotBeSwappedWithOffhand));
 
         var stackingTargets = new BlackWhiteList(Text.translatable(PREFIX + "stackingTargets"),
                         options.behavior.stackingTargets,
@@ -159,7 +162,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
     }
 
     private WBox createKeymap() {
-        var keymap = new WBoxCustom(Axis.VERTICAL).setInsets(Insets.ROOT_PANEL);
+        WBox keymap = new WBoxCustom(Axis.VERTICAL).setInsets(Insets.ROOT_PANEL);
 
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "stackToNearbyContainers"), options.keymap.stackToNearbyContainersKey));
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restockFromNearbyContainers"), options.keymap.restockFromNearbyContainersKey));
@@ -179,7 +182,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         var bottom = (WBoxCustom) new WBoxCustom(Axis.HORIZONTAL).setInsets(new Insets(7))
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
-        var doneButton = new FlatColorButton(Text.translatable(PREFIX + "done")).setBorder()
+        WButton doneButton = new FlatColorButton(Text.translatable(PREFIX + "done")).setBorder()
                 .setOnClick(() -> {
                     options.write();
                     MinecraftClient.getInstance().currentScreen.close();
@@ -202,8 +205,9 @@ public class ModOptionsGui extends LightweightGuiDescription {
     }
 
     private WToggleButton createCheckbox(String s, MutableBoolean isOn) {
-        var checkbox = new WToggleButton(CHECKED, UNCHECKED, Text.translatable(PREFIX + s))
-                .setColor(TEXT_COLOR, TEXT_COLOR);
+        var checkbox = new WToggleButton(CHECKED, UNCHECKED, Text.translatable(PREFIX + s));
+
+        checkbox.setColor(TEXT_COLOR, TEXT_COLOR);
         checkbox.setToggle(isOn.booleanValue());
         checkbox.setOnToggle(isOn::setValue);
         return checkbox;

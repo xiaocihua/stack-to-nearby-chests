@@ -4,6 +4,7 @@
   "package": "io.github.xiaocihua.stacktonearbychests.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "ClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerMixin",
     "HandledScreenAccessor",
     "HandledScreenMixin",
