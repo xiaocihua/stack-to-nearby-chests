@@ -27,5 +27,5 @@ Containers as stacking targets and restocking sources can be specified in the mo
 
 
 - **Favorite items** Hold Left Alt down right-clicking the item to favorite it. Favorite items cannot be Quick Stacked, otherwise behave like normal items.
-Quick-move, swap and throw with Q key (in the inventory screen), can be disabled separately for favorite items in the mod options. Items will be unfavorited after being removed from the player inventory.
+Pick up, quick-move, swap and throw with Q key, can be disabled separately for favorite items in the mod options. Items will be unfavorited after being removed from the player inventory.
 This feature is not available in creative mode, switching to creative mode from another mode will clear the flags of all favorite items.
