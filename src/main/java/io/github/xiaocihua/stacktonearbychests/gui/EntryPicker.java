@@ -10,6 +10,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.StringUtils;
@@ -41,11 +42,11 @@ public abstract class EntryPicker extends WBox {
         title = new WLabel(getTitle(), TEXT_COLOR);
         add(title);
 
-        searchByName = new WTextField(Text.translatable(PREFIX + "searchByName"))
+        searchByName = new WTextField(new TranslatableText(PREFIX + "searchByName"))
                 .setChangedListener(searchStr -> entryList.setData(searchByName(searchStr)));
         add(searchByName);
 
-        searchByID = new WTextField(Text.translatable(PREFIX + "searchByID"))
+        searchByID = new WTextField(new TranslatableText(PREFIX + "searchByID"))
                 .setChangedListener(searchStr -> entryList.setData(searchByID(searchStr)));
         add(searchByID);
 
@@ -55,14 +56,14 @@ public abstract class EntryPicker extends WBox {
         bottomBar = new WBoxCustom(Axis.HORIZONTAL);
         bottomBar.setHorizontalAlignment(HorizontalAlignment.RIGHT);
 
-        var addButton = new FlatColorButton(Text.translatable(PREFIX + "add")).setBorder()
+        var addButton = new FlatColorButton(new TranslatableText(PREFIX + "add")).setBorder()
                 .setOnClick(() -> {
                     consumer.accept(entryList.getSelectedData());
                     close();
                 });
         bottomBar.add(addButton, 50);
 
-        var cancelButton = new FlatColorButton(Text.translatable(PREFIX + "cancel")).setBorder()
+        var cancelButton = new FlatColorButton(new TranslatableText(PREFIX + "cancel")).setBorder()
                 .setOnClick(this::close);
         bottomBar.add(cancelButton, 50);
 
@@ -122,7 +123,7 @@ public abstract class EntryPicker extends WBox {
 
         @Override
         public Text getTitle() {
-            return Text.translatable(PREFIX + "addItemsToList");
+            return new TranslatableText(PREFIX + "addItemsToList");
         }
 
         @Override
@@ -154,7 +155,7 @@ public abstract class EntryPicker extends WBox {
 
         @Override
         public Text getTitle() {
-            return Text.translatable(PREFIX + "addContainersToList");
+            return new TranslatableText(PREFIX + "addContainersToList");
         }
 
         @Override

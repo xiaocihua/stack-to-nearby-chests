@@ -14,6 +14,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -51,7 +52,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
     }
 
     private WLabel createTitle() {
-        return new WLabel(Text.translatable(PREFIX + "title"), TEXT_COLOR)
+        return new WLabel(new TranslatableText(PREFIX + "title"), TEXT_COLOR)
                 .setVerticalAlignment(VerticalAlignment.CENTER)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
     }
@@ -59,9 +60,9 @@ public class ModOptionsGui extends LightweightGuiDescription {
     @NotNull
     private WTabPanelCustom createTabs() {
         var tabs = new WTabPanelCustom();
-        tabs.add(new WScrollPanelCustom(createAppearance()), builder -> builder.title(Text.translatable(PREFIX + "appearance")));
-        tabs.add(new WScrollPanelCustom(createBehavior()), builder -> builder.title(Text.translatable(PREFIX + "behavior")));
-        tabs.add(new WScrollPanelCustom(createKeymap()), builder -> builder.title(Text.translatable(PREFIX + "keymap")));
+        tabs.add(new WScrollPanelCustom(createAppearance()), builder -> builder.title(new TranslatableText(PREFIX + "appearance")));
+        tabs.add(new WScrollPanelCustom(createBehavior()), builder -> builder.title(new TranslatableText(PREFIX + "behavior")));
+        tabs.add(new WScrollPanelCustom(createKeymap()), builder -> builder.title(new TranslatableText(PREFIX + "keymap")));
         return tabs;
     }
 
@@ -69,7 +70,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
     private WBox createAppearance() {
         WBox appearance = createCard();
 
-        MutableText favoriteItemStyleLabel = Text.translatable(PREFIX + "favoriteItemStyle");
+        MutableText favoriteItemStyleLabel = new TranslatableText(PREFIX + "favoriteItemStyle");
 
         var favoriteItemStyle = new FlatColorButton() {
             private int index = LockedSlots.FAVORITE_ITEM_TAGS.indexOf(options.appearance.favoriteItemStyle);
@@ -87,7 +88,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
             }
 
             public void setCurrent(Identifier id) {
-                super.setLabel(Text.translatable(MOD_ID + ".resource." + id.getPath()));
+                super.setLabel(new TranslatableText(MOD_ID + ".resource." + id.getPath()));
                 super.setIcon(new TextureIcon(new Identifier(id.getNamespace(), String.format(Locale.ROOT, "textures/%s%s", id.getPath(), ".png"))));
                 options.appearance.favoriteItemStyle = id;
             }
@@ -130,28 +131,28 @@ public class ModOptionsGui extends LightweightGuiDescription {
         behavior.add(createCheckbox("favoriteItemStacksCannotBeThrown", options.behavior.favoriteItemStacksCannotBeThrown));
         behavior.add(createCheckbox("favoriteItemsCannotBeSwappedWithOffhand", options.behavior.favoriteItemsCannotBeSwappedWithOffhand));
 
-        var stackingTargets = new BlackWhiteList(Text.translatable(PREFIX + "stackingTargets"),
+        var stackingTargets = new BlackWhiteList(new TranslatableText(PREFIX + "stackingTargets"),
                         options.behavior.stackingTargets,
                         BlockEntry::new,
                         consumer -> openDialog(new EntryPicker.ContainerPicker(consumer)),
                         data -> options.behavior.stackingTargets = data);
         behavior.add(stackingTargets, 230, 124);
 
-        var itemsThatWillNotBeStacked = new BlackWhiteList(Text.translatable(PREFIX + "itemsThatWillNotBeStacked"),
+        var itemsThatWillNotBeStacked = new BlackWhiteList(new TranslatableText(PREFIX + "itemsThatWillNotBeStacked"),
                         options.behavior.itemsThatWillNotBeStacked,
                         ItemEntry::new,
                         consumer -> openDialog(new EntryPicker.ItemPicker(consumer)),
                         data -> options.behavior.itemsThatWillNotBeStacked = data);
         behavior.add(itemsThatWillNotBeStacked, 230, 124);
 
-        var restockingSources = new BlackWhiteList(Text.translatable(PREFIX + "restockingSources"),
+        var restockingSources = new BlackWhiteList(new TranslatableText(PREFIX + "restockingSources"),
                         options.behavior.restockingSources,
                         BlockEntry::new,
                         consumer -> openDialog(new EntryPicker.ContainerPicker(consumer)),
                         data -> options.behavior.restockingSources = data);
         behavior.add(restockingSources, 230, 124);
 
-        var itemsThatWillNotBeRestocked = new BlackWhiteList(Text.translatable(PREFIX + "itemsThatWillNotBeRestocked"),
+        var itemsThatWillNotBeRestocked = new BlackWhiteList(new TranslatableText(PREFIX + "itemsThatWillNotBeRestocked"),
                         options.behavior.itemsThatWillNotBeRestocked,
                         ItemEntry::new,
                         consumer -> openDialog(new EntryPicker.ItemPicker(consumer)),
@@ -164,14 +165,14 @@ public class ModOptionsGui extends LightweightGuiDescription {
     private WBox createKeymap() {
         WBox keymap = new WBoxCustom(Axis.VERTICAL).setInsets(Insets.ROOT_PANEL);
 
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "stackToNearbyContainers"), options.keymap.stackToNearbyContainersKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restockFromNearbyContainers"), options.keymap.restockFromNearbyContainersKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "quickStack"), options.keymap.quickStackKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restock"), options.keymap.restockKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "markAsFavorite"), options.keymap.markAsFavoriteKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "openModOptionsScreen"), options.keymap.openModOptionsScreenKey));
+        keymap.add(new KeymapEntry(new TranslatableText(PREFIX + "stackToNearbyContainers"), options.keymap.stackToNearbyContainersKey));
+        keymap.add(new KeymapEntry(new TranslatableText(PREFIX + "restockFromNearbyContainers"), options.keymap.restockFromNearbyContainersKey));
+        keymap.add(new KeymapEntry(new TranslatableText(PREFIX + "quickStack"), options.keymap.quickStackKey));
+        keymap.add(new KeymapEntry(new TranslatableText(PREFIX + "restock"), options.keymap.restockKey));
+        keymap.add(new KeymapEntry(new TranslatableText(PREFIX + "markAsFavorite"), options.keymap.markAsFavoriteKey));
+        keymap.add(new KeymapEntry(new TranslatableText(PREFIX + "openModOptionsScreen"), options.keymap.openModOptionsScreenKey));
 
-        WLabel hint = new WLabel(Text.translatable(PREFIX + "keyMapHint").setStyle(Style.EMPTY.withItalic(true)), 0xBFBFBF)
+        WLabel hint = new WLabel(new TranslatableText(PREFIX + "keyMapHint").setStyle(Style.EMPTY.withItalic(true)), 0xBFBFBF)
                 .setVerticalAlignment(VerticalAlignment.CENTER);
         keymap.add(hint);
 
@@ -182,7 +183,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         var bottom = (WBoxCustom) new WBoxCustom(Axis.HORIZONTAL).setInsets(new Insets(7))
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
-        WButton doneButton = new FlatColorButton(Text.translatable(PREFIX + "done")).setBorder()
+        WButton doneButton = new FlatColorButton(new TranslatableText(PREFIX + "done")).setBorder()
                 .setOnClick(() -> {
                     options.write();
                     MinecraftClient.getInstance().currentScreen.close();
@@ -205,7 +206,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
     }
 
     private WToggleButton createCheckbox(String s, MutableBoolean isOn) {
-        var checkbox = new WToggleButton(CHECKED, UNCHECKED, Text.translatable(PREFIX + s));
+        var checkbox = new WToggleButton(CHECKED, UNCHECKED, new TranslatableText(PREFIX + s));
 
         checkbox.setColor(TEXT_COLOR, TEXT_COLOR);
         checkbox.setToggle(isOn.booleanValue());
@@ -214,7 +215,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
     }
 
     private TextFieldWithLabel createIntTextField(String s, ModOptions.IntOption value) {
-        var textField = new TextFieldWithLabel(Text.translatable(PREFIX + s), TEXT_COLOR, value::reset);
+        var textField = new TextFieldWithLabel(new TranslatableText(PREFIX + s), TEXT_COLOR, value::reset);
         textField.getTextField().setText(String.valueOf(value.intValue()));
         textField.getTextField().setChangedListener(text -> value.setValue(NumberUtils.toInt(text)));
         textField.getTextField().setTextPredicate(text -> text.matches("-?\\d+"));

@@ -9,6 +9,7 @@ import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
 import io.github.xiaocihua.stacktonearbychests.KeySequence;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import org.lwjgl.glfw.GLFW;
 
 public class KeymapEntry extends WBox {
@@ -28,7 +29,7 @@ public class KeymapEntry extends WBox {
         keybinding = new KeyBindingWidget(keySequence);
         add(keybinding);
 
-        resetButton = new FlatColorButton(Text.translatable("stack-to-nearby-chests.options.reset"))
+        resetButton = new FlatColorButton(new TranslatableText("stack-to-nearby-chests.options.reset"))
                 .setBorder()
                 .setOnClick(keybinding::reset);
         add(resetButton);

@@ -20,6 +20,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -247,7 +248,7 @@ public class WTabPanelCustom extends WPanel {
 
                 if (!this.tooltip.isEmpty()) {
                     //noinspection Convert2Lambda
-                    tooltip = new Consumer<TooltipBuilder>() {
+                    tooltip = new Consumer<>() {
                         @Environment(EnvType.CLIENT)
                         @Override
                         public void accept(TooltipBuilder builder) {
@@ -367,10 +368,10 @@ public class WTabPanelCustom extends WPanel {
             Text label = data.getTitle();
 
             if (label != null) {
-                builder.put(NarrationPart.TITLE, Text.translatable(NarrationMessages.TAB_TITLE_KEY, label));
+                builder.put(NarrationPart.TITLE, new TranslatableText(NarrationMessages.TAB_TITLE_KEY, label));
             }
 
-            builder.put(NarrationPart.POSITION, Text.translatable(NarrationMessages.TAB_POSITION_KEY, tabWidgets.indexOf(this) + 1, tabWidgets.size()));
+            builder.put(NarrationPart.POSITION, new TranslatableText(NarrationMessages.TAB_POSITION_KEY, tabWidgets.indexOf(this) + 1, tabWidgets.size()));
         }
     }
 }

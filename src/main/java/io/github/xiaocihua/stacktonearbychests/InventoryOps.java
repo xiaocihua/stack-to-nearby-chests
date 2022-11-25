@@ -10,6 +10,7 @@ import net.minecraft.block.enums.ChestType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -18,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.crash.CrashException;
@@ -90,7 +91,7 @@ public class InventoryOps {
             if (entity == null) {
                 return;
             }
-            World world = client.world;
+            ClientWorld world = client.world;
             assert world != null;
             ClientPlayerEntity player = client.player;
             assert player != null;
@@ -132,8 +133,7 @@ public class InventoryOps {
                             continue;
                         }
 
-                        interactionManager.interactBlock(player,
-                                Hand.MAIN_HAND,
+                        interactionManager.interactBlock(player, world, Hand.MAIN_HAND,
                                 new BlockHitResult(closestPos,
                                         MathUtil.getFacingDirection(closestPos.subtract(origin)),
                                         pos,
@@ -153,17 +153,17 @@ public class InventoryOps {
                         try {
                             screenHandler = REQUEST_QUEUE.poll(4, TimeUnit.SECONDS);
                             if (screenHandler == null) {
-                                player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByTimeout"));
+                                sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByTimeout");
                                 break OUT;
                             }
                             consumer.accept(screenHandler);
 
                             Thread.sleep(ModOptions.get().behavior.searchInterval.intValue());
                         } catch (InterruptedException e) {
-                            player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByEscape"));
+                            sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByEscape");
                             break OUT;
                         } catch (CrashException e) {
-                            player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByException"));
+                            sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByException");
                             StackToNearbyChests.LOGGER.error(e.getMessage() + "\nscreenHandler " + screenHandler);
                             break OUT;
                         }
@@ -263,12 +263,6 @@ public class InventoryOps {
         client.interactionManager.clickSlot(screenHandler.syncId, slot.id, GLFW.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, client.player);
     }
 
-    public static void onUpdateSlotStacks(ScreenHandler handler) {
-        if (isRunning()) {
-            REQUEST_QUEUE.add(handler);
-        }
-    }
-
     public record SlotsInScreenHandler(List<Slot> playerSlots, List<Slot> containerSlots) {
 
         static SlotsInScreenHandler of(ScreenHandler screenHandler) {
@@ -276,6 +270,16 @@ public class InventoryOps {
                     .collect(partitioningBy(slot -> slot.inventory instanceof PlayerInventory));
 
             return new SlotsInScreenHandler(inventories.get(true), inventories.get(false));
+        }
+    }
+
+    private static void sendInterruptedMessage(String message) {
+        MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new TranslatableText(message));
+    }
+
+    public static void onUpdateSlotStacks(ScreenHandler handler) {
+        if (isRunning()) {
+            REQUEST_QUEUE.add(handler);
         }
     }
 }

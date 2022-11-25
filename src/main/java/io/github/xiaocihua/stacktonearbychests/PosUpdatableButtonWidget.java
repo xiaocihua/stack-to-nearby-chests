@@ -8,7 +8,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.screen.ScreenTexts;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -64,7 +64,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
         private int textureHeight = 16;
         private PressAction pressAction = button -> {};
         private TooltipSupplier tooltipSupplier = (button, matrices, mouseX, mouseY) -> {};
-        private Text text = ScreenTexts.EMPTY;
+        private Text text = LiteralText.EMPTY;
         private HandledScreen<?> parent = null;
         private Optional<Function<HandledScreenAccessor, Integer>> xUpdater = Optional.empty();
         private Optional<Function<HandledScreenAccessor, Integer>> yUpdater = Optional.empty();

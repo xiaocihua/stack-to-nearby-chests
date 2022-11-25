@@ -11,6 +11,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -40,14 +41,14 @@ public class TextFieldWithLabel extends WBoxCustom {
         textField = new WTextField();
         add(textField);
 
-        resetButton = new FlatColorButton(Text.translatable("stack-to-nearby-chests.options.reset"))
+        resetButton = new FlatColorButton(new TranslatableText("stack-to-nearby-chests.options.reset"))
                 .setBorder()
                 .setOnClick(() -> textField.setText(String.valueOf(onReset.get())));
         add(resetButton);
     }
 
     public TextFieldWithLabel withTooltip(String tooltip) {
-        this.tooltip = MinecraftClient.getInstance().textRenderer.wrapLines(Text.translatable(tooltip), 150);
+        this.tooltip = MinecraftClient.getInstance().textRenderer.wrapLines(new TranslatableText(tooltip), 150);
         return this;
     }
 

@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -111,11 +112,11 @@ public class StackToNearbyChests implements ClientModInitializer {
     }
 
     private List<Text> getLines(String text) {
-        return List.of(Text.translatable(text));
+        return List.of(new TranslatableText(text));
     }
 
     private List<Text> getLinesWithHint(String text) {
-        return List.of(Text.translatable(text),
-                Text.translatable("stack-to-nearby-chests.tooltip.hint").setStyle(Style.EMPTY.withItalic(true).withColor(Formatting.DARK_GRAY)));
+        return List.of(new TranslatableText(text),
+                new TranslatableText("stack-to-nearby-chests.tooltip.hint").setStyle(Style.EMPTY.withItalic(true).withColor(Formatting.DARK_GRAY)));
     }
 }

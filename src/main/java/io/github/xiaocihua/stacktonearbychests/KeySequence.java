@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public final class KeySequence {
 
     public Text getLocalizedText() {
         if (keys.isEmpty()) {
-            return Text.translatable("key.keyboard.unknown");
+            return new TranslatableText("key.keyboard.unknown");
         }
 
         String localized = keys.stream()
