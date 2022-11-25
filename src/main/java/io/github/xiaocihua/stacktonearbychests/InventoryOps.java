@@ -153,17 +153,17 @@ public class InventoryOps {
                         try {
                             screenHandler = REQUEST_QUEUE.poll(4, TimeUnit.SECONDS);
                             if (screenHandler == null) {
-                                player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByTimeout"));
+                                sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByTimeout");
                                 break OUT;
                             }
                             consumer.accept(screenHandler);
 
                             Thread.sleep(ModOptions.get().behavior.searchInterval.intValue());
                         } catch (InterruptedException e) {
-                            player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByEscape"));
+                            sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByEscape");
                             break OUT;
                         } catch (CrashException e) {
-                            player.sendMessage(Text.translatable("stack-to-nearby-chests.message.interruptedByException"));
+                            sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByException");
                             StackToNearbyChests.LOGGER.error(e.getMessage() + "\nscreenHandler " + screenHandler);
                             break OUT;
                         }
@@ -263,19 +263,23 @@ public class InventoryOps {
         client.interactionManager.clickSlot(screenHandler.syncId, slot.id, GLFW.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, client.player);
     }
 
-    public static void onUpdateSlotStacks(ScreenHandler handler) {
-        if (isRunning()) {
-            REQUEST_QUEUE.add(handler);
-        }
-    }
-
-    public record SlotsInScreenHandler(List<Slot> playerSlots, List<Slot> containerSlots) {
+    private record SlotsInScreenHandler(List<Slot> playerSlots, List<Slot> containerSlots) {
 
         static SlotsInScreenHandler of(ScreenHandler screenHandler) {
             Map<Boolean, List<Slot>> inventories = screenHandler.slots.stream()
                     .collect(partitioningBy(slot -> slot.inventory instanceof PlayerInventory));
 
             return new SlotsInScreenHandler(inventories.get(true), inventories.get(false));
+        }
+    }
+
+    private static void sendInterruptedMessage(String message) {
+        MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.translatable(message));
+    }
+
+    public static void onUpdateSlotStacks(ScreenHandler handler) {
+        if (isRunning()) {
+            REQUEST_QUEUE.add(handler);
         }
     }
 }
