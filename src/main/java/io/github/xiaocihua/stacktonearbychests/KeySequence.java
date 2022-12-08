@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,27 @@ public final class KeySequence {
         });
     }
 
+    // Fix the problem that all key bindings cannot be triggered because other mods cancel the key release event
+    // The solution comes from malilib https://github.com/maruohon/malilib/issues/59
+    public static void reCheckPressedKeys() {
+        for (int key : PRESSING_KEYS) {
+            if (!isKeyPressed(key)) {
+                PRESSING_KEYS.rem(key);
+            }
+        }
+    }
+
+    public static boolean isKeyPressed(int key) {
+        long window = MinecraftClient.getInstance().getWindow().getHandle();
+        return isMouseButton(key)
+                ? GLFW.glfwGetMouseButton(window, key + MOUSE_BUTTON_CODE_OFFSET) == GLFW.GLFW_PRESS
+                : InputUtil.isKeyPressed(window, key);
+    }
+
+    private static boolean isMouseButton(int key) {
+        return key < -1;
+    }
+
     public void addKey(int key) {
         if (keys.size() >= 3) {
             keys.clear();
@@ -72,8 +94,8 @@ public final class KeySequence {
 
         String localized = keys.stream()
                 .map(key -> {
-                    if (key < -1) {
-                        return InputUtil.Type.MOUSE.createFromCode(key + KeySequence.MOUSE_BUTTON_CODE_OFFSET);
+                    if (isMouseButton(key)) {
+                        return InputUtil.Type.MOUSE.createFromCode(key + MOUSE_BUTTON_CODE_OFFSET);
                     } else {
                         return InputUtil.Type.KEYSYM.createFromCode(key);
                     }

@@ -1,5 +1,6 @@
 package io.github.xiaocihua.stacktonearbychests.mixin;
 
+import io.github.xiaocihua.stacktonearbychests.KeySequence;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import io.github.xiaocihua.stacktonearbychests.event.SetScreenCallback;
 import net.minecraft.client.MinecraftClient;
@@ -26,5 +27,10 @@ public abstract class MinecraftClientMixin {
         if (result == ActionResult.FAIL) {
             ci.cancel();
         }
+    }
+
+    @Inject(method = "tick", at = @At("RETURN"))
+    private void onTick(CallbackInfo ci) {
+        KeySequence.reCheckPressedKeys();
     }
 }
