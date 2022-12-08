@@ -88,7 +88,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
 
             public void setCurrent(Identifier id) {
                 super.setLabel(Text.translatable(MOD_ID + ".resource." + id.getPath()));
-                super.setIcon(new TextureIcon(new Identifier(id.getNamespace(), String.format(Locale.ROOT, "textures/%s%s", id.getPath(), ".png"))));
+                super.setIcon(new TextureIcon(new Identifier(id.getNamespace(), String.format(Locale.ROOT, "textures/item/%s%s", id.getPath(), ".png"))));
                 options.appearance.favoriteItemStyle = id;
             }
 

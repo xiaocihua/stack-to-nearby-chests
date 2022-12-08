@@ -9,9 +9,9 @@ import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -127,15 +127,15 @@ public abstract class EntryPicker extends WBox {
 
         @Override
         public List<Identifier> searchByName(String searchStr) {
-            return Registry.ITEM.stream()
+            return Registries.ITEM.stream()
                     .filter(item -> StringUtils.containsIgnoreCase(item.getName().getString(), searchStr))
-                    .map(Registry.ITEM::getId)
+                    .map(Registries.ITEM::getId)
                     .toList();
         }
 
         @Override
         public List<Identifier> searchByID(String searchStr) {
-            return Registry.ITEM.getIds().stream()
+            return Registries.ITEM.getIds().stream()
                     .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
                     .toList();
         }
@@ -159,17 +159,17 @@ public abstract class EntryPicker extends WBox {
 
         @Override
         public List<Identifier> searchByName(String searchStr) {
-            return Registry.BLOCK.stream()
+            return Registries.BLOCK.stream()
                     .filter(block -> block instanceof BlockWithEntity)
                     .filter(block -> StringUtils.containsIgnoreCase(block.getName().toString(), searchStr))
-                    .map(Registry.BLOCK::getId)
+                    .map(Registries.BLOCK::getId)
                     .toList();
         }
 
         @Override
         public List<Identifier> searchByID(String searchStr) {
-            return Registry.BLOCK.stream()
-                    .map(Registry.BLOCK::getId)
+            return Registries.BLOCK.stream()
+                    .map(Registries.BLOCK::getId)
                     .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
                     .toList();
         }

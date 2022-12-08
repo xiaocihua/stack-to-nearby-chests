@@ -9,7 +9,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -61,10 +60,6 @@ public class LockedSlots {
 
     public static void init() {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> read(handler, client));
-
-        FAVORITE_ITEM_TAGS.forEach(identifier ->
-                ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-                        .register((atlasTexture, registry) -> registry.register(identifier)));
 
         ModOptions.get().keymap.markAsFavoriteKey.registerOnScreen(HandledScreen.class, screen -> {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -292,8 +287,8 @@ public class LockedSlots {
         if (isLocked(slot) && isForeground == id.getPath().equals("gold_badge")) {
             Sprite sprite = MinecraftClient.getInstance()
                     .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-                    .apply(id);
-            RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
+                    .apply(new Identifier(id.getNamespace(), "item/" + id.getPath()));
+            RenderSystem.setShaderTexture(0, sprite.getAtlasId());
             DrawableHelper.drawSprite(matrices, slot.x, slot.y, isForeground ? 300 : 200, 16, 16, sprite);
         }
     }

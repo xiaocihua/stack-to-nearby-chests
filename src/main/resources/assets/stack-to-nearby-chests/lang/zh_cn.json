@@ -1,8 +1,8 @@
 {
-  "stack-to-nearby-chests.stackToNearbyContainersButton.tooltip": "堆叠到附近的容器",
-  "stack-to-nearby-chests.restockFromNearbyContainersButton.tooltip": "从附近的容器中补货",
-  "stack-to-nearby-chests.quickStackButton.tooltip": "快速堆叠",
-  "stack-to-nearby-chests.restockButton.tooltip": "补货",
+  "stack-to-nearby-chests.tooltip.stackToNearbyContainersButton": "堆叠到附近的容器",
+  "stack-to-nearby-chests.tooltip.restockFromNearbyContainersButton": "从附近的容器中补货",
+  "stack-to-nearby-chests.tooltip.quickStackButton": "快速堆叠",
+  "stack-to-nearby-chests.tooltip.restockButton": "补货",
   "stack-to-nearby-chests.tooltip.hint": "按 Esc 中断",
 
   "stack-to-nearby-chests.message.interruptedByTimeout": "操作已中断，原因：超时",

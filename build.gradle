@@ -70,6 +70,14 @@ jar {
     }
 }
 
+loom {
+    runs {
+        client {
+            runDir = "run1.19.3"
+        }
+    }
+}
+
 // configure the maven publication
 publishing {
     publications {

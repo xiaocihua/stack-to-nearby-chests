@@ -10,9 +10,9 @@ import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Optional;
 
@@ -24,7 +24,7 @@ public class BlockEntry extends SelectableEntryList.Entry<Identifier> {
 
     public BlockEntry(Identifier id) {
         super(id);
-        Optional<Block> block = Registry.BLOCK.getOrEmpty(id);
+        Optional<Block> block = Registries.BLOCK.getOrEmpty(id);
         icon = block.<Icon>map(block1 -> new ItemIcon(block1.asItem())).orElse(new TextureIcon(MissingSprite.getMissingSpriteId()));
         name = block.<Text>map(Block::getName).orElse(Text.of(id.toString()));
     }

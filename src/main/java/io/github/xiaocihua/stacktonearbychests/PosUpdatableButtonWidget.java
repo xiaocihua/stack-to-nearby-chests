@@ -5,12 +5,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -32,12 +34,11 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
                                      int textureWidth,
                                      int textureHeight,
                                      PressAction pressAction,
-                                     TooltipSupplier tooltipSupplier,
                                      Text text,
                                      HandledScreen<?> parent,
                                      Optional<Function<HandledScreenAccessor, Integer>> xUpdater,
                                      Optional<Function<HandledScreenAccessor, Integer>> yUpdater) {
-        super(x, y, width, height, u, v, hoveredVOffset, texture, textureWidth, textureHeight, pressAction, tooltipSupplier, text);
+        super(x, y, width, height, u, v, hoveredVOffset, texture, textureWidth, textureHeight, pressAction, text);
         this.parent = parent;
         this.xUpdater = xUpdater;
         this.yUpdater = yUpdater;
@@ -46,8 +47,8 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
 
     @Override
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        xUpdater.ifPresent(updater -> x = updater.apply((HandledScreenAccessor) parent));
-        yUpdater.ifPresent(updater -> y = updater.apply((HandledScreenAccessor) parent));
+        xUpdater.ifPresent(updater -> setX(updater.apply((HandledScreenAccessor) parent)));
+        yUpdater.ifPresent(updater -> setY(updater.apply((HandledScreenAccessor) parent)));
         super.renderButton(matrices, mouseX, mouseY, delta);
     }
 
@@ -63,9 +64,10 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
         private int textureWidth = 16;
         private int textureHeight = 16;
         private PressAction pressAction = button -> {};
-        private TooltipSupplier tooltipSupplier = (button, matrices, mouseX, mouseY) -> {};
+        @Nullable
+        private Tooltip tooltip;
         private Text text = ScreenTexts.EMPTY;
-        private HandledScreen<?> parent = null;
+        private HandledScreen<?> parent;
         private Optional<Function<HandledScreenAccessor, Integer>> xUpdater = Optional.empty();
         private Optional<Function<HandledScreenAccessor, Integer>> yUpdater = Optional.empty();
 
@@ -108,8 +110,13 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
             return this;
         }
 
-        public Builder setTooltipSupplier(TooltipSupplier tooltipSupplier) {
-            this.tooltipSupplier = tooltipSupplier;
+        public Builder setTooltip(Text content) {
+            this.tooltip = Tooltip.of(content);
+            return this;
+        }
+
+        public Builder setTooltip(Tooltip tooltip) {
+            this.tooltip = tooltip;
             return this;
         }
 
@@ -129,7 +136,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
         }
 
         public PosUpdatableButtonWidget build() {
-            return new PosUpdatableButtonWidget(x,
+            PosUpdatableButtonWidget button = new PosUpdatableButtonWidget(x,
                     y,
                     width,
                     height,
@@ -140,11 +147,12 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
                     textureWidth,
                     textureHeight,
                     pressAction,
-                    tooltipSupplier,
                     text,
                     parent,
                     xUpdater,
                     yUpdater);
+            button.setTooltip(tooltip);
+            return button;
         }
     }
 }

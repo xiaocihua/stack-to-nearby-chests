@@ -1,8 +1,8 @@
 {
-  "stack-to-nearby-chests.stackToNearbyContainersButton.tooltip": "Stack to nearby containers",
-  "stack-to-nearby-chests.restockFromNearbyContainersButton.tooltip": "Restock from nearby containers",
-  "stack-to-nearby-chests.quickStackButton.tooltip": "Quick stack",
-  "stack-to-nearby-chests.restockButton.tooltip": "Restock",
+  "stack-to-nearby-chests.tooltip.stackToNearbyContainersButton": "Stack to nearby containers",
+  "stack-to-nearby-chests.tooltip.restockFromNearbyContainersButton": "Restock from nearby containers",
+  "stack-to-nearby-chests.tooltip.quickStackButton": "Quick stack",
+  "stack-to-nearby-chests.tooltip.restockButton": "Restock",
   "stack-to-nearby-chests.tooltip.hint": "Press escape to interrupt",
 
   "stack-to-nearby-chests.message.interruptedByTimeout": "The operation was interrupted, reason: Timed out",

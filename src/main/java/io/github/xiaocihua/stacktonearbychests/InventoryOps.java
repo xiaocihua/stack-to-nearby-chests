@@ -15,6 +15,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -26,7 +27,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -124,7 +124,7 @@ public class InventoryOps {
                             continue;
                         }
                         BlockState state = world.getBlockState(pos);
-                        if (!filter.contains(Registry.BLOCK.getId(state.getBlock()).toString())) {
+                        if (!filter.contains(Registries.BLOCK.getId(state.getBlock()).toString())) {
                             continue;
                         }
                         Vec3d closestPos = MathUtil.getClosestPoint(pos, state.getOutlineShape(world, pos), origin);
@@ -219,7 +219,7 @@ public class InventoryOps {
 
         Set<Item> itemsInContainer = slots.containerSlots().stream()
                 .map(slot -> slot.getStack().getItem())
-                .filter(item -> !ModOptions.get().behavior.itemsThatWillNotBeStacked.contains(Registry.ITEM.getId(item).toString()))
+                .filter(item -> !ModOptions.get().behavior.itemsThatWillNotBeStacked.contains(Registries.ITEM.getId(item).toString()))
                 .collect(toSet());
 
         slots.playerSlots().stream()
@@ -238,7 +238,7 @@ public class InventoryOps {
                 .filter(Slot::hasStack)
                 .filter(slot -> slot.getStack().isStackable())
                 .filter(slot -> !ModOptions.get().behavior.itemsThatWillNotBeStacked
-                        .contains(Registry.ITEM
+                        .contains(Registries.ITEM
                                 .getId(slot.getStack().getItem())
                                 .toString()))
                 .forEach(slot -> slots.containerSlots().stream()
