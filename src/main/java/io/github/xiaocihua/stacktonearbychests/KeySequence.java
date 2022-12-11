@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public final class KeySequence {
@@ -111,11 +112,10 @@ public final class KeySequence {
         }
     }
 
-    public KeySequence register(Runnable action, ActionResult result) {
+    public KeySequence register(Supplier<ActionResult> action) {
         OnKeyCallback.PRESS.register(key -> {
             if (!keys.isEmpty() && PRESSING_KEYS.equals(keys)) {
-                action.run();
-                return result;
+                return action.get();
             } else {
                 return ActionResult.PASS;
             }
@@ -129,8 +129,11 @@ public final class KeySequence {
             Screen currentScreen = MinecraftClient.getInstance().currentScreen;
             if (screenClass.isInstance(currentScreen)) {
                 action.accept(currentScreen);
+                return result;
+            } else {
+                return ActionResult.PASS;
             }
-        }, result);
+        });
     }
 
     public KeySequence registerNotOnScreen(Runnable action, ActionResult result) {
@@ -138,7 +141,10 @@ public final class KeySequence {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.world != null && client.currentScreen == null) {
                 action.run();
+                return result;
+            } else {
+                return ActionResult.PASS;
             }
-        }, result);
+        });
     }
 }
