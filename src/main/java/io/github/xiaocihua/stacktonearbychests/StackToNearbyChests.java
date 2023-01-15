@@ -10,17 +10,12 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.*;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
-
-import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class StackToNearbyChests implements ClientModInitializer {
@@ -74,7 +69,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 ModOptions.get().keymap.stackToNearbyContainersKey.testThenRun(InventoryOps::stackToNearbyContainers);
                 ModOptions.get().keymap.restockFromNearbyContainersKey.testThenRun(InventoryOps::restockFromNearbyContainers);
             });
-        } else {
+        } else if (!(screen instanceof BeaconScreen || screen instanceof SmithingScreen || screen instanceof GrindstoneScreen)) {
             ScreenHandler screenHandler = ((HandledScreen<?>) screen).getScreenHandler();
 
             if (ModOptions.get().appearance.showQuickStackButton.booleanValue()) {
@@ -104,14 +99,5 @@ public class StackToNearbyChests implements ClientModInitializer {
                 ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryOps.restock(screenHandler));
             });
         }
-    }
-
-    private List<Text> getLines(String text) {
-        return List.of(Text.translatable(text));
-    }
-
-    private List<Text> getLinesWithHint(String text) {
-        return List.of(Text.translatable(text),
-                Text.translatable("stack-to-nearby-chests.tooltip.hint").setStyle(Style.EMPTY.withItalic(true).withColor(Formatting.DARK_GRAY)));
     }
 }
