@@ -5,9 +5,10 @@
   "stack-to-nearby-chests.tooltip.restockButton": "补货",
   "stack-to-nearby-chests.tooltip.hint": "按 Esc 中断",
 
+  "stack-to-nearby-chests.message.operationInterrupted": "操作已中断",
   "stack-to-nearby-chests.message.interruptedByTimeout": "操作已中断，原因：超时",
-  "stack-to-nearby-chests.message.interruptedByEscape": "操作已中断，原因：Esc 键被按下",
-  "stack-to-nearby-chests.message.interruptedByException": "点击物品槽位时发生异常, 请检查日志",
+  "stack-to-nearby-chests.message.exceptionOccurredWhileClickingSlot": "点击物品槽位时发生异常, 请检查日志",
+  "stack-to-nearby-chests.message.exceptionOccurred": "操作过程中发生异常，请检查日志",
 
   "stack-to-nearby-chests.resource.gold_badge": "金徽章",
   "stack-to-nearby-chests.resource.gold_border": "金边框",
