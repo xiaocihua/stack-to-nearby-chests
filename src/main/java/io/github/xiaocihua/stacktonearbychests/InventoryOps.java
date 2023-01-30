@@ -8,6 +8,7 @@ import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.ChestType;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
@@ -48,7 +49,18 @@ public class InventoryOps {
     private static Thread forEachContainerThread;
 
     public static void init() {
-        SetScreenCallback.EVENT.register(screen -> isRunning() ? ActionResult.FAIL : ActionResult.PASS);
+        SetScreenCallback.EVENT.register(screen -> {
+            if (isRunning()) {
+                if (screen instanceof DeathScreen) {
+                    interruptCurrentOperation();
+                    return ActionResult.PASS;
+                }
+
+                return ActionResult.FAIL;
+            }
+
+            return ActionResult.PASS;
+        });
 
         OnKeyCallback.PRESS.register(key -> {
             if (isRunning()){
@@ -69,6 +81,7 @@ public class InventoryOps {
     public static void interruptCurrentOperation() {
         if (forEachContainerThread != null) {
             forEachContainerThread.interrupt();
+            sendChatMessage("stack-to-nearby-chests.message.operationInterrupted");
         }
     }
 
@@ -84,99 +97,107 @@ public class InventoryOps {
      * Adapted from Earthcomputer's ClientCommands.
      * @see <a href = "https://github.com/Earthcomputer/clientcommands">https://github.com/Earthcomputer/clientcommands</a>
      */
-    public static void forEachContainer(Consumer<ScreenHandler> consumer, Collection<String> filter) {
+    public static void forEachContainer(Consumer<ScreenHandler> action, Collection<String> filter) {
         Runnable task = () -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            Entity entity = client.cameraEntity;
-            if (entity == null) {
-                return;
+            try {
+                forEachContainerInternal(action, filter);
+            } catch (Exception e) {
+                sendChatMessage("stack-to-nearby-chests.message.exceptionOccurred");
+                StackToNearbyChests.LOGGER.error("An exception occurred during the operation", e);
+            } finally {
+                MinecraftClient.getInstance().executeSync(() -> forEachContainerThread = null);
             }
-            ClientWorld world = client.world;
-            assert world != null;
-            ClientPlayerEntity player = client.player;
-            assert player != null;
-            ClientPlayerInteractionManager interactionManager = client.interactionManager;
-            assert interactionManager != null;
-            if (player.isSneaking()) {
-                return;
-            }
-
-            Set<BlockPos> searchedBlocks = new HashSet<>();
-            boolean hasSearchedEnderChest = false;
-
-            Vec3d origin = entity.getCameraPosVec(0);
-            float reachDistance = interactionManager.getReachDistance();
-            int minX = MathHelper.floor(origin.x - reachDistance);
-            int minY = MathHelper.floor(origin.y - reachDistance);
-            int minZ = MathHelper.floor(origin.z - reachDistance);
-            int maxX = MathHelper.floor(origin.x + reachDistance);
-            int maxY = MathHelper.floor(origin.y + reachDistance);
-            int maxZ = MathHelper.floor(origin.z + reachDistance);
-
-            OUT:
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
-                    for (int z = minZ; z <= maxZ; z++) {
-                        BlockPos pos = new BlockPos(x, y, z);
-                        if (!canSearch(world, pos)) {
-                            continue;
-                        }
-                        if (searchedBlocks.contains(pos)) {
-                            continue;
-                        }
-                        BlockState state = world.getBlockState(pos);
-                        if (!filter.contains(Registry.BLOCK.getId(state.getBlock()).toString())) {
-                            continue;
-                        }
-                        Vec3d closestPos = MathUtil.getClosestPoint(pos, state.getOutlineShape(world, pos), origin);
-                        if (closestPos.squaredDistanceTo(origin) > reachDistance * reachDistance) {
-                            continue;
-                        }
-
-                        interactionManager.interactBlock(player, world, Hand.MAIN_HAND,
-                                new BlockHitResult(closestPos,
-                                        MathUtil.getFacingDirection(closestPos.subtract(origin)),
-                                        pos,
-                                        false));
-
-                        searchedBlocks.add(pos);
-                        if (state.getBlock() == Blocks.ENDER_CHEST) {
-                            if (hasSearchedEnderChest) {
-                                continue;
-                            }
-                            hasSearchedEnderChest = true;
-                        } else {
-                            getTheOtherHalfOfLargeChest(world, pos).ifPresent(searchedBlocks::add);
-                        }
-
-                        ScreenHandler screenHandler = null;
-                        try {
-                            screenHandler = REQUEST_QUEUE.poll(4, TimeUnit.SECONDS);
-                            if (screenHandler == null) {
-                                sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByTimeout");
-                                break OUT;
-                            }
-                            consumer.accept(screenHandler);
-
-                            Thread.sleep(ModOptions.get().behavior.searchInterval.intValue());
-                        } catch (InterruptedException e) {
-                            sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByEscape");
-                            break OUT;
-                        } catch (CrashException e) {
-                            sendInterruptedMessage("stack-to-nearby-chests.message.interruptedByException");
-                            StackToNearbyChests.LOGGER.error(e.getMessage() + "\nscreenHandler " + screenHandler);
-                            break OUT;
-                        }
-                    }
-                }
-            }
-            MinecraftClient.getInstance().executeSync(() -> {
-                player.closeHandledScreen();
-                forEachContainerThread = null;
-            });
         };
         forEachContainerThread = new Thread(task, "For Each Containers");
         forEachContainerThread.start();
+    }
+
+    private static void forEachContainerInternal(Consumer<ScreenHandler> action, Collection<String> filter) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        Entity entity = client.cameraEntity;
+        if (entity == null) {
+            return;
+        }
+        ClientWorld world = client.world;
+        assert world != null;
+        ClientPlayerEntity player = client.player;
+        assert player != null;
+        ClientPlayerInteractionManager interactionManager = client.interactionManager;
+        assert interactionManager != null;
+        if (player.isSneaking()) {
+            return;
+        }
+
+        Set<BlockPos> searchedBlocks = new HashSet<>();
+        boolean hasSearchedEnderChest = false;
+
+        Vec3d origin = entity.getCameraPosVec(0);
+        float reachDistance = interactionManager.getReachDistance();
+        int minX = MathHelper.floor(origin.x - reachDistance);
+        int minY = MathHelper.floor(origin.y - reachDistance);
+        int minZ = MathHelper.floor(origin.z - reachDistance);
+        int maxX = MathHelper.floor(origin.x + reachDistance);
+        int maxY = MathHelper.floor(origin.y + reachDistance);
+        int maxZ = MathHelper.floor(origin.z + reachDistance);
+
+        OUT:
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    BlockPos pos = new BlockPos(x, y, z);
+                    if (!canSearch(world, pos)) {
+                        continue;
+                    }
+                    if (searchedBlocks.contains(pos)) {
+                        continue;
+                    }
+                    BlockState state = world.getBlockState(pos);
+                    if (!filter.contains(Registry.BLOCK.getId(state.getBlock()).toString())) {
+                        continue;
+                    }
+                    Vec3d closestPos = MathUtil.getClosestPoint(pos, state.getOutlineShape(world, pos), origin);
+                    if (closestPos.squaredDistanceTo(origin) > reachDistance * reachDistance) {
+                        continue;
+                    }
+
+                    interactionManager.interactBlock(player, world, Hand.MAIN_HAND,
+                            new BlockHitResult(closestPos,
+                                    MathUtil.getFacingDirection(closestPos.subtract(origin)),
+                                    pos,
+                                    false));
+
+                    searchedBlocks.add(pos);
+                    if (state.getBlock() == Blocks.ENDER_CHEST) {
+                        if (hasSearchedEnderChest) {
+                            continue;
+                        }
+                        hasSearchedEnderChest = true;
+                    } else {
+                        getTheOtherHalfOfLargeChest(world, pos).ifPresent(searchedBlocks::add);
+                    }
+
+                    ScreenHandler screenHandler = null;
+                    try {
+                        screenHandler = REQUEST_QUEUE.poll(4, TimeUnit.SECONDS);
+                        if (screenHandler == null) {
+                            sendChatMessage("stack-to-nearby-chests.message.interruptedByTimeout");
+                            break OUT;
+                        }
+                        action.accept(screenHandler);
+
+                        Thread.sleep(ModOptions.get().behavior.searchInterval.intValue());
+                    } catch (InterruptedException e) {
+                        break OUT;
+                    } catch (CrashException e) {
+                        sendChatMessage("stack-to-nearby-chests.message.exceptionOccurredWhileClickingSlot");
+                        StackToNearbyChests.LOGGER.error(e.getMessage() + "\nscreenHandler " + screenHandler);
+                        break OUT;
+                    }
+                }
+            }
+        }
+
+        client.executeSync(player::closeHandledScreen);
     }
 
     /**
@@ -263,7 +284,7 @@ public class InventoryOps {
         client.interactionManager.clickSlot(screenHandler.syncId, slot.id, GLFW.GLFW_MOUSE_BUTTON_LEFT, SlotActionType.PICKUP, client.player);
     }
 
-    public record SlotsInScreenHandler(List<Slot> playerSlots, List<Slot> containerSlots) {
+    private record SlotsInScreenHandler(List<Slot> playerSlots, List<Slot> containerSlots) {
 
         static SlotsInScreenHandler of(ScreenHandler screenHandler) {
             Map<Boolean, List<Slot>> inventories = screenHandler.slots.stream()
@@ -273,7 +294,7 @@ public class InventoryOps {
         }
     }
 
-    private static void sendInterruptedMessage(String message) {
+    private static void sendChatMessage(String message) {
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new TranslatableText(message));
     }
 
