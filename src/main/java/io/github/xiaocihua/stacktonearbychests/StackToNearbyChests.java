@@ -10,8 +10,7 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.*;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -77,7 +76,16 @@ public class StackToNearbyChests implements ClientModInitializer {
                 ModOptions.get().keymap.stackToNearbyContainersKey.testThenRun(InventoryOps::stackToNearbyContainers);
                 ModOptions.get().keymap.restockFromNearbyContainersKey.testThenRun(InventoryOps::restockFromNearbyContainers);
             });
-        } else {
+        } else if (!(screen instanceof BeaconScreen
+                || screen instanceof GrindstoneScreen
+                || screen instanceof CartographyTableScreen
+                || screen instanceof CraftingScreen
+                || screen instanceof LoomScreen
+                || screen instanceof EnchantmentScreen
+                || screen instanceof MerchantScreen
+                || screen instanceof ForgingScreen<?>
+                || screen instanceof StonecutterScreen
+                )) {
             ScreenHandler screenHandler = ((HandledScreen<?>) screen).getScreenHandler();
 
             if (ModOptions.get().appearance.showQuickStackButton.booleanValue()) {
