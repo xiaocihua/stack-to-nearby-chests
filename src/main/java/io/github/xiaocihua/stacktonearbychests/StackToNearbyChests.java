@@ -71,7 +71,16 @@ public class StackToNearbyChests implements ClientModInitializer {
                 ModOptions.get().keymap.stackToNearbyContainersKey.testThenRun(InventoryOps::stackToNearbyContainers);
                 ModOptions.get().keymap.restockFromNearbyContainersKey.testThenRun(InventoryOps::restockFromNearbyContainers);
             });
-        } else if (!(screen instanceof BeaconScreen || screen instanceof SmithingScreen || screen instanceof GrindstoneScreen)) {
+        } else if (!(screen instanceof BeaconScreen
+                || screen instanceof GrindstoneScreen
+                || screen instanceof CartographyTableScreen
+                || screen instanceof CraftingScreen
+                || screen instanceof LoomScreen
+                || screen instanceof EnchantmentScreen
+                || screen instanceof MerchantScreen
+                || screen instanceof ForgingScreen<?>
+                || screen instanceof StonecutterScreen
+                )) {
             ScreenHandler screenHandler = ((HandledScreen<?>) screen).getScreenHandler();
 
             if (ModOptions.get().appearance.showQuickStackButton.booleanValue()) {
