@@ -12,8 +12,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.*;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 
@@ -47,7 +49,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 new PosUpdatableButtonWidget.Builder(inventoryScreen)
                         .setUV(0, 0)
                         .setTexture(BUTTON_TEXTURE, 64, 32)
-                        .setTooltip(Text.translatable("stack-to-nearby-chests.tooltip.stackToNearbyContainersButton"))
+                        .setTooltip(getTooltipWithHint("stack-to-nearby-chests.tooltip.stackToNearbyContainersButton"))
                         .setXUpdater(parent -> parent.getX() + ModOptions.get().appearance.stackToNearbyContainersButtonPosX.intValue())
                         .setYUpdater(parent -> parent.getY() + ModOptions.get().appearance.stackToNearbyContainersButtonPosY.intValue())
                         .setPressAction(button -> InventoryOps.stackToNearbyContainers())
@@ -58,7 +60,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 new PosUpdatableButtonWidget.Builder(inventoryScreen)
                         .setUV(16, 0)
                         .setTexture(BUTTON_TEXTURE, 64, 32)
-                        .setTooltip(Text.translatable("stack-to-nearby-chests.tooltip.restockFromNearbyContainersButton"))
+                        .setTooltip(getTooltipWithHint("stack-to-nearby-chests.tooltip.restockFromNearbyContainersButton"))
                         .setXUpdater(parent -> parent.getX() + ModOptions.get().appearance.restockFromNearbyContainersButtonPosX.intValue())
                         .setYUpdater(parent -> parent.getY() + ModOptions.get().appearance.restockFromNearbyContainersButtonPosY.intValue())
                         .setPressAction(button -> InventoryOps.restockFromNearbyContainers())
@@ -99,5 +101,11 @@ public class StackToNearbyChests implements ClientModInitializer {
                 ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryOps.restock(screenHandler));
             });
         }
+    }
+
+    private static Text getTooltipWithHint(String translationKey) {
+        return Text.translatable(translationKey)
+                .append("\n")
+                .append(Text.translatable("stack-to-nearby-chests.tooltip.hint").setStyle(Style.EMPTY.withItalic(true).withColor(Formatting.DARK_GRAY)));
     }
 }
