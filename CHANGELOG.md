@@ -1,5 +1,1 @@
-Improved error message
-
-Now the player's death will interrupt the unfinished operation
-
-Removed Quick stack and Restock button on the beacon, grindstone, simithing table, merchant, cartography table, crafting, loom, enchantment, stonecutter and anvil screen because they are useless
+Fixed last entered keybind gets duplicated into the others when exiting the menu ([#7](https://github.com/xiaocihua/stack-to-nearby-chests/issues/7))
