@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 public final class KeySequence {
     public static final int MOUSE_BUTTON_CODE_OFFSET = 100;
 
-    private static final KeySequence EMPTY = new KeySequence(new ArrayList<>());
-
     private static final IntArrayList PRESSING_KEYS = new IntArrayList();
 
     private List<Integer> keys;
@@ -31,7 +29,7 @@ public final class KeySequence {
     }
 
     public static KeySequence empty() {
-        return EMPTY;
+        return new KeySequence(new ArrayList<>());
     }
 
     public static void init() {
