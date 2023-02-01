@@ -5,9 +5,6 @@ on: [ workflow_dispatch ]
 env:
   RELEASE_NAME: 0.2.4 for Minecraft 1.19.3
   VERSION: 0.2.4
-  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
-  MODRINTH_TOKEN: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
-  CURSEFORGE_TOKEN: ${{ secrets.PUBLISH_CURSEFORGE_TOKEN }}
 
 permissions:
   contents: write
@@ -41,19 +38,20 @@ jobs:
         uses: Kir-Antipov/mc-publish@v3.2
         with:
           github-tag: "mc1.19.3-${{env.VERSION}}"
-          github-token: "${{env.GITHUB_TOKEN}}"
+          github-token: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
           github-prerelease: true
 
           modrinth-id: HtGckJVc
-          modrinth-token: "${{env.MODRINTH_TOKEN}}"
+          modrinth-token: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
 
           curseforge-id: 693995
-          curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
+          curseforge-token: ${{ secrets.PUBLISH_CURSEFORGE_TOKEN }}
 
           name: "${{env.RELEASE_NAME}}"
           version: "${{env.VERSION}}"
           version-type: beta
           changelog-file: CHANGELOG.md
+          files: build/libs/!(*-@(dev|sources|javadoc)).jar
 
           loaders: fabric
           game-versions: |
