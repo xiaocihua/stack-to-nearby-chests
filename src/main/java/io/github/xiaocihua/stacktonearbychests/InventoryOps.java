@@ -23,10 +23,9 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
@@ -37,6 +36,7 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 import static java.util.function.Predicate.not;
@@ -50,7 +50,7 @@ public class InventoryOps {
 
     public static void init() {
         SetScreenCallback.EVENT.register(screen -> {
-            if (isRunning()) {
+            if (!isTerminated()) {
                 if (screen instanceof DeathScreen) {
                     interruptCurrentOperation();
                     return ActionResult.PASS;
@@ -75,13 +75,16 @@ public class InventoryOps {
     }
 
     public static boolean isRunning() {
-        return forEachContainerThread != null;
+        return forEachContainerThread != null && !forEachContainerThread.isInterrupted();
+    }
+
+    public static boolean isTerminated() {
+        return forEachContainerThread == null;
     }
 
     public static void interruptCurrentOperation() {
         if (forEachContainerThread != null) {
             forEachContainerThread.interrupt();
-            sendChatMessage("stack-to-nearby-chests.message.operationInterrupted");
         }
     }
 
@@ -93,29 +96,37 @@ public class InventoryOps {
         forEachContainer(InventoryOps::restock, ModOptions.get().behavior.restockingSources);
     }
 
-    /**
-     * Adapted from Earthcomputer's ClientCommands.
-     * @see <a href = "https://github.com/Earthcomputer/clientcommands">https://github.com/Earthcomputer/clientcommands</a>
-     */
     public static void forEachContainer(Consumer<ScreenHandler> action, Collection<String> filter) {
         Runnable task = () -> {
             try {
                 forEachContainerInternal(action, filter);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                sendChatMessage("stack-to-nearby-chests.message.operationInterrupted");
+            } catch (TimeoutException e) {
+                sendChatMessage("stack-to-nearby-chests.message.interruptedByTimeout");
             } catch (Exception e) {
                 sendChatMessage("stack-to-nearby-chests.message.exceptionOccurred");
                 StackToNearbyChests.LOGGER.error("An exception occurred during the operation", e);
             } finally {
-                MinecraftClient.getInstance().executeSync(() -> forEachContainerThread = null);
+                REQUEST_QUEUE.clear();
+                MinecraftClient.getInstance().executeSync(() -> {
+                    MinecraftClient.getInstance().player.closeHandledScreen();
+                    forEachContainerThread = null;
+                });
             }
         };
-        forEachContainerThread = new Thread(task, "For Each Containers");
+        forEachContainerThread = new Thread(task, "For Each Container");
         forEachContainerThread.start();
     }
 
-    private static void forEachContainerInternal(Consumer<ScreenHandler> action, Collection<String> filter) {
+    /**
+     * Adapted from Earthcomputer's <a href = "https://github.com/Earthcomputer/clientcommands">ClientCommands</a>.
+     */
+    private static void forEachContainerInternal(Consumer<ScreenHandler> action, Collection<String> filter) throws InterruptedException, TimeoutException {
         MinecraftClient client = MinecraftClient.getInstance();
-        Entity entity = client.cameraEntity;
-        if (entity == null) {
+        Entity cameraEntity = client.getCameraEntity();
+        if (cameraEntity == null) {
             return;
         }
         ClientWorld world = client.world;
@@ -128,83 +139,65 @@ public class InventoryOps {
             return;
         }
 
+        Vec3d origin = cameraEntity.getCameraPosVec(0);
+        float reachDistance = interactionManager.getReachDistance();
+        Box box = MathUtil.getBox(origin, reachDistance);
+        float squaredReachDistance = reachDistance * reachDistance;
+
         Set<BlockPos> searchedBlocks = new HashSet<>();
         boolean hasSearchedEnderChest = false;
 
-        Vec3d origin = entity.getCameraPosVec(0);
-        float reachDistance = interactionManager.getReachDistance();
-        int minX = MathHelper.floor(origin.x - reachDistance);
-        int minY = MathHelper.floor(origin.y - reachDistance);
-        int minZ = MathHelper.floor(origin.z - reachDistance);
-        int maxX = MathHelper.floor(origin.x + reachDistance);
-        int maxY = MathHelper.floor(origin.y + reachDistance);
-        int maxZ = MathHelper.floor(origin.z + reachDistance);
-
-        OUT:
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    BlockPos pos = new BlockPos(x, y, z);
-                    if (!canSearch(world, pos)) {
-                        continue;
-                    }
-                    if (searchedBlocks.contains(pos)) {
-                        continue;
-                    }
-                    BlockState state = world.getBlockState(pos);
-                    if (!filter.contains(Registry.BLOCK.getId(state.getBlock()).toString())) {
-                        continue;
-                    }
-                    Vec3d closestPos = MathUtil.getClosestPoint(pos, state.getOutlineShape(world, pos), origin);
-                    if (closestPos.squaredDistanceTo(origin) > reachDistance * reachDistance) {
-                        continue;
-                    }
-
-                    interactionManager.interactBlock(player, world, Hand.MAIN_HAND,
-                            new BlockHitResult(closestPos,
-                                    MathUtil.getFacingDirection(closestPos.subtract(origin)),
-                                    pos,
-                                    false));
-
-                    searchedBlocks.add(pos);
-                    if (state.getBlock() == Blocks.ENDER_CHEST) {
-                        if (hasSearchedEnderChest) {
-                            continue;
-                        }
-                        hasSearchedEnderChest = true;
-                    } else {
-                        getTheOtherHalfOfLargeChest(world, pos).ifPresent(searchedBlocks::add);
-                    }
-
-                    ScreenHandler screenHandler = null;
-                    try {
-                        screenHandler = REQUEST_QUEUE.poll(4, TimeUnit.SECONDS);
-                        if (screenHandler == null) {
-                            sendChatMessage("stack-to-nearby-chests.message.interruptedByTimeout");
-                            break OUT;
-                        }
-                        action.accept(screenHandler);
-
-                        Thread.sleep(ModOptions.get().behavior.searchInterval.intValue());
-                    } catch (InterruptedException e) {
-                        break OUT;
-                    } catch (CrashException e) {
-                        sendChatMessage("stack-to-nearby-chests.message.exceptionOccurredWhileClickingSlot");
-                        StackToNearbyChests.LOGGER.error(e.getMessage() + "\nscreenHandler " + screenHandler);
-                        break OUT;
-                    }
-                }
+        for (BlockPos pos : MathUtil.getBlocksInBox(box)) {
+            if (!canSearch(world, pos)) {
+                continue;
             }
-        }
+            if (searchedBlocks.contains(pos)) {
+                continue;
+            }
+            BlockState state = world.getBlockState(pos);
+            if (!filter.contains(Registry.BLOCK.getId(state.getBlock()).toString())) {
+                continue;
+            }
+            Vec3d closestPos = MathUtil.getClosestPoint(pos, state.getOutlineShape(world, pos), origin);
+            if (closestPos.squaredDistanceTo(origin) > squaredReachDistance) {
+                continue;
+            }
 
-        client.executeSync(player::closeHandledScreen);
+            BlockPos immutablePos = pos.toImmutable();
+            searchedBlocks.add(immutablePos);
+            if (state.getBlock() == Blocks.ENDER_CHEST) {
+                if (hasSearchedEnderChest) {
+                    continue;
+                }
+                hasSearchedEnderChest = true;
+            } else {
+                getTheOtherHalfOfLargeChest(world, pos).ifPresent(searchedBlocks::add);
+            }
+
+            interactionManager.interactBlock(player, world, Hand.MAIN_HAND,
+                    new BlockHitResult(closestPos,
+                            MathUtil.getFacingDirection(closestPos.subtract(origin)),
+                            immutablePos,
+                            false));
+
+            action.accept(getRequestedScreenHandler());
+
+            Thread.sleep(ModOptions.get().behavior.searchInterval.intValue());
+        }
+    }
+
+    private static ScreenHandler getRequestedScreenHandler() throws InterruptedException, TimeoutException {
+        ScreenHandler screenHandler = REQUEST_QUEUE.poll(4, TimeUnit.SECONDS);
+        if (screenHandler == null) {
+            throw new TimeoutException();
+        }
+        return screenHandler;
     }
 
     /**
-     * Adapted from Earthcomputer's ClientCommands.
-     * @see <a href = "https://github.com/Earthcomputer/clientcommands">https://github.com/Earthcomputer/clientcommands</a>
+     * Adapted from Earthcomputer's <a href = "https://github.com/Earthcomputer/clientcommands">ClientCommands</a>.
      */
-    public static boolean canSearch(World world, BlockPos pos) {
+    private static boolean canSearch(World world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (!(blockEntity instanceof Inventory) && state.getBlock() != Blocks.ENDER_CHEST) {
