@@ -12,7 +12,7 @@ public abstract class RecipeBookWidgetMixin {
 
     @Inject(method = "update", at = @At("HEAD"), cancellable = true)
     private void onUpdate(CallbackInfo ci) {
-        if (InventoryOps.isRunning()) {
+        if (!InventoryOps.isTerminated()) {
             ci.cancel();
         }
     }
