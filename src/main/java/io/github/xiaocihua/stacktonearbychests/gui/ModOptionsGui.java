@@ -110,6 +110,11 @@ public class ModOptionsGui extends LightweightGuiDescription {
         appearance.add(createIntTextField("stackToNearbyContainersButtonPosY", options.appearance.stackToNearbyContainersButtonPosY), 315, 20);
         appearance.add(createIntTextField("restockFromNearbyContainersButtonPosX", options.appearance.restockFromNearbyContainersButtonPosX), 340, 20);
         appearance.add(createIntTextField("restockFromNearbyContainersButtonPosY", options.appearance.restockFromNearbyContainersButtonPosY), 340, 20);
+        String tooltip = PREFIX + "buttonPos.tooltip";
+        appearance.add(createIntTextField("quickStackButtonPosX", options.appearance.quickStackButtonPosX).withTooltip(tooltip), 230, 20);
+        appearance.add(createIntTextField("quickStackButtonPosY", options.appearance.quickStackButtonPosY).withTooltip(tooltip), 230, 20);
+        appearance.add(createIntTextField("restockButtonPosX", options.appearance.restockButtonPosX).withTooltip(tooltip), 215, 20);
+        appearance.add(createIntTextField("restockButtonPosY", options.appearance.restockButtonPosY).withTooltip(tooltip), 215, 20);
         return appearance;
     }
 
