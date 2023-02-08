@@ -1,17 +1,44 @@
 package io.github.xiaocihua.stacktonearbychests;
 
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 
+import static net.minecraft.util.math.MathHelper.clamp;
+import static net.minecraft.util.math.MathHelper.floor;
+
 public class MathUtil {
+
+    public static Box getBox(Vec3d center, double radius) {
+        return new Box(
+            center.x - radius,
+            center.y - radius,
+            center.z - radius,
+            center.x + radius,
+            center.y + radius,
+            center.z + radius
+        );
+    }
+
+    public static Iterable<BlockPos> getBlocksInBox(Box box) {
+        int minX = floor(box.minX);
+        int maxX = floor(box.maxX);
+        int minY = floor(box.minY);
+        int maxY = floor(box.maxY);
+        int minZ = floor(box.minZ);
+        int maxZ = floor(box.maxZ);
+        return BlockPos.iterate(minX, minY, minZ, maxX, maxY, maxZ);
+    }
 
     public static Direction getFacingDirection(Vec3d vec) {
         return Direction.getFacing(vec.x, vec.y, vec.z);
     }
 
     /**
-     * Get the closest point to the {@code pos} on the block. From Earthcomputer's ClientCommands.
-     * @see <a href = "https://github.com/Earthcomputer/clientcommands">https://github.com/Earthcomputer/clientcommands</a>
+     * Get the closest point to the {@code pos} on the block. From Earthcomputer's
+     * <a href = "https://github.com/Earthcomputer/clientcommands">ClientCommands</a>.
      */
     public static Vec3d getClosestPoint(BlockPos blockPos, VoxelShape voxel, Vec3d pos) {
         return getClosestPoint(blockPos, voxel, pos, null);
@@ -25,9 +52,9 @@ public class MathUtil {
             for (Direction face : dirs) {
                 Box faceBox = getFace(box, face);
                 // Since the faces are axis aligned, it's a simple clamp operation
-                Vec3d val = new Vec3d(MathHelper.clamp(pos.x, faceBox.minX, faceBox.maxX),
-                        MathHelper.clamp(pos.y, faceBox.minY, faceBox.maxY),
-                        MathHelper.clamp(pos.z, faceBox.minZ, faceBox.maxZ));
+                Vec3d val = new Vec3d(clamp(pos.x, faceBox.minX, faceBox.maxX),
+                        clamp(pos.y, faceBox.minY, faceBox.maxY),
+                        clamp(pos.z, faceBox.minZ, faceBox.maxZ));
                 double distanceSq = val.squaredDistanceTo(pos);
                 if (distanceSq < result.distanceSq) {
                     result.val = val;
@@ -39,8 +66,7 @@ public class MathUtil {
     }
 
     /**
-     * From Earthcomputer's ClientCommands.
-     * @see <a href = "https://github.com/Earthcomputer/clientcommands">https://github.com/Earthcomputer/clientcommands</a>
+     * From Earthcomputer's <a href = "https://github.com/Earthcomputer/clientcommands">ClientCommands</a>.
      */
     private static Box getFace(Box box, Direction dir) {
         return switch (dir) {
