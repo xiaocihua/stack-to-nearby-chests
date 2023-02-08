@@ -1,1 +1,3 @@
-Fixed last entered keybind gets duplicated into the others when exiting the menu ([#7](https://github.com/xiaocihua/stack-to-nearby-chests/issues/7))
+Added options to change position of restock/quick stack buttons. ([#9](https://github.com/xiaocihua/stack-to-nearby-chests/issues/9))
+
+Fixed the problem that pressing escape key to interrupt the current operation will cause IllegalStateException.

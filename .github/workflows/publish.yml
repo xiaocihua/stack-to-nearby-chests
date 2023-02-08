@@ -3,8 +3,8 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.2.5 for Minecraft 1.19.3
-  VERSION: 0.2.5
+  RELEASE_NAME: 0.2.6 for Minecraft 1.19.3
+  VERSION: 0.2.6
 
 permissions:
   contents: write
@@ -39,7 +39,6 @@ jobs:
         with:
           github-tag: "mc1.19.3-${{env.VERSION}}"
           github-token: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
-          github-prerelease: true
 
           modrinth-id: HtGckJVc
           modrinth-token: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
@@ -49,7 +48,6 @@ jobs:
 
           name: "${{env.RELEASE_NAME}}"
           version: "${{env.VERSION}}"
-          version-type: beta
           changelog-file: CHANGELOG.md
           files: build/libs/!(*-@(dev|sources|javadoc)).jar
 
