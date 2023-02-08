@@ -1,8 +1,11 @@
 package io.github.xiaocihua.stacktonearbychests;
 
 import com.mojang.logging.LogUtils;
+import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
 import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsGui;
 import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsScreen;
+import io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget;
+import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -47,6 +50,8 @@ public class StackToNearbyChests implements ClientModInitializer {
             return;
         }
 
+        ModOptions.Appearance appearanceOption = ModOptions.get().appearance;
+
         if (screen instanceof AbstractInventoryScreen<?> inventoryScreen) {
             if (ModOptions.get().appearance.showStackToNearbyContainersButton.booleanValue()) {
                 new PosUpdatableButtonWidget.Builder(inventoryScreen)
@@ -54,8 +59,8 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setTexture(BUTTON_TEXTURE, 64, 32)
                         .setTooltipSupplier((button, matrices, mouseX, mouseY) ->
                                 screen.renderTooltip(matrices, getLinesWithHint("stack-to-nearby-chests.stackToNearbyContainersButton.tooltip"), mouseX, mouseY))
-                        .setXUpdater(parent -> parent.getX() + ModOptions.get().appearance.stackToNearbyContainersButtonPosX.intValue())
-                        .setYUpdater(parent -> parent.getY() + ModOptions.get().appearance.stackToNearbyContainersButtonPosY.intValue())
+                        .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.stackToNearbyContainersButtonPosX.intValue(),
+                                parent.getY() + appearanceOption.stackToNearbyContainersButtonPosY.intValue()))
                         .setPressAction(button -> InventoryOps.stackToNearbyContainers())
                         .build();
             }
@@ -66,8 +71,8 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setTexture(BUTTON_TEXTURE, 64, 32)
                         .setTooltipSupplier((button, matrices, mouseX, mouseY) ->
                                 screen.renderTooltip(matrices, getLinesWithHint("stack-to-nearby-chests.restockFromNearbyContainersButton.tooltip"), mouseX, mouseY))
-                        .setXUpdater(parent -> parent.getX() + ModOptions.get().appearance.restockFromNearbyContainersButtonPosX.intValue())
-                        .setYUpdater(parent -> parent.getY() + ModOptions.get().appearance.restockFromNearbyContainersButtonPosY.intValue())
+                        .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.restockFromNearbyContainersButtonPosX.intValue(),
+                                parent.getY() + appearanceOption.restockFromNearbyContainersButtonPosY.intValue()))
                         .setPressAction(button -> InventoryOps.restockFromNearbyContainers())
                         .build();
             }
@@ -94,8 +99,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setTexture(BUTTON_TEXTURE, 64, 32)
                         .setTooltipSupplier((button, matrices, mouseX, mouseY) ->
                                 screen.renderTooltip(matrices, getLines("stack-to-nearby-chests.quickStackButton.tooltip"), mouseX, mouseY))
-                        .setXUpdater(parent -> (int)(parent.getX() + parent.getBackgroundWidth() * 1.025))
-                        .setYUpdater(parent -> (int)(parent.getY() + parent.getBackgroundHeight() * 0.55))
+                        .setPosUpdater(parent -> getAbsolutePos(parent, appearanceOption.quickStackButtonPosX, appearanceOption.quickStackButtonPosY))
                         .setPressAction(button -> InventoryOps.quickStack(screenHandler))
                         .build();
             }
@@ -106,8 +110,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setTexture(BUTTON_TEXTURE, 64, 32)
                         .setTooltipSupplier((button, matrices, mouseX, mouseY) ->
                                 screen.renderTooltip(matrices, getLines("stack-to-nearby-chests.restockButton.tooltip"), mouseX, mouseY))
-                        .setXUpdater(parent -> (int)(parent.getX() + parent.getBackgroundWidth() * 1.025))
-                        .setYUpdater(parent -> (int)(parent.getY() + parent.getBackgroundHeight() * 0.55) + 20)
+                        .setPosUpdater(parent -> getAbsolutePos(parent, appearanceOption.restockButtonPosX, appearanceOption.restockButtonPosY))
                         .setPressAction(button -> InventoryOps.restock(screenHandler))
                         .build();
             }
@@ -117,6 +120,11 @@ public class StackToNearbyChests implements ClientModInitializer {
                 ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryOps.restock(screenHandler));
             });
         }
+    }
+
+    private static Vec2i getAbsolutePos(HandledScreenAccessor parent, ModOptions.IntOption x, ModOptions.IntOption y) {
+        return new Vec2i(parent.getX() + parent.getBackgroundWidth() + x.intValue(),
+                parent.getY() + parent.getBackgroundHeight() / 2 + y.intValue());
     }
 
     private List<Text> getLines(String text) {
