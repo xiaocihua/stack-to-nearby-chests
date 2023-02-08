@@ -1,5 +1,6 @@
-package io.github.xiaocihua.stacktonearbychests;
+package io.github.xiaocihua.stacktonearbychests.gui;
 
+import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,8 +21,7 @@ import java.util.function.Function;
 @Environment(EnvType.CLIENT)
 public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     private final HandledScreen<?> parent;
-    private final Optional<Function<HandledScreenAccessor, Integer>> xUpdater;
-    private final Optional<Function<HandledScreenAccessor, Integer>> yUpdater;
+    private final Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater;
 
     private PosUpdatableButtonWidget(int x,
                                      int y,
@@ -36,20 +36,21 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
                                      PressAction pressAction,
                                      Text text,
                                      HandledScreen<?> parent,
-                                     Optional<Function<HandledScreenAccessor, Integer>> xUpdater,
-                                     Optional<Function<HandledScreenAccessor, Integer>> yUpdater) {
+                                     Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater) {
         super(x, y, width, height, u, v, hoveredVOffset, texture, textureWidth, textureHeight, pressAction, text);
         this.parent = parent;
-        this.xUpdater = xUpdater;
-        this.yUpdater = yUpdater;
+        this.posUpdater = posUpdater;
         Screens.getButtons(parent).add(this);
     }
 
     @Override
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        xUpdater.ifPresent(updater -> setX(updater.apply((HandledScreenAccessor) parent)));
-        yUpdater.ifPresent(updater -> setY(updater.apply((HandledScreenAccessor) parent)));
+        posUpdater.ifPresent(updater -> setPos(updater.apply((HandledScreenAccessor) parent)));
         super.renderButton(matrices, mouseX, mouseY, delta);
+    }
+
+    public void setPos(Vec2i pos) {
+        super.setPos(pos.x(), pos.y());
     }
 
     public static class Builder {
@@ -68,8 +69,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
         private Tooltip tooltip;
         private Text text = ScreenTexts.EMPTY;
         private HandledScreen<?> parent;
-        private Optional<Function<HandledScreenAccessor, Integer>> xUpdater = Optional.empty();
-        private Optional<Function<HandledScreenAccessor, Integer>> yUpdater = Optional.empty();
+        private Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater = Optional.empty();
 
         public Builder(HandledScreen<?> parent) {
             this.parent = parent;
@@ -125,13 +125,8 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
             return this;
         }
 
-        public Builder setXUpdater(Function<HandledScreenAccessor, Integer> xUpdater) {
-            this.xUpdater = Optional.ofNullable(xUpdater);
-            return this;
-        }
-
-        public Builder setYUpdater(Function<HandledScreenAccessor, Integer> yUpdater) {
-            this.yUpdater = Optional.ofNullable(yUpdater);
+        public Builder setPosUpdater(Function<HandledScreenAccessor, Vec2i> posUpdater) {
+            this.posUpdater = Optional.ofNullable(posUpdater);
             return this;
         }
 
@@ -149,8 +144,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
                     pressAction,
                     text,
                     parent,
-                    xUpdater,
-                    yUpdater);
+                    posUpdater);
             button.setTooltip(tooltip);
             return button;
         }

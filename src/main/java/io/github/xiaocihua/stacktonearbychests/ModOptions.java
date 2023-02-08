@@ -79,6 +79,12 @@ public class ModOptions {
         public IntOption restockFromNearbyContainersButtonPosX = new IntOption(160);
         public IntOption restockFromNearbyContainersButtonPosY  = new IntOption(170);
 
+        public IntOption quickStackButtonPosX = new IntOption(6);
+        public IntOption quickStackButtonPosY = new IntOption(-10);
+
+        public IntOption restockButtonPosX = new IntOption(6);
+        public IntOption restockButtonPosY = new IntOption(10);
+
         public Identifier favoriteItemStyle = new Identifier(ModOptions.MOD_ID, "gold_badge");
     }
 
