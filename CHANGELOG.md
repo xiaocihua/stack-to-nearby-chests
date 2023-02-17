@@ -1,1 +1,7 @@
-Fixed compatibility issues with PlayerEx. ([#11](https:/0.2./github.com/xiaocihua/stack-to-nearby-chests/issues/11))
+Support for quick stacking and restocking operations for entities.
+
+Added "Support for container entities" option.
+
+Added "Show button tooltip" option.
+
+Removed "Quick stack" and "Restock" button on the screen of rideable inventory not equipped with a chest.
