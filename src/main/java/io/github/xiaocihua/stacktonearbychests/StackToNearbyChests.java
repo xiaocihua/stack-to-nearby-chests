@@ -50,6 +50,15 @@ public class StackToNearbyChests implements ClientModInitializer {
             return;
         }
 
+        // For compatibility with PlayerEx
+        String screenName = screen.getClass().getCanonicalName();
+        if ("com.github.clevernucleus.playerex.client.gui.ExScreen".equals(screenName)
+                || "com.github.clevernucleus.playerex.client.gui.CombatPageLayer".equals(screenName)
+                || "com.github.clevernucleus.playerex.client.gui.AttributesPageLayer".equals(screenName)
+        ) {
+            return;
+        }
+
         ModOptions.Appearance appearanceOption = ModOptions.get().appearance;
 
         if (screen instanceof AbstractInventoryScreen<?> inventoryScreen) {

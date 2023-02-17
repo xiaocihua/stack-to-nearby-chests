@@ -74,6 +74,14 @@ public class InventoryOps {
         });
     }
 
+    public static void onUpdateSlotStacks(ScreenHandler handler) {
+        if (isRunning()
+                && !"com.github.clevernucleus.playerex.factory.ExScreenFactory.Handler".equals(handler.getClass().getCanonicalName())
+        ) {
+            REQUEST_QUEUE.add(handler);
+        }
+    }
+
     public static boolean isRunning() {
         return forEachContainerThread != null && !forEachContainerThread.isInterrupted();
     }
@@ -289,11 +297,5 @@ public class InventoryOps {
 
     private static void sendChatMessage(String message) {
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new TranslatableText(message));
-    }
-
-    public static void onUpdateSlotStacks(ScreenHandler handler) {
-        if (isRunning()) {
-            REQUEST_QUEUE.add(handler);
-        }
     }
 }
