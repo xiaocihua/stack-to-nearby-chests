@@ -70,13 +70,15 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public void onKeyPressed(int ch, int key, int modifiers) {
+        public InputResult onKeyPressed(int ch, int key, int modifiers) {
             switch (ch) {
                 case GLFW.GLFW_KEY_ENTER -> releaseFocus();
                 case GLFW.GLFW_KEY_BACKSPACE -> keySequence.clear();
                 default -> keySequence.addKey(ch);
             }
             setLabel();
+
+            return InputResult.PROCESSED;
         }
 
         private void setLabel() {

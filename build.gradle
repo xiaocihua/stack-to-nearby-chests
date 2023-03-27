@@ -73,7 +73,7 @@ jar {
 loom {
     runs {
         client {
-            runDir = "run1.19.3"
+            runDir = "run1.19.4"
             vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar")
         }
     }

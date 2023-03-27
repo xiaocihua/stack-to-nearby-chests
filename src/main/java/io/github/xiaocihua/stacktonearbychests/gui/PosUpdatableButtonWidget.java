@@ -1,5 +1,6 @@
 package io.github.xiaocihua.stacktonearbychests.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import net.fabricmc.api.EnvType;
@@ -46,11 +47,22 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     @Override
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         posUpdater.ifPresent(updater -> setPos(updater.apply((HandledScreenAccessor) parent)));
-        super.renderButton(matrices, mouseX, mouseY, delta);
+
+        RenderSystem.setShaderTexture(0, texture);
+        int i = v;
+        if (!this.isNarratable()) {
+            i = v + hoveredVOffset * 2;
+        } else if (this.isHovered()) {
+            i = v + hoveredVOffset;
+        }
+
+        RenderSystem.enableDepthTest();
+        drawTexture(matrices, getX(), getY(), (float)u, (float)i, width, height, textureWidth, textureHeight);
     }
 
     public void setPos(Vec2i pos) {
-        super.setPos(pos.x(), pos.y());
+        setX(pos.x());
+        setY(pos.y());
     }
 
     public static class Builder {
