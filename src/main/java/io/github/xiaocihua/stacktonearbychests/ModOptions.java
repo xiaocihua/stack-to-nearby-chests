@@ -152,6 +152,12 @@ public class ModOptions {
                 "charm:mangrove_trapped_chest",
                 "charm:acacia_trapped_chest",
                 "charm:jungle_trapped_chest");
+        public Set<String> stackingTargetEntities = Set.of("minecraft:chest_boat",
+                "minecraft:trader_llama",
+                "minecraft:chest_minecart",
+                "minecraft:donkey",
+                "minecraft:llama",
+                "minecraft:mule");
         public Set<String> itemsThatWillNotBeStacked = Set.of("minecraft:shulker_box",
                 "minecraft:brown_shulker_box",
                 "minecraft:yellow_shulker_box",
@@ -223,6 +229,12 @@ public class ModOptions {
                 "charm:mangrove_trapped_chest",
                 "charm:acacia_trapped_chest",
                 "charm:jungle_trapped_chest");
+        public Set<String> restockingSourceEntities = Set.of("minecraft:chest_boat",
+                "minecraft:trader_llama",
+                "minecraft:chest_minecart",
+                "minecraft:donkey",
+                "minecraft:llama",
+                "minecraft:mule");
         public Set<String> itemsThatWillNotBeRestocked = Set.of("minecraft:shulker_box",
                 "minecraft:brown_shulker_box",
                 "minecraft:yellow_shulker_box",

@@ -136,31 +136,45 @@ public class ModOptionsGui extends LightweightGuiDescription {
         behavior.add(createCheckbox("favoriteItemsCannotBeSwappedWithOffhand", options.behavior.favoriteItemsCannotBeSwappedWithOffhand));
 
         var stackingTargets = new BlackWhiteList(Text.translatable(PREFIX + "stackingTargets"),
-                        options.behavior.stackingTargets,
-                        BlockEntry::new,
-                        consumer -> openDialog(new EntryPicker.ContainerPicker(consumer)),
-                        data -> options.behavior.stackingTargets = data);
+                options.behavior.stackingTargets,
+                BlockContainerEntry::new,
+                consumer -> openDialog(new EntryPicker.BlockContainerPicker(consumer)),
+                data -> options.behavior.stackingTargets = data);
         behavior.add(stackingTargets, 230, 124);
 
+        var stackingTargetEntities = new BlackWhiteList(Text.translatable(PREFIX + "stackingTargetEntities"),
+                options.behavior.stackingTargetEntities,
+                EntityContainerEntry::new,
+                consumer -> openDialog(new EntryPicker.EntityContainerPicker(consumer)),
+                data -> options.behavior.stackingTargetEntities = data);
+        behavior.add(stackingTargetEntities, 230, 124);
+
         var itemsThatWillNotBeStacked = new BlackWhiteList(Text.translatable(PREFIX + "itemsThatWillNotBeStacked"),
-                        options.behavior.itemsThatWillNotBeStacked,
-                        ItemEntry::new,
-                        consumer -> openDialog(new EntryPicker.ItemPicker(consumer)),
-                        data -> options.behavior.itemsThatWillNotBeStacked = data);
+                options.behavior.itemsThatWillNotBeStacked,
+                ItemEntry::new,
+                consumer -> openDialog(new EntryPicker.ItemPicker(consumer)),
+                data -> options.behavior.itemsThatWillNotBeStacked = data);
         behavior.add(itemsThatWillNotBeStacked, 230, 124);
 
         var restockingSources = new BlackWhiteList(Text.translatable(PREFIX + "restockingSources"),
-                        options.behavior.restockingSources,
-                        BlockEntry::new,
-                        consumer -> openDialog(new EntryPicker.ContainerPicker(consumer)),
-                        data -> options.behavior.restockingSources = data);
+                options.behavior.restockingSources,
+                BlockContainerEntry::new,
+                consumer -> openDialog(new EntryPicker.BlockContainerPicker(consumer)),
+                data -> options.behavior.restockingSources = data);
         behavior.add(restockingSources, 230, 124);
 
+        var restockingSourceEntities = new BlackWhiteList(Text.translatable(PREFIX + "restockingSourceEntities"),
+                options.behavior.restockingSourceEntities,
+                EntityContainerEntry::new,
+                consumer -> openDialog(new EntryPicker.EntityContainerPicker(consumer)),
+                data -> options.behavior.restockingSourceEntities = data);
+        behavior.add(restockingSourceEntities, 230, 124);
+
         var itemsThatWillNotBeRestocked = new BlackWhiteList(Text.translatable(PREFIX + "itemsThatWillNotBeRestocked"),
-                        options.behavior.itemsThatWillNotBeRestocked,
-                        ItemEntry::new,
-                        consumer -> openDialog(new EntryPicker.ItemPicker(consumer)),
-                        data -> options.behavior.itemsThatWillNotBeRestocked = data);
+                options.behavior.itemsThatWillNotBeRestocked,
+                ItemEntry::new,
+                consumer -> openDialog(new EntryPicker.ItemPicker(consumer)),
+                data -> options.behavior.itemsThatWillNotBeRestocked = data);
         behavior.add(itemsThatWillNotBeRestocked, 230, 124);
 
         return behavior;

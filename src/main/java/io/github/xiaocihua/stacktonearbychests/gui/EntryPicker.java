@@ -146,9 +146,9 @@ public abstract class EntryPicker extends WBox {
         }
     }
 
-    public static class ContainerPicker extends EntryPicker {
+    public static class BlockContainerPicker extends EntryPicker {
 
-        public ContainerPicker(Consumer<List<Identifier>> consumer) {
+        public BlockContainerPicker(Consumer<List<Identifier>> consumer) {
             super(consumer);
         }
 
@@ -169,6 +169,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByID(String searchStr) {
             return Registries.BLOCK.stream()
+                    .filter(block -> block instanceof BlockWithEntity)
                     .map(Registries.BLOCK::getId)
                     .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
                     .toList();
@@ -176,7 +177,38 @@ public abstract class EntryPicker extends WBox {
 
         @Override
         public SelectableEntryList<Identifier> getEntryList() {
-            return new SelectableEntryList<>(searchByName(""), BlockEntry::new);
+            return new SelectableEntryList<>(searchByName(""), BlockContainerEntry::new);
+        }
+    }
+
+    public static class EntityContainerPicker extends EntryPicker {
+        public EntityContainerPicker(Consumer<List<Identifier>> consumer) {
+            super(consumer);
+        }
+
+        @Override
+        public Text getTitle() {
+            return Text.translatable(PREFIX + "addContainersToList");
+        }
+
+        @Override
+        public List<Identifier> searchByName(String searchStr) {
+            return Registries.ENTITY_TYPE.stream()
+                    .filter(entityType -> StringUtils.containsIgnoreCase(entityType.getName().getString(), searchStr))
+                    .map(Registries.ENTITY_TYPE::getId)
+                    .toList();
+        }
+
+        @Override
+        public List<Identifier> searchByID(String searchStr) {
+            return Registries.ENTITY_TYPE.getIds().stream()
+                    .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
+                    .toList();
+        }
+
+        @Override
+        public SelectableEntryList<Identifier> getEntryList() {
+            return new SelectableEntryList<>(searchByName(""), EntityContainerEntry::new);
         }
     }
 }
