@@ -12,10 +12,13 @@ import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.RideableInventory;
+import net.minecraft.entity.passive.AbstractDonkeyEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -47,6 +50,8 @@ public class InventoryOps {
     @Nullable
     private static Thread forEachContainerThread;
 
+    public static volatile boolean sneak;
+
     public static void init() {
         SetScreenCallback.EVENT.register(screen -> {
             if (!isTerminated()) {
@@ -73,14 +78,6 @@ public class InventoryOps {
         });
     }
 
-    public static void onUpdateSlotStacks(ScreenHandler handler) {
-        if (isRunning()
-                && !"com.github.clevernucleus.playerex.factory.ExScreenFactory.Handler".equals(handler.getClass().getCanonicalName())
-        ) {
-            REQUEST_QUEUE.add(handler);
-        }
-    }
-
     public static boolean isRunning() {
         return forEachContainerThread != null && !forEachContainerThread.isInterrupted();
     }
@@ -96,17 +93,17 @@ public class InventoryOps {
     }
 
     public static void stackToNearbyContainers() {
-        forEachContainer(InventoryOps::quickStack, ModOptions.get().behavior.stackingTargets);
+        forEachContainer(InventoryOps::quickStack, ModOptions.get().behavior.stackingTargets, ModOptions.get().behavior.stackingTargetEntities);
     }
 
     public static void restockFromNearbyContainers() {
-        forEachContainer(InventoryOps::restock, ModOptions.get().behavior.restockingSources);
+        forEachContainer(InventoryOps::restock, ModOptions.get().behavior.restockingSources, ModOptions.get().behavior.restockingSourceEntities);
     }
 
-    public static void forEachContainer(Consumer<ScreenHandler> action, Collection<String> filter) {
+    public static void forEachContainer(Consumer<ScreenHandler> action, Collection<String> blockFilter, Collection<String> entityFilter) {
         Runnable task = () -> {
             try {
-                forEachContainerInternal(action, filter);
+                forEachContainerInternal(action, blockFilter, entityFilter);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 sendChatMessage("stack-to-nearby-chests.message.operationInterrupted");
@@ -117,6 +114,7 @@ public class InventoryOps {
                 StackToNearbyChests.LOGGER.error("An exception occurred during the operation", e);
             } finally {
                 REQUEST_QUEUE.clear();
+                sneak = false;
                 MinecraftClient.getInstance().executeSync(() -> {
                     MinecraftClient.getInstance().player.closeHandledScreen();
                     forEachContainerThread = null;
@@ -130,7 +128,7 @@ public class InventoryOps {
     /**
      * Adapted from Earthcomputer's <a href = "https://github.com/Earthcomputer/clientcommands">ClientCommands</a>.
      */
-    private static void forEachContainerInternal(Consumer<ScreenHandler> action, Collection<String> filter) throws InterruptedException, TimeoutException {
+    private static void forEachContainerInternal(Consumer<ScreenHandler> action, Collection<String> blockFilter, Collection<String> entityFilter) throws InterruptedException, TimeoutException {
         MinecraftClient client = MinecraftClient.getInstance();
         Entity cameraEntity = client.getCameraEntity();
         if (cameraEntity == null) {
@@ -154,6 +152,8 @@ public class InventoryOps {
         Set<BlockPos> searchedBlocks = new HashSet<>();
         boolean hasSearchedEnderChest = false;
 
+        int searchInterval = ModOptions.get().behavior.searchInterval.intValue();
+
         for (BlockPos pos : MathUtil.getBlocksInBox(box)) {
             if (!canSearch(world, pos)) {
                 continue;
@@ -162,7 +162,7 @@ public class InventoryOps {
                 continue;
             }
             BlockState state = world.getBlockState(pos);
-            if (!filter.contains(Registry.BLOCK.getId(state.getBlock()).toString())) {
+            if (!blockFilter.contains(Registry.BLOCK.getId(state.getBlock()).toString())) {
                 continue;
             }
             Vec3d closestPos = MathUtil.getClosestPoint(pos, state.getOutlineShape(world, pos), origin);
@@ -190,7 +190,30 @@ public class InventoryOps {
 
             action.accept(getRequestedScreenHandler());
 
-            Thread.sleep(ModOptions.get().behavior.searchInterval.intValue());
+            Thread.sleep(searchInterval);
+        }
+
+        List<Entity> entities = world.getOtherEntities(cameraEntity,
+                box,
+                EntityPredicates.VALID_INVENTORIES.or(entity -> entity instanceof RideableInventory)
+                        .and(entity -> entityFilter.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()))
+                        .and(entity -> !(entity instanceof AbstractDonkeyEntity donkey) || donkey.hasChest()));
+
+        if (entities.isEmpty()) {
+            return;
+        }
+
+        sneak = true;
+        for (Entity entity : entities) {
+            if (entity.squaredDistanceTo(origin) > squaredReachDistance) {
+                continue;
+            }
+
+            interactionManager.interactEntity(player, entity, Hand.MAIN_HAND);
+
+            action.accept(getRequestedScreenHandler());
+
+            Thread.sleep(searchInterval);
         }
     }
 
@@ -297,5 +320,11 @@ public class InventoryOps {
 
     private static void sendChatMessage(String message) {
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.translatable(message));
+    }
+
+    public static void onUpdateSlotStacks(ScreenHandler handler) {
+        if (isRunning()) {
+            REQUEST_QUEUE.add(handler);
+        }
     }
 }
