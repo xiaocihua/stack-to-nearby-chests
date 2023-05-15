@@ -21,7 +21,7 @@ public class BlackWhiteList extends WBoxCustom {
 
     public BlackWhiteList(Text title,
                           Collection<String> data,
-                          Function<Identifier, SelectableEntryList.Entry<Identifier>> supplier,
+                          Function<Identifier, SelectableEntryList.Entry<Identifier>> entrySupplier,
                           Consumer<Consumer<List<Identifier>>> onAddButtonClick,
                           Consumer<Set<String>> dataChangeListener) {
         super(Axis.VERTICAL);
@@ -29,7 +29,7 @@ public class BlackWhiteList extends WBoxCustom {
         var titleLabel = new WLabel(title, TEXT_COLOR).setVerticalAlignment(VerticalAlignment.CENTER);
         add(titleLabel, 12);
 
-        this.list = new SelectableEntryList<>(data.stream().map(Identifier::new).toList(), supplier)
+        this.list = new SelectableEntryList<>(data.stream().map(Identifier::new).toList(), entrySupplier)
                 .setChangedListener(identifiers -> dataChangeListener.accept(identifiers.stream().map(Identifier::toString).collect(Collectors.toSet())));
 
         var buttons = new WBoxCustom(Axis.HORIZONTAL);
