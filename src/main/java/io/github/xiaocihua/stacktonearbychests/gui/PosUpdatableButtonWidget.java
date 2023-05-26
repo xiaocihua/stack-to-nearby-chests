@@ -110,12 +110,14 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
             return this;
         }
 
-        public Builder setTooltip(Text content) {
-            this.tooltip = Tooltip.of(content);
+        public Builder setTooltip(@Nullable Text content) {
+            if (content != null) {
+                this.tooltip = Tooltip.of(content);
+            }
             return this;
         }
 
-        public Builder setTooltip(Tooltip tooltip) {
+        public Builder setTooltip(@Nullable Tooltip tooltip) {
             this.tooltip = tooltip;
             return this;
         }

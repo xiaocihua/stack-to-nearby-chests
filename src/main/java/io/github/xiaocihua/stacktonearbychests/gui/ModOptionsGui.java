@@ -106,6 +106,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         appearance.add(createCheckbox("showRestockFromNearbyContainersButton", options.appearance.showRestockFromNearbyContainersButton));
         appearance.add(createCheckbox("showQuickStackButton", options.appearance.showQuickStackButton));
         appearance.add(createCheckbox("showRestockButton", options.appearance.showRestockButton));
+        appearance.add(createCheckbox("showButtonTooltip", options.appearance.showButtonTooltip));
         appearance.add(createIntTextField("stackToNearbyContainersButtonPosX", options.appearance.stackToNearbyContainersButtonPosX), 315, 20);
         appearance.add(createIntTextField("stackToNearbyContainersButtonPosY", options.appearance.stackToNearbyContainersButtonPosY), 315, 20);
         appearance.add(createIntTextField("restockFromNearbyContainersButtonPosX", options.appearance.restockFromNearbyContainersButtonPosX), 340, 20);
