@@ -6,6 +6,7 @@ import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsGui;
 import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsScreen;
 import io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
+import io.github.xiaocihua.stacktonearbychests.mixin.HorseScreenAccessor;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,6 +16,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.*;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.entity.passive.AbstractDonkeyEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -46,10 +48,6 @@ public class StackToNearbyChests implements ClientModInitializer {
     }
 
     private void addButtonsAndKeys(MinecraftClient client, Screen screen, int scaledWidth, int scaledHeight) {
-        if (!(screen instanceof HandledScreen<?>)) {
-            return;
-        }
-
         // For compatibility with PlayerEx
         String screenName = screen.getClass().getCanonicalName();
         if ("com.github.clevernucleus.playerex.client.gui.ExScreen".equals(screenName)
@@ -88,16 +86,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 ModOptions.get().keymap.stackToNearbyContainersKey.testThenRun(InventoryOps::stackToNearbyContainers);
                 ModOptions.get().keymap.restockFromNearbyContainersKey.testThenRun(InventoryOps::restockFromNearbyContainers);
             });
-        } else if (!(screen instanceof BeaconScreen
-                || screen instanceof GrindstoneScreen
-                || screen instanceof CartographyTableScreen
-                || screen instanceof CraftingScreen
-                || screen instanceof LoomScreen
-                || screen instanceof EnchantmentScreen
-                || screen instanceof MerchantScreen
-                || screen instanceof ForgingScreen<?>
-                || screen instanceof StonecutterScreen
-        )) {
+        } else if (isContainerScreen(screen)) {
             ScreenHandler screenHandler = ((HandledScreen<?>) screen).getScreenHandler();
 
             if (ModOptions.get().appearance.showQuickStackButton.booleanValue()) {
@@ -151,5 +140,29 @@ public class StackToNearbyChests implements ClientModInitializer {
     private List<Text> getLinesWithHint(String text) {
         return List.of(Text.translatable(text),
                 Text.translatable("stack-to-nearby-chests.tooltip.hint").setStyle(Style.EMPTY.withItalic(true).withColor(Formatting.DARK_GRAY)));
+    }
+
+    private static boolean isContainerScreen(Screen screen) {
+        if (!(screen instanceof HandledScreen<?>)) {
+            return false;
+        } else if (
+                screen instanceof BeaconScreen
+                        || screen instanceof GrindstoneScreen
+                        || screen instanceof CartographyTableScreen
+                        || screen instanceof CraftingScreen
+                        || screen instanceof LoomScreen
+                        || screen instanceof EnchantmentScreen
+                        || screen instanceof MerchantScreen
+                        || screen instanceof ForgingScreen<?>
+                        || screen instanceof StonecutterScreen
+                        || screen instanceof AbstractInventoryScreen<?>
+        ) {
+            return false;
+        } else if (screen instanceof HorseScreen) {
+            return ((HorseScreenAccessor) screen).getEntity() instanceof AbstractDonkeyEntity abstractDonkeyEntity
+                    && abstractDonkeyEntity.hasChest();
+        }
+
+        return true;
     }
 }
