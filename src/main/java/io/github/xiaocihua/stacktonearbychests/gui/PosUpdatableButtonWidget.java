@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.util.math.MatrixStack;
@@ -64,7 +65,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
         private int textureWidth = 16;
         private int textureHeight = 16;
         private PressAction pressAction = button -> {};
-        private TooltipSupplier tooltipSupplier = (button, matrices, mouseX, mouseY) -> {};
+        private TooltipSupplier tooltipSupplier = ButtonWidget.EMPTY;
         private Text text = ScreenTexts.EMPTY;
         private HandledScreen<?> parent;
         private Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater = Optional.empty();

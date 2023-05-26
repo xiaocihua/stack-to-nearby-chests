@@ -22,6 +22,7 @@
   "stack-to-nearby-chests.options.showRestockFromNearbyContainersButton": "Show restock from nearby containers button",
   "stack-to-nearby-chests.options.showQuickStackButton": "Show quick stack button",
   "stack-to-nearby-chests.options.showRestockButton": "Show restock button",
+  "stack-to-nearby-chests.options.showButtonTooltip": "Show button tooltip",
   "stack-to-nearby-chests.options.stackToNearbyContainersButtonPosX": "Stack to nearby containers button position X",
   "stack-to-nearby-chests.options.stackToNearbyContainersButtonPosY": "Stack to nearby containers button position Y",
   "stack-to-nearby-chests.options.restockFromNearbyContainersButtonPosX": "Restock from nearby containers button position X",
