@@ -73,6 +73,8 @@ public class ModOptions {
         public MutableBoolean showQuickStackButton = new MutableBoolean(true);
         public MutableBoolean showRestockButton = new MutableBoolean(true);
 
+        public MutableBoolean showButtonTooltip = new MutableBoolean(true);
+
         public IntOption stackToNearbyContainersButtonPosX = new IntOption(140);
         public IntOption stackToNearbyContainersButtonPosY = new IntOption(170);
 
