@@ -8,6 +8,7 @@
     "ClientPlayerInteractionManagerMixin",
     "HandledScreenAccessor",
     "HandledScreenMixin",
+    "HorseScreenAccessor",
     "KeyboardMixin",
     "MinecraftClientMixin",
     "MinecraftServerAccessor",
