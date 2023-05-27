@@ -1,3 +1,7 @@
-Added options to change position of restock/quick stack buttons. ([#9](https://github.com/xiaocihua/stack-to-nearby-chests/issues/9))
+Support for quick stacking and restocking operations for entities.
 
-Fixed the problem that pressing escape key to interrupt the current operation will cause IllegalStateException.
+Added "Support for container entities" option.
+
+Added "Show button tooltip" option.
+
+Removed "Quick stack" and "Restock" button on the screen of rideable inventory not equipped with a chest.
