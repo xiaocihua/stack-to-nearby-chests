@@ -193,6 +193,10 @@ public class InventoryOps {
             Thread.sleep(searchInterval);
         }
 
+        if (!ModOptions.get().behavior.supportForContainerEntities.booleanValue()) {
+            return;
+        }
+
         List<Entity> entities = world.getOtherEntities(cameraEntity,
                 box,
                 EntityPredicates.VALID_INVENTORIES.or(entity -> entity instanceof RideableInventory)
