@@ -34,6 +34,7 @@
   "stack-to-nearby-chests.options.buttonPos.tooltip": "相对于GUI右侧边的中点",
   "stack-to-nearby-chests.options.behavior": "行为",
   "stack-to-nearby-chests.options.searchInterval": "搜索间隔",
+  "stack-to-nearby-chests.options.supportForContainerEntities": "支持容器实体",
   "stack-to-nearby-chests.options.doNotQuickStackItemsFromTheHotbar": "禁止快速堆叠快捷栏中的物品",
   "stack-to-nearby-chests.options.favoriteItemsCannotBePickedUp": "禁止抓取标记为收藏的物品",
   "stack-to-nearby-chests.options.favoriteItemStacksCannotBeQuickMoved": "禁止快速移动标记为收藏的物品",

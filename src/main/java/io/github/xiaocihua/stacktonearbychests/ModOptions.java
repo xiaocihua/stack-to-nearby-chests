@@ -93,6 +93,8 @@ public class ModOptions {
     public static class Behavior {
         public IntOption searchInterval = new IntOption(0);
 
+        public MutableBoolean supportForContainerEntities = new MutableBoolean(true);
+
         public MutableBoolean doNotQuickStackItemsFromTheHotbar = new MutableBoolean(false);
         public MutableBoolean favoriteItemsCannotBePickedUp = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeThrown = new MutableBoolean(false);

@@ -128,6 +128,8 @@ public class ModOptionsGui extends LightweightGuiDescription {
         searchInterval.getTextField().setTextPredicate(text -> NumberUtils.toInt(text, -1) >= 0);
         behavior.add(searchInterval, 230, 20);
 
+        behavior.add(createCheckbox("supportForContainerEntities", options.behavior.supportForContainerEntities));
+
         behavior.add(createCheckbox("doNotQuickStackItemsFromTheHotbar", options.behavior.doNotQuickStackItemsFromTheHotbar));
 
         behavior.add(createCheckbox("favoriteItemsCannotBePickedUp", options.behavior.favoriteItemsCannotBePickedUp));
