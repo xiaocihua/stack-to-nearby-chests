@@ -196,6 +196,9 @@ public class InventoryOps {
         if (!ModOptions.get().behavior.supportForContainerEntities.booleanValue()) {
             return;
         }
+        if (player.hasVehicle()) {
+            return;
+        }
 
         List<Entity> entities = world.getOtherEntities(cameraEntity,
                 box,
