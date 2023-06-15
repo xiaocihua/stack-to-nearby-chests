@@ -5,7 +5,7 @@ import io.github.cottonmc.cotton.gui.widget.WScrollBar;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 /**
  * Copy from {@link WScrollBar}
@@ -22,8 +22,8 @@ public class WScrollBarCustom extends WScrollBar {
     }
 
     @Override
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        ScreenDrawing.coloredRect(matrices, x, y, width, height, 0xFF_262626);
+    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+        ScreenDrawing.coloredRect(context, x, y, width, height, 0xFF_262626);
 
         if (maxValue <= 0) return;
 
@@ -38,16 +38,16 @@ public class WScrollBarCustom extends WScrollBar {
         }
 
         if (axis == Axis.HORIZONTAL) {
-            ScreenDrawing.coloredRect(matrices, x + getHandlePosition(), y, getHandleSize(), height, handleColor);
+            ScreenDrawing.coloredRect(context, x + getHandlePosition(), y, getHandleSize(), height, handleColor);
 
             if (isFocused()) {
-                ScreenDrawing.coloredRect(matrices, x + getHandlePosition(), y, getHandleSize(), height, 0xFF_686868);
+                ScreenDrawing.coloredRect(context, x + getHandlePosition(), y, getHandleSize(), height, 0xFF_686868);
             }
         } else {
-            ScreenDrawing.coloredRect(matrices, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), handleColor);
+            ScreenDrawing.coloredRect(context, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), handleColor);
 
             if (isFocused()) {
-                ScreenDrawing.coloredRect(matrices, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), 0xFF_686868);
+                ScreenDrawing.coloredRect(context, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), 0xFF_686868);
             }
         }
     }

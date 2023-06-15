@@ -11,7 +11,7 @@ import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 /**
  * Copy from {@link WScrollPanel}
@@ -90,14 +90,14 @@ public class WScrollPanelCustom extends WClippedPanelCustom {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
 		if (verticalScrollBar.getValue() != lastVerticalScroll || horizontalScrollBar.getValue() != lastHorizontalScroll) {
 			layout();
 			lastHorizontalScroll = horizontalScrollBar.getValue();
 			lastVerticalScroll = verticalScrollBar.getValue();
 		}
 
-		super.paint(matrices, x, y, mouseX, mouseY);
+		super.paint(context, x, y, mouseX, mouseY);
 	}
 
 	@Override

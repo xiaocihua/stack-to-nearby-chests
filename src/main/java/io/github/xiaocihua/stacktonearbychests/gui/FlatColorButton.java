@@ -4,7 +4,7 @@ import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.WButton;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 import java.util.OptionalInt;
@@ -56,24 +56,24 @@ public class FlatColorButton extends WButton {
     }
 
     @Override
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
         boolean hovered = (mouseX >= 0 && mouseY >= 0 && mouseX < getWidth() && mouseY < getHeight());
         boolean enabled = isEnabled();
         Icon icon = getIcon();
         Text label = getLabel();
 
         if (!enabled) {
-            ScreenDrawing.coloredRect(matrices, x, y, width, height, disabledColor);
+            ScreenDrawing.coloredRect(context, x, y, width, height, disabledColor);
         } else if (hovered || isFocused()) {
-            ScreenDrawing.coloredRect(matrices, x, y, width, height, hoveredColor);
+            ScreenDrawing.coloredRect(context, x, y, width, height, hoveredColor);
         } else {
-            ScreenDrawing.coloredRect(matrices, x, y, width, height, regularColor);
+            ScreenDrawing.coloredRect(context, x, y, width, height, regularColor);
         }
 
-        borderColor.ifPresent(color -> drawBorder(matrices, x, y, width, height, color));
+        borderColor.ifPresent(color -> drawBorder(context, x, y, width, height, color));
 
         if (icon != null) {
-            icon.paint(matrices, x + 2, y + 2, 16);
+            icon.paint(context, x + 2, y + 2, 16);
         }
 
         if (label != null) {
@@ -85,14 +85,14 @@ public class FlatColorButton extends WButton {
 			}*/
 
             int xOffset = (icon != null && alignment == HorizontalAlignment.LEFT) ? 18 : 0;
-            ScreenDrawing.drawStringWithShadow(matrices, label.asOrderedText(), alignment, x + xOffset, y + ((height - 8) / 2), width, color); //LibGuiClient.config.darkMode ? darkmodeColor : color);
+            ScreenDrawing.drawStringWithShadow(context, label.asOrderedText(), alignment, x + xOffset, y + ((height - 8) / 2), width, color); //LibGuiClient.config.darkMode ? darkmodeColor : color);
         }
     }
 
-    protected void drawBorder(MatrixStack matrices, int x, int y, int width, int height, int color) {
-        ScreenDrawing.coloredRect(matrices, x, y, width, 1, color);
-        ScreenDrawing.coloredRect(matrices, x, y + height - 1, width, 1, color);
-        ScreenDrawing.coloredRect(matrices, x, y, 1, height, color);
-        ScreenDrawing.coloredRect(matrices, x + width - 1, y, 1, height, color);
+    protected void drawBorder(DrawContext context, int x, int y, int width, int height, int color) {
+        ScreenDrawing.coloredRect(context, x, y, width, 1, color);
+        ScreenDrawing.coloredRect(context, x, y + height - 1, width, 1, color);
+        ScreenDrawing.coloredRect(context, x, y, 1, height, color);
+        ScreenDrawing.coloredRect(context, x + width - 1, y, 1, height, color);
     }
 }
