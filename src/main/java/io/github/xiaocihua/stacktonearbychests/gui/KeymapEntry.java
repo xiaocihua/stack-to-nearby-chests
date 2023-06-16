@@ -7,7 +7,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
 import io.github.xiaocihua.stacktonearbychests.KeySequence;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
@@ -86,12 +86,12 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+        public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
             if (isFocused()) {
-                drawBorder(matrices, x, y, width, height, 0xFF_F5F5F5);
+                drawBorder(context, x, y, width, height, 0xFF_F5F5F5);
             }
 
-            super.paint(matrices, x, y, mouseX, mouseY);
+            super.paint(context, x, y, mouseX, mouseY);
         }
     }
 }

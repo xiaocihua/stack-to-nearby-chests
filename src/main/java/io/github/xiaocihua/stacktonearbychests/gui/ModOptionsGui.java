@@ -9,8 +9,8 @@ import io.github.cottonmc.cotton.gui.widget.icon.TextureIcon;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import io.github.xiaocihua.stacktonearbychests.ModOptions;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -93,9 +93,9 @@ public class ModOptionsGui extends LightweightGuiDescription {
             }
 
             @Override
-            public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-                ScreenDrawing.texturedRect(matrices, x + 1, y + 1, 18, 18, new Identifier(MOD_ID, "textures/slot_background.png"), 0xFF_FFFFFF);
-                super.paint(matrices, x, y, mouseX, mouseY);
+            public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+                ScreenDrawing.texturedRect(context, x + 1, y + 1, 18, 18, new Identifier(MOD_ID, "textures/slot_background.png"), 0xFF_FFFFFF);
+                super.paint(context, x, y, mouseX, mouseY);
             }
         };
 

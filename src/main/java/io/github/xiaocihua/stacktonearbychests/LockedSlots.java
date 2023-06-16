@@ -10,12 +10,11 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -282,14 +281,14 @@ public class LockedSlots {
         }
     }
 
-    public static void drawFavoriteItemStyle(MatrixStack matrices, Slot slot, boolean isForeground) {
+    public static void drawFavoriteItemStyle(DrawContext context, Slot slot, boolean isForeground) {
         Identifier id = ModOptions.get().appearance.favoriteItemStyle;
         if (isLocked(slot) && isForeground == id.getPath().equals("gold_badge")) {
             Sprite sprite = MinecraftClient.getInstance()
                     .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
                     .apply(new Identifier(id.getNamespace(), "item/" + id.getPath()));
             RenderSystem.setShaderTexture(0, sprite.getAtlasId());
-            DrawableHelper.drawSprite(matrices, slot.x, slot.y, isForeground ? 300 : 200, 16, 16, sprite);
+            context.drawSprite(slot.x, slot.y, isForeground ? 300 : 200, 16, 16, sprite);
         }
     }
 

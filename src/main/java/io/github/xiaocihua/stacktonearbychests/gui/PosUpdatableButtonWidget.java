@@ -6,11 +6,11 @@ import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -45,7 +45,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         posUpdater.ifPresent(updater -> setPos(updater.apply((HandledScreenAccessor) parent)));
 
         RenderSystem.setShaderTexture(0, texture);
@@ -57,7 +57,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
         }
 
         RenderSystem.enableDepthTest();
-        drawTexture(matrices, getX(), getY(), (float)u, (float)i, width, height, textureWidth, textureHeight);
+        drawTexture(context, texture, getX(), getY(), u, i, 0, width, height, textureWidth, textureHeight);
     }
 
     public void setPos(Vec2i pos) {

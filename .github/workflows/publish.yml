@@ -3,7 +3,7 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.3.0 for Minecraft 1.19.4
+  RELEASE_NAME: 0.3.0 for Minecraft 1.20
   VERSION: 0.3.0
 
 permissions:
@@ -37,7 +37,7 @@ jobs:
       - name: Publish (CurseForge/Modrinth/Github)
         uses: Kir-Antipov/mc-publish@v3.2
         with:
-          github-tag: "mc1.19.4-${{env.VERSION}}"
+          github-tag: "mc1.20-${{env.VERSION}}"
           github-token: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
 
           modrinth-id: HtGckJVc
@@ -53,7 +53,7 @@ jobs:
 
           loaders: fabric
           game-versions: |
-            1.19.4
+            1.20
           java: |
             17
             18

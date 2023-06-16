@@ -7,7 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -28,13 +28,13 @@ public class BlockContainerEntry extends SelectableEntryList.Entry<Identifier> {
     }
 
     @Override
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        super.paint(matrices, x, y, mouseX, mouseY);
+    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+        super.paint(context, x, y, mouseX, mouseY);
         int iconSize = 16;
         int inset = 6;
         int fontWidth = MinecraftClient.getInstance().textRenderer.getWidth(name.asOrderedText());
         int fontHeight = MinecraftClient.getInstance().textRenderer.fontHeight + 2;
-        icon.ifPresent(i -> i.paint(matrices, x + inset, y + (height - iconSize) / 2, 16));
-        ScreenDrawing.drawString(matrices, name.asOrderedText(), x + width - inset - fontWidth, y + (height - fontHeight) / 2 + 2, TEXT_COLOR);
+        icon.ifPresent(i -> i.paint(context, x + inset, y + (height - iconSize) / 2, 16));
+        ScreenDrawing.drawString(context, name.asOrderedText(), x + width - inset - fontWidth, y + (height - fontHeight) / 2 + 2, TEXT_COLOR);
     }
 }

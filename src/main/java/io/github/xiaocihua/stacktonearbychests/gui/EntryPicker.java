@@ -8,7 +8,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import net.minecraft.block.BlockWithEntity;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -99,9 +99,9 @@ public abstract class EntryPicker extends WBox {
     }
 
     @Override
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        getBackgroundPainter().paintBackground(matrices, x, y, this);
-        super.paint(matrices, x, y, mouseX, mouseY);
+    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+        getBackgroundPainter().paintBackground(context, x, y, this);
+        super.paint(context, x, y, mouseX, mouseY);
     }
 
     @Override

@@ -4,7 +4,7 @@ import io.github.cottonmc.cotton.gui.widget.WPanel;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 /**
  * A panel that is clipped to only render widgets inside its bounds.
@@ -12,12 +12,12 @@ import net.minecraft.client.util.math.MatrixStack;
 public class WClippedPanelCustom extends WPanel {
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-		if (getBackgroundPainter() != null) getBackgroundPainter().paintBackground(matrices, x, y, this);
+	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+		if (getBackgroundPainter() != null) getBackgroundPainter().paintBackground(context, x, y, this);
 
 		ScissorsBugFix.push(x, y, width, height);
 		for (WWidget child : children) {
-			child.paint(matrices, x + child.getX(), y + child.getY(), mouseX - child.getX(), mouseY - child.getY());
+			child.paint(context, x + child.getX(), y + child.getY(), mouseX - child.getX(), mouseY - child.getY());
 		}
 		ScissorsBugFix.pop();
 	}

@@ -10,7 +10,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
@@ -96,15 +96,15 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-		ScreenDrawing.coloredRect(matrices, x, y, this.width, this.height, 0xFF_262626);
+	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+		ScreenDrawing.coloredRect(context, x, y, this.width, this.height, 0xFF_262626);
 
 		if (scrollBar.getValue() != lastScroll) {
 			layout();
 			lastScroll = scrollBar.getValue();
 		}
 
-		super.paint(matrices, x, y, mouseX, mouseY);
+		super.paint(context, x, y, mouseX, mouseY);
 	}
 
 	private Entry<D> createChild(D d) {
@@ -246,11 +246,11 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 		}
 
 		@Override
-		public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+		public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
 			if (isSelected) {
-				SELECTED.paintBackground(matrices, x, y, this);
+				SELECTED.paintBackground(context, x, y, this);
 			} else {
-				UNSELECTED.paintBackground(matrices, x, y, this);
+				UNSELECTED.paintBackground(context, x, y, this);
 			}
 
 		}
