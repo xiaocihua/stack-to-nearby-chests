@@ -12,6 +12,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.*;
@@ -27,6 +28,8 @@ import org.slf4j.Logger;
 @Environment(EnvType.CLIENT)
 public class StackToNearbyChests implements ClientModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final boolean IS_EXPANDED_STORAGE_MOD_LOADED = FabricLoader.getInstance().isModLoaded("expandedstorage");
+
     private static final Identifier BUTTON_TEXTURE = new Identifier(ModOptions.MOD_ID, "textures/buttons.png");
 
     @Override

@@ -7,6 +7,8 @@ import io.github.cottonmc.cotton.gui.widget.WTextField;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import io.github.xiaocihua.stacktonearbychests.StackToNearbyChests;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.registry.Registries;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
 import static io.github.xiaocihua.stacktonearbychests.gui.ModOptionsGui.TEXT_COLOR;
@@ -118,6 +121,7 @@ public abstract class EntryPicker extends WBox {
 
         public ItemPicker(Consumer<List<Identifier>> consumer) {
             super(consumer);
+            entryList.setData(searchByName(""));
         }
 
         @Override
@@ -142,14 +146,29 @@ public abstract class EntryPicker extends WBox {
 
         @Override
         public SelectableEntryList<Identifier> getEntryList() {
-            return new SelectableEntryList<>(searchByName(""), ItemEntry::new);
+            return new SelectableEntryList<>(ItemEntry::new);
         }
     }
 
     public static class BlockContainerPicker extends EntryPicker {
 
+        Predicate<Block> nonVanillaStyleContainer;
+
         public BlockContainerPicker(Consumer<List<Identifier>> consumer) {
             super(consumer);
+
+            nonVanillaStyleContainer = block -> false;
+
+            if (StackToNearbyChests.IS_EXPANDED_STORAGE_MOD_LOADED) {
+                try {
+                    Class<?> clazz = Class.forName("compasses.expandedstorage.common.block.OpenableBlock");
+                    nonVanillaStyleContainer = clazz::isInstance;
+                } catch (ClassNotFoundException e) {
+                    StackToNearbyChests.LOGGER.error("Unable to find class compasses.expandedstorage.common.block.OpenableBlock");
+                }
+            }
+
+            entryList.setData(searchByName(""));
         }
 
         @Override
@@ -160,7 +179,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByName(String searchStr) {
             return Registries.BLOCK.stream()
-                    .filter(block -> block instanceof BlockWithEntity)
+                    .filter(nonVanillaStyleContainer.or(block -> block instanceof BlockWithEntity))
                     .filter(block -> StringUtils.containsIgnoreCase(block.getName().toString(), searchStr))
                     .map(Registries.BLOCK::getId)
                     .toList();
@@ -169,7 +188,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByID(String searchStr) {
             return Registries.BLOCK.stream()
-                    .filter(block -> block instanceof BlockWithEntity)
+                    .filter(nonVanillaStyleContainer.or(block -> block instanceof BlockWithEntity))
                     .map(Registries.BLOCK::getId)
                     .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
                     .toList();
@@ -177,13 +196,14 @@ public abstract class EntryPicker extends WBox {
 
         @Override
         public SelectableEntryList<Identifier> getEntryList() {
-            return new SelectableEntryList<>(searchByName(""), BlockContainerEntry::new);
+            return new SelectableEntryList<>(BlockContainerEntry::new);
         }
     }
 
     public static class EntityContainerPicker extends EntryPicker {
         public EntityContainerPicker(Consumer<List<Identifier>> consumer) {
             super(consumer);
+            entryList.setData(searchByName(""));
         }
 
         @Override
@@ -208,7 +228,7 @@ public abstract class EntryPicker extends WBox {
 
         @Override
         public SelectableEntryList<Identifier> getEntryList() {
-            return new SelectableEntryList<>(searchByName(""), EntityContainerEntry::new);
+            return new SelectableEntryList<>(EntityContainerEntry::new);
         }
     }
 }

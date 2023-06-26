@@ -52,11 +52,14 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 
 	private Optional<Consumer<List<D>>> changedListener = Optional.empty();
 
+	public SelectableEntryList(Function<D, Entry<D>> supplier) {
+		this(Collections.emptyList(), supplier);
+	}
+
 	public SelectableEntryList(Collection<D> data, Function<D, Entry<D>> supplier) {
-		this.data = new ArrayList<>(data);
 		this.supplier = supplier;
-		scrollBar.setMaxValue(data.size());
 		scrollBar.setParent(this);
+		this.data = new ArrayList<>(data);
 	}
 
 	public void addData(Collection<D> data) {
