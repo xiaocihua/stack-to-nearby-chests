@@ -1,1 +1,1 @@
-Update to Minecraft 1.20.
+Fixed compatibility issues with Expanded Storage (thanks to @XcapeEst)
