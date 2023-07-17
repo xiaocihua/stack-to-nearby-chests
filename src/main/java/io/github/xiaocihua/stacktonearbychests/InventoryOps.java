@@ -289,7 +289,7 @@ public class InventoryOps {
         slots.playerSlots().stream()
                 .filter(Slot::hasStack)
                 .filter(slot -> slot.getStack().isStackable())
-                .filter(slot -> !ModOptions.get().behavior.itemsThatWillNotBeStacked
+                .filter(slot -> !ModOptions.get().behavior.itemsThatWillNotBeRestocked
                         .contains(Registry.ITEM
                                 .getId(slot.getStack().getItem())
                                 .toString()))
