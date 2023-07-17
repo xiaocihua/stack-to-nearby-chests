@@ -1,11 +1,7 @@
-Support for quick stacking and restocking operations for entities.
+Fixed "Items that will not be restocked" list not working properly.
 
-Added "Support for container entities" option.
+Buttons are now hidden when the player is in spectator mode.
 
-Added "Show button tooltip" option.
-
-Removed "Quick stack" and "Restock" button on the screen of rideable inventory not equipped with a chest.
-
-Updated LibGui version.
+Now the next task cannot be executed until the previous task is completely finished.
 
 **This version is not compatible with optifabric**
