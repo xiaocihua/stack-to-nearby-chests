@@ -48,6 +48,10 @@ public class StackToNearbyChests implements ClientModInitializer {
     }
 
     private void addButtonsAndKeys(MinecraftClient client, Screen screen, int scaledWidth, int scaledHeight) {
+        if (client.player == null || client.player.isSpectator()) {
+            return;
+        }
+
         // For compatibility with PlayerEx
         String screenName = screen.getClass().getCanonicalName();
         if ("com.github.clevernucleus.playerex.client.gui.ExScreen".equals(screenName)
