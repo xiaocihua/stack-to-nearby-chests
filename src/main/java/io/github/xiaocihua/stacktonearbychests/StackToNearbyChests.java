@@ -46,6 +46,10 @@ public class StackToNearbyChests implements ClientModInitializer {
     }
 
     private void addButtonsAndKeys(MinecraftClient client, Screen screen, int scaledWidth, int scaledHeight) {
+        if (client.player == null || client.player.isSpectator()) {
+            return;
+        }
+
         if (!(screen instanceof HandledScreen<?>)) {
             return;
         }

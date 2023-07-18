@@ -138,14 +138,11 @@ public class InventoryOps {
             return;
         }
         ClientWorld world = client.world;
-        assert world != null;
         ClientPlayerEntity player = client.player;
-        assert player != null;
-        ClientPlayerInteractionManager interactionManager = client.interactionManager;
-        assert interactionManager != null;
-        if (player.isSneaking()) {
+        if (player.isSneaking() || player.isSpectator()) {
             return;
         }
+        ClientPlayerInteractionManager interactionManager = client.interactionManager;
 
         Vec3d origin = cameraEntity.getCameraPosVec(0);
         float reachDistance = interactionManager.getReachDistance();
