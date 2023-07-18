@@ -63,7 +63,7 @@ public class InventoryOps {
         });
 
         OnKeyCallback.PRESS.register(key -> {
-            if (isRunning()){
+            if (!isTerminated()){
                 if (key == GLFW.GLFW_KEY_ESCAPE) {
                     interruptCurrentOperation();
                 }
