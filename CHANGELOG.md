@@ -1,1 +1,5 @@
-Fixed compatibility issues with PlayerEx. ([#11](https:/0.2./github.com/xiaocihua/stack-to-nearby-chests/issues/11))
+Fixed "Items that will not be restocked" list not working properly.
+
+Buttons are now hidden when the player is in spectator mode.
+
+Now the next task cannot be executed until the previous task is completely finished.
