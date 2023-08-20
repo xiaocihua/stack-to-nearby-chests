@@ -5,10 +5,10 @@
   "stack-to-nearby-chests.tooltip.restockButton": "Restock",
   "stack-to-nearby-chests.tooltip.hint": "Press escape to interrupt",
 
-  "stack-to-nearby-chests.message.operationInterrupted": "The operation was interrupted",
-  "stack-to-nearby-chests.message.interruptedByTimeout": "The operation was interrupted, reason: Timed out",
+  "stack-to-nearby-chests.message.actionInterrupted": "The action was interrupted",
+  "stack-to-nearby-chests.message.interruptedByTimeout": "The action was interrupted, reason: Timed out",
   "stack-to-nearby-chests.message.exceptionOccurredWhileClickingSlot": "An exception occurred while clicking a slot, please check the log",
-  "stack-to-nearby-chests.message.exceptionOccurred": "An exception occurred during the operation, please check the log",
+  "stack-to-nearby-chests.message.exceptionOccurred": "An exception occurred, please check the log",
 
   "stack-to-nearby-chests.resource.gold_badge": "Gold Badge",
   "stack-to-nearby-chests.resource.gold_border": "Gold Border",
