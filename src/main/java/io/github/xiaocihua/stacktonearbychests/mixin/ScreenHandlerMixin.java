@@ -1,6 +1,6 @@
 package io.github.xiaocihua.stacktonearbychests.mixin;
 
-import io.github.xiaocihua.stacktonearbychests.InventoryOps;
+import io.github.xiaocihua.stacktonearbychests.ForEachContainerTask;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,7 +22,9 @@ public abstract class ScreenHandlerMixin {
 
     @Inject(method = "updateSlotStacks(ILjava/util/List;Lnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
     private void onUpdateSlotStacks(int revision, List<ItemStack> stacks, ItemStack cursorStack, CallbackInfo ci) {
-        InventoryOps.onUpdateSlotStacks((ScreenHandler)(Object)this);
+        if (ForEachContainerTask.isRunning()) {
+            ForEachContainerTask.getCurrentTask().onNext((ScreenHandler)(Object)this);
+        }
     }
 
     @Inject(method = "insertItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;markDirty()V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)

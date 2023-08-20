@@ -12,6 +12,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.*;
@@ -32,16 +33,18 @@ public class StackToNearbyChests implements ClientModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
     private static final Identifier BUTTON_TEXTURE = new Identifier(ModOptions.MOD_ID, "textures/buttons.png");
 
+    public static final boolean IS_PLAYEREX_MOD_LOADED = FabricLoader.getInstance().isModLoaded("playerex");
+
     @Override
     public void onInitializeClient() {
         KeySequence.init();
         LockedSlots.init();
-        InventoryOps.init();
+        ForEachContainerTask.init();
 
         ScreenEvents.AFTER_INIT.register(this::addButtonsAndKeys);
 
-        ModOptions.get().keymap.stackToNearbyContainersKey.registerNotOnScreen(InventoryOps::stackToNearbyContainers, ActionResult.PASS);
-        ModOptions.get().keymap.restockFromNearbyContainersKey.registerNotOnScreen(InventoryOps::restockFromNearbyContainers, ActionResult.PASS);
+        ModOptions.get().keymap.stackToNearbyContainersKey.registerNotOnScreen(InventoryActions::stackToNearbyContainers, ActionResult.PASS);
+        ModOptions.get().keymap.restockFromNearbyContainersKey.registerNotOnScreen(InventoryActions::restockFromNearbyContainers, ActionResult.PASS);
 
         ModOptions.get().keymap.openModOptionsScreenKey.registerNotOnScreen(
                 () -> MinecraftClient.getInstance().setScreen(new ModOptionsScreen(new ModOptionsGui())), ActionResult.FAIL);
@@ -53,12 +56,14 @@ public class StackToNearbyChests implements ClientModInitializer {
         }
 
         // For compatibility with PlayerEx
-        String screenName = screen.getClass().getCanonicalName();
-        if ("com.github.clevernucleus.playerex.client.gui.ExScreen".equals(screenName)
-                || "com.github.clevernucleus.playerex.client.gui.CombatPageLayer".equals(screenName)
-                || "com.github.clevernucleus.playerex.client.gui.AttributesPageLayer".equals(screenName)
-        ) {
-            return;
+        if (IS_PLAYEREX_MOD_LOADED) {
+            String screenName = screen.getClass().getCanonicalName();
+            if ("com.github.clevernucleus.playerex.client.gui.ExScreen".equals(screenName)
+                    || "com.github.clevernucleus.playerex.client.gui.CombatPageLayer".equals(screenName)
+                    || "com.github.clevernucleus.playerex.client.gui.AttributesPageLayer".equals(screenName)
+            ) {
+                return;
+            }
         }
 
         ModOptions.Appearance appearanceOption = ModOptions.get().appearance;
@@ -71,7 +76,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setTooltipSupplier(getTooltipWithHint(screen, "stack-to-nearby-chests.stackToNearbyContainersButton.tooltip"))
                         .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.stackToNearbyContainersButtonPosX.intValue(),
                                 parent.getY() + appearanceOption.stackToNearbyContainersButtonPosY.intValue()))
-                        .setPressAction(button -> InventoryOps.stackToNearbyContainers())
+                        .setPressAction(button -> InventoryActions.stackToNearbyContainers())
                         .build();
             }
 
@@ -82,13 +87,13 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setTooltipSupplier(getTooltipWithHint(screen, "stack-to-nearby-chests.restockFromNearbyContainersButton.tooltip"))
                         .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.restockFromNearbyContainersButtonPosX.intValue(),
                                 parent.getY() + appearanceOption.restockFromNearbyContainersButtonPosY.intValue()))
-                        .setPressAction(button -> InventoryOps.restockFromNearbyContainers())
+                        .setPressAction(button -> InventoryActions.restockFromNearbyContainers())
                         .build();
             }
 
             ScreenKeyboardEvents.afterKeyPress(screen).register((screen1, key, scancode, modifiers) -> {
-                ModOptions.get().keymap.stackToNearbyContainersKey.testThenRun(InventoryOps::stackToNearbyContainers);
-                ModOptions.get().keymap.restockFromNearbyContainersKey.testThenRun(InventoryOps::restockFromNearbyContainers);
+                ModOptions.get().keymap.stackToNearbyContainersKey.testThenRun(InventoryActions::stackToNearbyContainers);
+                ModOptions.get().keymap.restockFromNearbyContainersKey.testThenRun(InventoryActions::restockFromNearbyContainers);
             });
         } else if (isContainerScreen(screen)) {
             ScreenHandler screenHandler = ((HandledScreen<?>) screen).getScreenHandler();
@@ -99,7 +104,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setTexture(BUTTON_TEXTURE, 64, 32)
                         .setTooltipSupplier(getTooltip(screen, "stack-to-nearby-chests.quickStackButton.tooltip"))
                         .setPosUpdater(parent -> getAbsolutePos(parent, appearanceOption.quickStackButtonPosX, appearanceOption.quickStackButtonPosY))
-                        .setPressAction(button -> InventoryOps.quickStack(screenHandler))
+                        .setPressAction(button -> InventoryActions.quickStack(screenHandler))
                         .build();
             }
 
@@ -109,13 +114,13 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setTexture(BUTTON_TEXTURE, 64, 32)
                         .setTooltipSupplier(getTooltip(screen, "stack-to-nearby-chests.restockButton.tooltip"))
                         .setPosUpdater(parent -> getAbsolutePos(parent, appearanceOption.restockButtonPosX, appearanceOption.restockButtonPosY))
-                        .setPressAction(button -> InventoryOps.restock(screenHandler))
+                        .setPressAction(button -> InventoryActions.restock(screenHandler))
                         .build();
             }
 
             ScreenKeyboardEvents.afterKeyPress(screen).register((screen1, key, scancode, modifiers) -> {
-                ModOptions.get().keymap.quickStackKey.testThenRun(() -> InventoryOps.quickStack(screenHandler));
-                ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryOps.restock(screenHandler));
+                ModOptions.get().keymap.quickStackKey.testThenRun(() -> InventoryActions.quickStack(screenHandler));
+                ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryActions.restock(screenHandler));
             });
         }
     }

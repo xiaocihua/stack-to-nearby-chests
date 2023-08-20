@@ -1,7 +1,6 @@
 package io.github.xiaocihua.stacktonearbychests.mixin;
 
 import com.mojang.authlib.GameProfile;
-import io.github.xiaocihua.stacktonearbychests.InventoryOps;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -33,10 +32,4 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         LockedSlots.afterDropSelectedItem(getInventory().selectedSlot);
     }
 
-    @Inject(method = "isSneaking", at = @At("RETURN"), cancellable = true)
-    private void onIsSneaking(CallbackInfoReturnable<Boolean> cir) {
-        if (!InventoryOps.isTerminated() && InventoryOps.sneak) {
-            cir.setReturnValue(true);
-        }
-    }
 }
