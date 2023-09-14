@@ -187,6 +187,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         WBox keymap = new WBoxCustom(Axis.VERTICAL).setInsets(Insets.ROOT_PANEL);
 
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "stackToNearbyContainers"), options.keymap.stackToNearbyContainersKey));
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainers"), options.keymap.quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainersKey));
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restockFromNearbyContainers"), options.keymap.restockFromNearbyContainersKey));
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "quickStack"), options.keymap.quickStackKey));
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restock"), options.keymap.restockKey));

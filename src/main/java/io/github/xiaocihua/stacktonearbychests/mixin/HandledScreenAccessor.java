@@ -22,6 +22,10 @@ public interface HandledScreenAccessor {
     @Accessor("y")
     void setY(int y);
 
+    @Accessor("focusedSlot")
+    @Nullable
+    Slot getFocusedSlot();
+
     @Accessor
     int getBackgroundWidth();
 
