@@ -74,6 +74,10 @@ public final class KeySequence {
         }
     }
 
+    public boolean isEmpty() {
+        return keys.isEmpty();
+    }
+
     public void addMouseButton(int button) {
         addKey(button - MOUSE_BUTTON_CODE_OFFSET);
     }
@@ -104,10 +108,13 @@ public final class KeySequence {
         return Text.of(localized);
     }
 
-    public void testThenRun(Runnable action) {
-        if (!keys.isEmpty() && PRESSING_KEYS.equals(keys)) {
+    public boolean testThenRun(Runnable action) {
+        if (!isEmpty() && PRESSING_KEYS.equals(keys)) {
             action.run();
+            return true;
         }
+
+        return false;
     }
 
     public KeySequence register(Supplier<ActionResult> action) {

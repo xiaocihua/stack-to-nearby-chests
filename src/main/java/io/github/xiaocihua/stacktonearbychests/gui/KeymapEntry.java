@@ -2,7 +2,7 @@ package io.github.xiaocihua.stacktonearbychests.gui;
 
 import io.github.cottonmc.cotton.gui.widget.WBox;
 import io.github.cottonmc.cotton.gui.widget.WButton;
-import io.github.cottonmc.cotton.gui.widget.WLabel;
+import io.github.cottonmc.cotton.gui.widget.WText;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
@@ -15,15 +15,15 @@ public class KeymapEntry extends WBox {
     private static final int KEYBINDING_WIDTH = 170;
     private static final int RESET_BUTTON_WIDTH = 40;
 
-    private final WLabel label;
+    private final WText text;
     private final KeyBindingWidget keybinding;
     private final WButton resetButton;
 
-    public KeymapEntry(Text label, KeySequence keySequence) {
+    public KeymapEntry(Text text, KeySequence keySequence) {
         super(Axis.HORIZONTAL);
 
-        this.label = new WLabel(label, ModOptionsGui.TEXT_COLOR).setVerticalAlignment(VerticalAlignment.CENTER);
-        add(this.label);
+        this.text = new WText(text, ModOptionsGui.TEXT_COLOR).setVerticalAlignment(VerticalAlignment.CENTER);
+        add(this.text);
 
         keybinding = new KeyBindingWidget(keySequence);
         add(keybinding);
@@ -36,7 +36,7 @@ public class KeymapEntry extends WBox {
 
     @Override
     public void layout() {
-        label.setSize(width - KEYBINDING_WIDTH - RESET_BUTTON_WIDTH - spacing, height);
+        text.setSize(width - KEYBINDING_WIDTH - RESET_BUTTON_WIDTH - spacing, height);
         keybinding.setSize(KEYBINDING_WIDTH - spacing, height);
         resetButton.setSize(RESET_BUTTON_WIDTH, height);
         super.layout();

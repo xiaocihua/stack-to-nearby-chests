@@ -57,6 +57,7 @@
   "stack-to-nearby-chests.options.keymap": "Keymap",
   "stack-to-nearby-chests.options.stackToNearbyContainers": "Stack to nearby containers",
   "stack-to-nearby-chests.options.restockFromNearbyContainers": "Restock from nearby containers",
+  "stack-to-nearby-chests.options.quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainers": "Quick stack items of the same type as the one under the cursor to nearby containers",
   "stack-to-nearby-chests.options.quickStack": "Quick stack",
   "stack-to-nearby-chests.options.restock": "Restock",
   "stack-to-nearby-chests.options.markAsFavorite": "Favorite items",

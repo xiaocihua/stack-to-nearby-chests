@@ -3,6 +3,7 @@ package io.github.xiaocihua.stacktonearbychests;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.xiaocihua.stacktonearbychests.event.ClickSlotCallback;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import io.github.xiaocihua.stacktonearbychests.mixin.MinecraftServerAccessor;
 import net.fabricmc.api.EnvType;
@@ -81,6 +82,28 @@ public class LockedSlots {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             write();
             currentLockedSlots.clear();
+        });
+
+        ClickSlotCallback.BEFORE.register((syncId, slotId, button, actionType, player) -> {
+            @Nullable
+            Slot slot = slotId < 0 ? null : player.currentScreenHandler.getSlot(slotId);
+            if (isLocked(slot) && (
+                    actionType == SlotActionType.PICKUP && ModOptions.get().behavior.favoriteItemsCannotBePickedUp.booleanValue()
+                            || actionType == SlotActionType.QUICK_MOVE && ModOptions.get().behavior.favoriteItemStacksCannotBeQuickMoved.booleanValue()
+                            || actionType == SlotActionType.SWAP && ModOptions.get().behavior.favoriteItemStacksCannotBeSwapped.booleanValue()
+                            || actionType == SlotActionType.THROW && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()
+            )) {
+                return ActionResult.FAIL;
+            }
+
+            actionBeingExecuted = actionType;
+
+            return ActionResult.PASS;
+        });
+
+        ClickSlotCallback.AFTER.register((syncId, slotId, button, actionType, player) -> {
+            afterClickSlot(slotId, button, actionType, player);
+            return ActionResult.PASS;
         });
     }
 
@@ -163,23 +186,6 @@ public class LockedSlots {
                 && slotIndex != 36;// Feet
     }
 
-    public static ActionResult beforeClickSlot(int slotId, int button, SlotActionType actionType, PlayerEntity player) {
-        @Nullable
-        Slot slot = slotId < 0 ? null : player.currentScreenHandler.getSlot(slotId);
-        if (isLocked(slot) && (
-                actionType == SlotActionType.PICKUP && ModOptions.get().behavior.favoriteItemsCannotBePickedUp.booleanValue()
-                        || actionType == SlotActionType.QUICK_MOVE && ModOptions.get().behavior.favoriteItemStacksCannotBeQuickMoved.booleanValue()
-                        || actionType == SlotActionType.SWAP && ModOptions.get().behavior.favoriteItemStacksCannotBeSwapped.booleanValue()
-                        || actionType == SlotActionType.THROW && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()
-        )) {
-            return ActionResult.FAIL;
-        }
-
-        actionBeingExecuted = actionType;
-
-        return ActionResult.PASS;
-    }
-
     public static void onSetStack(int slotIndex, ItemStack stack) {
         if (stack.isEmpty()) {
             if (actionBeingExecuted == null || actionBeingExecuted == SlotActionType.THROW) {
@@ -196,7 +202,7 @@ public class LockedSlots {
         quickMoveDestination = destination;
     }
 
-    public static void afterClickSlot(int slotId, int button, SlotActionType actionType, PlayerEntity player) {
+    private static void afterClickSlot(int slotId, int button, SlotActionType actionType, PlayerEntity player) {
         ScreenHandler screenHandler = player.currentScreenHandler;
         @Nullable
         Slot slot = slotId < 0 ? null : screenHandler.getSlot(slotId);
