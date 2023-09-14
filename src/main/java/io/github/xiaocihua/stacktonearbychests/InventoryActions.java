@@ -1,6 +1,8 @@
 package io.github.xiaocihua.stacktonearbychests;
 
+import io.github.xiaocihua.stacktonearbychests.event.ClickSlotCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.Entity;
@@ -11,6 +13,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 import org.lwjgl.glfw.GLFW;
 
@@ -21,18 +24,39 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.LOGGER;
+import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.currentStackToNearbyContainersButton;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toSet;
 
 public class InventoryActions {
 
+    public static void init() {
+        ClickSlotCallback.BEFORE.register((syncId, slotId, button, actionType, player) ->
+        {
+            if (slotId == -999
+                    && actionType == SlotActionType.PICKUP
+                    && currentStackToNearbyContainersButton.map(ClickableWidget::isHovered).orElse(false)) {
+                return ActionResult.FAIL;
+            }
+            return ActionResult.PASS;
+        });
+    }
+
     public static void stackToNearbyContainers() {
         forEachContainer(InventoryActions::quickStack, ModOptions.get().behavior.stackingTargets, ModOptions.get().behavior.stackingTargetEntities);
     }
 
+    public static void stackToNearbyContainers(Item item) {
+        forEachContainer(screenHandler -> quickStack(screenHandler, item), ModOptions.get().behavior.stackingTargets, ModOptions.get().behavior.stackingTargetEntities);
+    }
+
     public static void restockFromNearbyContainers() {
         forEachContainer(InventoryActions::restock, ModOptions.get().behavior.restockingSources, ModOptions.get().behavior.restockingSourceEntities);
+    }
+
+    public static boolean canMerge(ItemStack stack, ItemStack otherStack) {
+        return stack.getCount() < stack.getMaxCount() && ItemStack.canCombine(stack, otherStack);
     }
 
     public static void forEachContainer(Consumer<ScreenHandler> action, Collection<String> blockFilter, Collection<String> entityFilter) {
@@ -53,8 +77,7 @@ public class InventoryActions {
             return;
         }
 
-        ForEachContainerTask task =
-                new ForEachBlockContainerTask(client, cameraEntity, world, player, interactionManager, action, blockFilter);
+        var task = new ForEachBlockContainerTask(client, cameraEntity, world, player, interactionManager, action, blockFilter);
 
         if (ModOptions.get().behavior.supportForContainerEntities.booleanValue() && !player.hasVehicle()) {
             task.thenStart(new ForEachEntityContainerTask(client, player, action, cameraEntity, world, interactionManager, entityFilter));
@@ -71,11 +94,26 @@ public class InventoryActions {
                 .filter(item -> !ModOptions.get().behavior.itemsThatWillNotBeStacked.contains(Registries.ITEM.getId(item).toString()))
                 .collect(toSet());
 
-        slots.playerSlots().stream()
+        moveAll(screenHandler, slots.playerSlots, itemsInContainer);
+    }
+
+    public static void quickStack(ScreenHandler screenHandler, Item item) {
+        var slots = SlotsInScreenHandler.of(screenHandler);
+
+        boolean hasSameTypeItems = slots.containerSlots.stream()
+                .anyMatch(slot -> slot.getStack().isOf(item));
+
+        if (hasSameTypeItems) {
+            moveAll(screenHandler, slots.playerSlots(), Set.of(item));
+        }
+    }
+
+    private static void moveAll(ScreenHandler screenHandler, List<Slot> playerSlots, Set<Item> itemsToBeMoved) {
+        playerSlots.stream()
                 .filter(slot -> !(ModOptions.get().behavior.doNotQuickStackItemsFromTheHotbar.booleanValue()
                         && PlayerInventory.isValidHotbarIndex(slot.getIndex())))
                 .filter(not(LockedSlots::isLocked))
-                .filter(slot -> itemsInContainer.contains(slot.getStack().getItem()))
+                .filter(slot -> itemsToBeMoved.contains(slot.getStack().getItem()))
                 .filter(slot -> slot.canTakeItems(MinecraftClient.getInstance().player))
                 .filter(Slot::hasStack)
                 .forEach(slot -> quickMove(screenHandler, slot));

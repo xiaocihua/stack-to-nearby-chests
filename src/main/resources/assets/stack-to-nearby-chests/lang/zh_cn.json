@@ -56,6 +56,7 @@
   "stack-to-nearby-chests.options.keymap": "按键映射",
   "stack-to-nearby-chests.options.stackToNearbyContainers": "堆叠到附近的容器",
   "stack-to-nearby-chests.options.restockFromNearbyContainers": "从附近的容器中补货",
+  "stack-to-nearby-chests.options.quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainers": "快速堆叠光标指向的该类物品到附近的容器",
   "stack-to-nearby-chests.options.quickStack": "快速堆叠",
   "stack-to-nearby-chests.options.restock": "补货",
   "stack-to-nearby-chests.options.markAsFavorite": "标记为收藏",

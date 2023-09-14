@@ -260,6 +260,7 @@ public class ModOptions {
 
     public static class Keymap {
         public KeySequence stackToNearbyContainersKey = KeySequence.empty();
+        public KeySequence quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainersKey = KeySequence.empty();
         public KeySequence restockFromNearbyContainersKey = KeySequence.empty();
         public KeySequence quickStackKey = KeySequence.empty();
         public KeySequence restockKey = KeySequence.empty();
