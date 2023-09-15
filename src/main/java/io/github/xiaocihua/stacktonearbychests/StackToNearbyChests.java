@@ -86,7 +86,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 var buttonWidget = new PosUpdatableButtonWidget.Builder(inventoryScreen)
                         .setUV(0, 0)
                         .setTexture(BUTTON_TEXTURE, 64, 32)
-                        .setTooltipSupplier(getTooltipWithHint(screen, "stack-to-nearby-chests.stackToNearbyContainersButton.tooltip"))
+                        .setTooltipSupplier(getTooltipWithHint(screen, "stack-to-nearby-chests.tooltip.stackToNearbyContainersButton"))
                         .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.stackToNearbyContainersButtonPosX.intValue(),
                                 parent.getY() + appearanceOption.stackToNearbyContainersButtonPosY.intValue()))
                         .setPressAction(button -> {
@@ -119,7 +119,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 new PosUpdatableButtonWidget.Builder(inventoryScreen)
                         .setUV(16, 0)
                         .setTexture(BUTTON_TEXTURE, 64, 32)
-                        .setTooltipSupplier(getTooltipWithHint(screen, "stack-to-nearby-chests.restockFromNearbyContainersButton.tooltip"))
+                        .setTooltipSupplier(getTooltipWithHint(screen, "stack-to-nearby-chests.tooltip.restockFromNearbyContainersButton"))
                         .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.restockFromNearbyContainersButtonPosX.intValue(),
                                 parent.getY() + appearanceOption.restockFromNearbyContainersButtonPosY.intValue()))
                         .setPressAction(button -> InventoryActions.restockFromNearbyContainers())
@@ -150,7 +150,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 new PosUpdatableButtonWidget.Builder((HandledScreen<?>) screen)
                         .setUV(32, 0)
                         .setTexture(BUTTON_TEXTURE, 64, 32)
-                        .setTooltipSupplier(getTooltip(screen, "stack-to-nearby-chests.quickStackButton.tooltip"))
+                        .setTooltipSupplier(getTooltip(screen, "stack-to-nearby-chests.tooltip.quickStackButton"))
                         .setPosUpdater(parent -> getAbsolutePos(parent, appearanceOption.quickStackButtonPosX, appearanceOption.quickStackButtonPosY))
                         .setPressAction(button -> InventoryActions.quickStack(screenHandler))
                         .build();
@@ -160,7 +160,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 new PosUpdatableButtonWidget.Builder((HandledScreen<?>) screen)
                         .setUV(48, 0)
                         .setTexture(BUTTON_TEXTURE, 64, 32)
-                        .setTooltipSupplier(getTooltip(screen, "stack-to-nearby-chests.restockButton.tooltip"))
+                        .setTooltipSupplier(getTooltip(screen, "stack-to-nearby-chests.tooltip.restockButton"))
                         .setPosUpdater(parent -> getAbsolutePos(parent, appearanceOption.restockButtonPosX, appearanceOption.restockButtonPosY))
                         .setPressAction(button -> InventoryActions.restock(screenHandler))
                         .build();
