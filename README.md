@@ -19,7 +19,7 @@ The code to iterate over all nearby containers is from [clientcommands](https://
 Items that will not be stacked and items that will not be restocked can be specified in the mod options (default: shulker box items).
 
 
-- **Stack to nearby containers** Perform Quick Stack on all openable containers within the player's reach.
+- **Quick stack to nearby containers** Perform Quick Stack on all openable containers within the player's reach.
 - **Restock from nearby containers** Restock with all openable containers within the player's reach.
 - The above two operations can be performed using buttons or shortcut keys in the player inventory screen, 
 or using shortcut keys when no screen is open.

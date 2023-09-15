@@ -43,9 +43,9 @@ public class ModOptionsGui extends LightweightGuiDescription {
     public ModOptionsGui() {
         root = new WPlainPanel();
         setRootPanel(root);
-        root.setSize(ROOT_WIDTH, 240);
+        root.setSize(ROOT_WIDTH, 245);
         root.add(createTitle(), 0, 0, ROOT_WIDTH, 20);
-        root.add(createTabs(), 0, 20, ROOT_WIDTH, 188);
+        root.add(createTabs(), 0, 20, ROOT_WIDTH, 193);
         root.add(createBottomBar(), 0, 208, ROOT_WIDTH, 32);
         root.validate(this);
     }
@@ -107,8 +107,8 @@ public class ModOptionsGui extends LightweightGuiDescription {
         appearance.add(createCheckbox("showQuickStackButton", options.appearance.showQuickStackButton));
         appearance.add(createCheckbox("showRestockButton", options.appearance.showRestockButton));
         appearance.add(createCheckbox("showButtonTooltip", options.appearance.showButtonTooltip));
-        appearance.add(createIntTextField("stackToNearbyContainersButtonPosX", options.appearance.stackToNearbyContainersButtonPosX), 315, 20);
-        appearance.add(createIntTextField("stackToNearbyContainersButtonPosY", options.appearance.stackToNearbyContainersButtonPosY), 315, 20);
+        appearance.add(createIntTextField("stackToNearbyContainersButtonPosX", options.appearance.stackToNearbyContainersButtonPosX), 342, 20);
+        appearance.add(createIntTextField("stackToNearbyContainersButtonPosY", options.appearance.stackToNearbyContainersButtonPosY), 342, 20);
         appearance.add(createIntTextField("restockFromNearbyContainersButtonPosX", options.appearance.restockFromNearbyContainersButtonPosX), 340, 20);
         appearance.add(createIntTextField("restockFromNearbyContainersButtonPosY", options.appearance.restockFromNearbyContainersButtonPosY), 340, 20);
         String tooltip = PREFIX + "buttonPos.tooltip";
