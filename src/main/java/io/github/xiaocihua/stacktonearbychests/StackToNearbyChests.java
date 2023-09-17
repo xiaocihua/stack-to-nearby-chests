@@ -46,6 +46,7 @@ public class StackToNearbyChests implements ClientModInitializer {
         KeySequence.init();
         LockedSlots.init();
         InventoryActions.init();
+        EndWorldTickExecutor.init();
         ForEachContainerTask.init();
 
         ScreenEvents.AFTER_INIT.register(this::addButtonsAndKeys);
