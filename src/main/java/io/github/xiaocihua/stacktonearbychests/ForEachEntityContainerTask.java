@@ -57,15 +57,14 @@ public class ForEachEntityContainerTask extends ForEachContainerTask {
             super.stop();
             return;
         }
-        player.input.sneaking = true;
         client.options.sneakKey.setPressed(true);
-        super.start();
+        EndWorldTickExecutor.execute(super::start);
     }
 
     @Override
     protected void stop() {
         client.options.sneakKey.setPressed(false);
-        super.stop();
+        EndWorldTickExecutor.execute(super::stop);
     }
 
     @Override
