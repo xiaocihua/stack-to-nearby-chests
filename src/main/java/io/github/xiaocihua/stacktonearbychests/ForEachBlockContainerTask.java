@@ -105,7 +105,7 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
                 getTheOtherHalfOfLargeChest(world, pos).ifPresent(searchedBlocks::add);
             }
 
-            var hitResult = new BlockHitResult(closestPos, MathUtil.getFacingDirection(closestPos.subtract(origin)), pos, false);
+            var hitResult = new BlockHitResult(closestPos, MathUtil.getFacingDirection(closestPos.subtract(origin)).getOpposite(), pos, false);
             interactionManager.interactBlock(player, Hand.MAIN_HAND, hitResult);
 
             return true;
