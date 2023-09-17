@@ -1,5 +1,16 @@
-Fixed "Items that will not be restocked" list not working properly.
+- The process of iterating through nearby containers is no longer performed in a separate thread to avoid potential thread-safety issues.
 
-Buttons are now hidden when the player is in spectator mode.
 
-Now the next task cannot be executed until the previous task is completely finished.
+- Now you can quick stack all items of one type to nearby containers via shortcut keys or by dragging and dropping items to the "Quick stack to nearby containers" button.
+
+
+- Changed all "stack to nearby containers" to "quick stack to nearby containers".
+
+
+- No longer attempts to open blocked shulker boxes.
+
+
+- Fixed creating BlockHitResult objects with the wrong side.
+
+
+- Fixed an issue where, occasionally, sneaking would not cancel after quick stacking to nearby container entities.
