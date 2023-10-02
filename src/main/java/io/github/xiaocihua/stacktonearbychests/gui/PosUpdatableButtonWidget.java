@@ -1,19 +1,17 @@
 package io.github.xiaocihua.stacktonearbychests.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -24,21 +22,14 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     private final HandledScreen<?> parent;
     private final Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater;
 
-    private PosUpdatableButtonWidget(int x,
-                                     int y,
-                                     int width,
+    private PosUpdatableButtonWidget(int width,
                                      int height,
-                                     int u,
-                                     int v,
-                                     int hoveredVOffset,
-                                     Identifier texture,
-                                     int textureWidth,
-                                     int textureHeight,
+                                     ButtonTextures textures,
                                      PressAction pressAction,
                                      Text text,
                                      HandledScreen<?> parent,
                                      Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater) {
-        super(x, y, width, height, u, v, hoveredVOffset, texture, textureWidth, textureHeight, pressAction, text);
+        super(0, 0, width, height, textures, pressAction, text);
         this.parent = parent;
         this.posUpdater = posUpdater;
         Screens.getButtons(parent).add(this);
@@ -47,17 +38,17 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     @Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         posUpdater.ifPresent(updater -> setPos(updater.apply((HandledScreenAccessor) parent)));
-
-        RenderSystem.setShaderTexture(0, texture);
-        int i = v;
-        if (!this.isNarratable()) {
-            i = v + hoveredVOffset * 2;
-        } else if (this.isHovered()) {
-            i = v + hoveredVOffset;
-        }
-
-        RenderSystem.enableDepthTest();
-        drawTexture(context, texture, getX(), getY(), u, i, 0, width, height, textureWidth, textureHeight);
+        super.renderButton(context, mouseX, mouseY, delta);
+//        RenderSystem.setShaderTexture(0, texture);
+//        int i = v;
+//        if (!this.isNarratable()) {
+//            i = v + hoveredVOffset * 2;
+//        } else if (this.isHovered()) {
+//            i = v + hoveredVOffset;
+//        }
+//
+//        RenderSystem.enableDepthTest();
+//        drawTexture(context, texture, getX(), getY(), u, i, 0, width, height, textureWidth, textureHeight);
     }
 
     public void setPos(Vec2i pos) {
@@ -66,31 +57,18 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     }
 
     public static class Builder {
-        private int x = 0;
-        private int y = 0;
         private int width = 16;
         private int height = 16;
-        private int u = 0;
-        private int v = 0;
-        private int hoveredVOffset = 16;
-        private Identifier texture = MissingSprite.getMissingSpriteId();
-        private int textureWidth = 16;
-        private int textureHeight = 16;
+        private ButtonTextures textures;
         private PressAction pressAction = button -> {};
         @Nullable
         private Tooltip tooltip;
         private Text text = ScreenTexts.EMPTY;
-        private HandledScreen<?> parent;
+        private final HandledScreen<?> parent;
         private Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater = Optional.empty();
 
         public Builder(HandledScreen<?> parent) {
             this.parent = parent;
-        }
-
-        public Builder setPos(int x, int y) {
-            this.x = x;
-            this.y = y;
-            return this;
         }
 
         public Builder setSize(int width, int height) {
@@ -99,21 +77,8 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
             return this;
         }
 
-        public Builder setUV(int u, int v) {
-            this.u = u;
-            this.v = v;
-            return this;
-        }
-
-        public Builder setHoveredVOffset(int hoveredVOffset) {
-            this.hoveredVOffset = hoveredVOffset;
-            return this;
-        }
-
-        public Builder setTexture(Identifier texture, int textureWidth, int textureHeight) {
-            this.texture = texture;
-            this.textureWidth = textureWidth;
-            this.textureHeight = textureHeight;
+        public Builder setTextures(ButtonTextures textures) {
+            this.textures = textures;
             return this;
         }
 
@@ -145,20 +110,8 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
         }
 
         public PosUpdatableButtonWidget build() {
-            PosUpdatableButtonWidget button = new PosUpdatableButtonWidget(x,
-                    y,
-                    width,
-                    height,
-                    u,
-                    v,
-                    hoveredVOffset,
-                    texture,
-                    textureWidth,
-                    textureHeight,
-                    pressAction,
-                    text,
-                    parent,
-                    posUpdater);
+            PosUpdatableButtonWidget button =
+                    new PosUpdatableButtonWidget(width, height, textures, pressAction, text, parent, posUpdater);
             button.setTooltip(tooltip);
             return button;
         }

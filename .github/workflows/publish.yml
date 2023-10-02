@@ -3,9 +3,9 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.4.0 for Minecraft 1.20-1.20.1
+  RELEASE_NAME: 0.4.0 for Minecraft 1.20.2
   VERSION: 0.4.0
-  MC_VERSION: mc1.20.1
+  MC_VERSION: mc1.20.2
 
 permissions:
   contents: write
@@ -54,10 +54,10 @@ jobs:
 
           loaders: fabric
           game-versions: |
-            1.20
-            1.20.1
+            1.20.2
           java: |
             17
             18
             19
             20
+            21

@@ -144,9 +144,9 @@ public class WScrollPanelCustom extends WClippedPanelCustom {
 	}
 
 	@Override
-	public InputResult onMouseScroll(int x, int y, double amount) {
+	public InputResult onMouseScroll(int x, int y, double horizontalAmount, double verticalAmount) {
 		if (hasVerticalScrollbar()) {
-			return verticalScrollBar.onMouseScroll(0, 0, amount);
+			return verticalScrollBar.onMouseScroll(0, 0, horizontalAmount, verticalAmount);
 		}
 
 		return InputResult.IGNORED;

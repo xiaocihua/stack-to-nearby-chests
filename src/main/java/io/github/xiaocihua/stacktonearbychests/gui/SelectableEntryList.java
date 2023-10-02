@@ -201,8 +201,8 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 	}
 
 	@Override
-	public InputResult onMouseScroll(int x, int y, double amount) {
-		return scrollBar.onMouseScroll(0, 0, amount);
+	public InputResult onMouseScroll(int x, int y, double horizontalAmount, double verticalAmount) {
+		return scrollBar.onMouseScroll(0, 0, horizontalAmount, verticalAmount);
 	}
 
 	public void select(D data) {
