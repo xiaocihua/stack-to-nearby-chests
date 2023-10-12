@@ -40,6 +40,7 @@ import static java.util.function.Predicate.not;
 public class StackToNearbyChests implements ClientModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final boolean IS_EXPANDED_STORAGE_MOD_LOADED = FabricLoader.getInstance().isModLoaded("expandedstorage");
+    public static final boolean IS_IPN_MOD_LOADED = FabricLoader.getInstance().isModLoaded("inventoryprofilesnext");
 
     private static final Identifier BUTTON_TEXTURES = new Identifier(ModOptions.MOD_ID, "widget/");
 
