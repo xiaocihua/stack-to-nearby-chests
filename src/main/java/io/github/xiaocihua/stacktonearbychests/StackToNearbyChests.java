@@ -13,6 +13,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.fabricmc.fabric.impl.client.screen.ScreenExtensions;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.*;
@@ -37,6 +38,9 @@ import static java.util.function.Predicate.not;
 @Environment(EnvType.CLIENT)
 public class StackToNearbyChests implements ClientModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static final boolean IS_IPN_MOD_LOADED = FabricLoader.getInstance().isModLoaded("inventoryprofilesnext");
+
     private static final Identifier BUTTON_TEXTURE = new Identifier(ModOptions.MOD_ID, "textures/buttons.png");
 
     public static Optional<PosUpdatableButtonWidget> currentStackToNearbyContainersButton = Optional.empty();
