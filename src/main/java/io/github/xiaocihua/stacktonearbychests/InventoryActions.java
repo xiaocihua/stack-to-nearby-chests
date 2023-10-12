@@ -17,6 +17,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.lwjgl.glfw.GLFW;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +113,7 @@ public class InventoryActions {
         playerSlots.stream()
                 .filter(slot -> !(ModOptions.get().behavior.doNotQuickStackItemsFromTheHotbar.booleanValue()
                         && PlayerInventory.isValidHotbarIndex(slot.getIndex())))
-                .filter(not(LockedSlots::isLocked))
+                .filter(not(InventoryActions::isSlotLocked))
                 .filter(slot -> itemsToBeMoved.contains(slot.getStack().getItem()))
                 .filter(slot -> slot.canTakeItems(MinecraftClient.getInstance().player))
                 .filter(Slot::hasStack)
@@ -158,5 +159,24 @@ public class InventoryActions {
 
             return new SlotsInScreenHandler(inventories.get(true), inventories.get(false));
         }
+    }
+
+    private static boolean isSlotLocked(Slot slot) {
+        if (StackToNearbyChests.IS_IPN_MOD_LOADED) {
+            try {
+                Class<?> clazz = Class.forName("org.anti_ad.mc.ipnext.event.LockSlotsHandler");
+                Object instance = clazz.getField("INSTANCE").get(null);
+                Boolean slotLocked = (Boolean) clazz.getMethod("isMappedSlotLocked", Slot.class)
+                        .invoke(instance, slot);
+                if (slotLocked) {
+                    return true;
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                     IllegalAccessException | NoSuchFieldException e) {
+                StackToNearbyChests.LOGGER.warn("An exception occurred when determining whether the slot is locked by IPN mod", e);
+            }
+        }
+
+        return LockedSlots.isLocked(slot);
     }
 }

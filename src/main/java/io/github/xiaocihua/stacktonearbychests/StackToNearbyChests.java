@@ -40,6 +40,9 @@ import static java.util.function.Predicate.not;
 @Environment(EnvType.CLIENT)
 public class StackToNearbyChests implements ClientModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static final boolean IS_IPN_MOD_LOADED = FabricLoader.getInstance().isModLoaded("inventoryprofilesnext");
+
     private static final Identifier BUTTON_TEXTURE = new Identifier(ModOptions.MOD_ID, "textures/buttons.png");
 
     public static final boolean IS_PLAYEREX_MOD_LOADED = FabricLoader.getInstance().isModLoaded("playerex");
