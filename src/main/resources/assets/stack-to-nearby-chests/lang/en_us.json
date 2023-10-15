@@ -37,6 +37,7 @@
   "stack-to-nearby-chests.options.searchInterval.tooltip": "The time between the end of the operations on the previous container and the opening of the next container (unit: milliseconds)",
   "stack-to-nearby-chests.options.supportForContainerEntities": "Support for container entities",
   "stack-to-nearby-chests.options.doNotQuickStackItemsFromTheHotbar": "Do not quick stack items from the hotbar",
+  "stack-to-nearby-chests.options.enableItemFavoriting": "Enable item favoriting",
   "stack-to-nearby-chests.options.favoriteItemsCannotBePickedUp": "Favorite items cannot be picked up",
   "stack-to-nearby-chests.options.favoriteItemStacksCannotBeQuickMoved": "Favorite items cannot be quick-moved",
   "stack-to-nearby-chests.options.favoriteItemStacksCannotBeSwapped": "Favorite items cannot be swapped",

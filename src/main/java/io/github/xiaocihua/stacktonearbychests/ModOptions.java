@@ -27,7 +27,7 @@ public class ModOptions {
     public static final Path MOD_OPTIONS_DIR = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID);
     public static final Path OPTIONS_FILE = MOD_OPTIONS_DIR.resolve("mod-options.json");
 
-    private static ModOptions options = read();
+    private static final ModOptions options = read();
 
     public Appearance appearance = new Appearance();
     public Behavior behavior = new Behavior();
@@ -96,6 +96,8 @@ public class ModOptions {
         public MutableBoolean supportForContainerEntities = new MutableBoolean(true);
 
         public MutableBoolean doNotQuickStackItemsFromTheHotbar = new MutableBoolean(false);
+
+        public MutableBoolean enableItemFavoriting = new MutableBoolean(true);
         public MutableBoolean favoriteItemsCannotBePickedUp = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeThrown = new MutableBoolean(false);
         public MutableBoolean favoriteItemStacksCannotBeQuickMoved = new MutableBoolean(false);
