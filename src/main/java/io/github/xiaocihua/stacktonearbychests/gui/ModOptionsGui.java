@@ -132,6 +132,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
 
         behavior.add(createCheckbox("doNotQuickStackItemsFromTheHotbar", options.behavior.doNotQuickStackItemsFromTheHotbar));
 
+        behavior.add(createCheckbox("enableItemFavoriting", options.behavior.enableItemFavoriting));
         behavior.add(createCheckbox("favoriteItemsCannotBePickedUp", options.behavior.favoriteItemsCannotBePickedUp));
         behavior.add(createCheckbox("favoriteItemStacksCannotBeQuickMoved", options.behavior.favoriteItemStacksCannotBeQuickMoved));
         behavior.add(createCheckbox("favoriteItemStacksCannotBeSwapped", options.behavior.favoriteItemStacksCannotBeSwapped));
