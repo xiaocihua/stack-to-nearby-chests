@@ -50,7 +50,7 @@ public class LockedSlots {
             new Identifier(ModOptions.MOD_ID, "iron_border"));
 
     private static HashSet<Integer> currentLockedSlots = new HashSet<>();
-    private static boolean isMovingFavoriteItemStack = false;
+    private static boolean movingFavoriteItemStack = false;
     private static Slot quickMoveDestination;
     @Nullable
     private static SlotActionType actionBeingExecuted;
@@ -74,7 +74,7 @@ public class LockedSlots {
                     currentLockedSlots.clear();
                 }
                 refresh(handledScreen.getScreenHandler());
-                ScreenEvents.remove(screen).register(s -> isMovingFavoriteItemStack = false);
+                ScreenEvents.remove(screen).register(s -> movingFavoriteItemStack = false);
             }
         });
 
@@ -215,7 +215,7 @@ public class LockedSlots {
                 unLock(slotIndex);
             } else if (actionBeingExecuted == SlotActionType.PICKUP_ALL) {
                 if (unLock(slotIndex)) {
-                    isMovingFavoriteItemStack = true;
+                    movingFavoriteItemStack = true;
                 }
             }
         }
@@ -232,7 +232,7 @@ public class LockedSlots {
         switch (actionType) {
             case PICKUP -> {
                 if (slotId == ScreenHandler.EMPTY_SPACE_SLOT_INDEX) { // Throw
-                    isMovingFavoriteItemStack = false;
+                    movingFavoriteItemStack = false;
                 }
                 if (slot == null) {
                     break;
@@ -240,23 +240,24 @@ public class LockedSlots {
 
                 ItemStack cursorStack = screenHandler.getCursorStack();
                 ItemStack slotStack = slot.getStack();
-                if (isMovingFavoriteItemStack) {
+                if (movingFavoriteItemStack) {
                     if (cursorStack.isEmpty()) {
                         lock(slot);
-                        isMovingFavoriteItemStack = false;
+                        movingFavoriteItemStack = false;
                     } else if (!ItemStack.canCombine(cursorStack, slotStack)) { // Swap the slot with the cursor
                         if (!isLocked(slot)) {
-                            isMovingFavoriteItemStack = false;
+                            movingFavoriteItemStack = false;
                         }
                         lock(slot);
                     }
                 } else {
                     if (isLocked(slot) && slotStack.isEmpty()) {
                         unLock(slot);
-                        isMovingFavoriteItemStack = true;
-                    } else if (!ItemStack.canCombine(cursorStack, slotStack)) { // Swap the slot with the cursor
+                        movingFavoriteItemStack = true;
+                    } else if (!cursorStack.isEmpty()
+                            && !ItemStack.canCombine(cursorStack, slotStack)) { // Swap the slot with the cursor
                         if (isLocked(slot)) {
-                            isMovingFavoriteItemStack = true;
+                            movingFavoriteItemStack = true;
                         }
                         unLock(slot);
                     }
@@ -283,8 +284,8 @@ public class LockedSlots {
             }
             case QUICK_CRAFT -> {
                 if (screenHandler.getCursorStack().isEmpty()) {
-                    isMovingFavoriteItemStack = false;
-                } else if (isMovingFavoriteItemStack) {
+                    movingFavoriteItemStack = false;
+                } else if (movingFavoriteItemStack) {
                     lock(slot);
                 }
             }
