@@ -36,6 +36,7 @@
   "stack-to-nearby-chests.options.searchInterval": "搜索间隔",
   "stack-to-nearby-chests.options.supportForContainerEntities": "支持容器实体",
   "stack-to-nearby-chests.options.doNotQuickStackItemsFromTheHotbar": "禁止快速堆叠快捷栏中的物品",
+  "stack-to-nearby-chests.options.enableItemFavoriting": "启用物品收藏功能",
   "stack-to-nearby-chests.options.favoriteItemsCannotBePickedUp": "禁止抓取标记为收藏的物品",
   "stack-to-nearby-chests.options.favoriteItemStacksCannotBeQuickMoved": "禁止快速移动标记为收藏的物品",
   "stack-to-nearby-chests.options.favoriteItemStacksCannotBeSwapped": "禁止交换标记为收藏的物品",

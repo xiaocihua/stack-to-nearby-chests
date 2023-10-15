@@ -14,7 +14,6 @@ import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
@@ -29,7 +28,6 @@ import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
@@ -52,8 +50,6 @@ public class LockedSlots {
             new Identifier(ModOptions.MOD_ID, "gold_border"),
             new Identifier(ModOptions.MOD_ID, "iron_border"));
 
-    @Nullable
-    private static Path currentFile;
     private static HashSet<Integer> currentLockedSlots = new HashSet<>();
     private static boolean isMovingFavoriteItemStack = false;
     private static Slot quickMoveDestination;
@@ -61,7 +57,7 @@ public class LockedSlots {
     private static SlotActionType actionBeingExecuted;
 
     public static void init() {
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> read(handler, client));
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> read(client));
 
         FAVORITE_ITEM_TAGS.forEach(identifier ->
                 ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
@@ -79,13 +75,17 @@ public class LockedSlots {
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
             if (screen instanceof HandledScreen<?> handledScreen) {
+                if (!isEnabled()) {
+                    currentLockedSlots.clear();
+                }
                 refresh(handledScreen.getScreenHandler());
                 ScreenEvents.remove(screen).register(s -> isMovingFavoriteItemStack = false);
             }
         });
 
+        // Before disconnect
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            write();
+            write(client);
             currentLockedSlots.clear();
         });
 
@@ -112,7 +112,45 @@ public class LockedSlots {
         });
     }
 
-    private static void read(ClientPlayNetworkHandler handler, @NotNull MinecraftClient client) {
+    private static void read(MinecraftClient client) {
+        if (!isEnabled()) {
+            return;
+        }
+
+        Path path = getLockedSlotsFilePath(client);
+        if (path == null) {
+            return;
+        }
+
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            Type type = new TypeToken<HashSet<Integer>>() {}.getType();
+            currentLockedSlots = new Gson().fromJson(reader, type);
+        } catch (IOException e) {
+            StackToNearbyChests.LOGGER.info("Locked slots file does not exist", e);
+        }
+    }
+
+    private static void write(MinecraftClient client) {
+        if (!isEnabled()) {
+            return;
+        }
+
+        Path path = getLockedSlotsFilePath(client);
+        if (path == null) {
+            return;
+        }
+
+        try {
+            Files.createDirectories(LOCKED_SLOTS_FOLDER);
+            String json = new Gson().toJson(currentLockedSlots);
+            Files.writeString(path, json, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            StackToNearbyChests.LOGGER.error("Failed to write locked slots file", e);
+        }
+    }
+
+    @Nullable
+    private static Path getLockedSlotsFilePath(MinecraftClient client) {
         IntegratedServer integratedServer = client.getServer();
         ServerInfo currentServerEntry = client.getCurrentServerEntry();
         String fileName;
@@ -122,31 +160,14 @@ public class LockedSlots {
             fileName = currentServerEntry.address.concat(".json").replace(":", "colon");
         } else {
             StackToNearbyChests.LOGGER.info("Could not get level name or server address");
-            return;
+            return null;
         }
-        currentFile = LOCKED_SLOTS_FOLDER.resolve(fileName);
 
-        try (BufferedReader reader = Files.newBufferedReader(currentFile)) {
-            Type type = new TypeToken<HashSet<Integer>>() {}.getType();
-            currentLockedSlots = new Gson().fromJson(reader, type);
-        } catch (IOException e) {
-            StackToNearbyChests.LOGGER.info("Locked slots file does not exist", e);
-        }
+        return LOCKED_SLOTS_FOLDER.resolve(fileName);
     }
 
-    private static void write() {
-        if (currentFile == null) {
-            StackToNearbyChests.LOGGER.error("currentFile is null!");
-            return;
-        }
-
-        try {
-            Files.createDirectories(LOCKED_SLOTS_FOLDER);
-            String json = new Gson().toJson(currentLockedSlots);
-            Files.writeString(currentFile, json, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            StackToNearbyChests.LOGGER.error("Failed to write locked slots file", e);
-        }
+    private static boolean isEnabled() {
+        return ModOptions.get().behavior.enableItemFavoriting.booleanValue();
     }
 
     private static boolean lock(@Nullable Slot slot) {
@@ -178,13 +199,15 @@ public class LockedSlots {
     }
 
     private static boolean isLockable(@Nullable Slot slot) {
-        return slot != null
+        return isEnabled()
+                && slot != null
                 && slot.inventory instanceof PlayerInventory
                 && !MinecraftClient.getInstance().player.getAbilities().creativeMode;
     }
 
     private static boolean isLockable(int slotIndex) {
-        return slotIndex >= 0
+        return isEnabled()
+                && slotIndex >= 0
                 && slotIndex != 39 // Head
                 && slotIndex != 38 // Chest
                 && slotIndex != 37 // Legs
@@ -213,7 +236,7 @@ public class LockedSlots {
         Slot slot = slotId < 0 ? null : screenHandler.getSlot(slotId);
         switch (actionType) {
             case PICKUP -> {
-                if (slotId == -999) { // Throw
+                if (slotId == ScreenHandler.EMPTY_SPACE_SLOT_INDEX) { // Throw
                     isMovingFavoriteItemStack = false;
                 }
                 if (slot == null) {
