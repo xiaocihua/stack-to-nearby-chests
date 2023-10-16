@@ -14,6 +14,7 @@
     "MinecraftServerAccessor",
     "MouseMixin",
     "PlayerInventoryMixin",
+    "RecipeBookWidgetAccessor",
     "RecipeBookWidgetMixin",
     "ScreenHandlerMixin"
   ],
