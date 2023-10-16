@@ -7,6 +7,7 @@ import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsScreen;
 import io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import io.github.xiaocihua.stacktonearbychests.mixin.HorseScreenAccessor;
+import io.github.xiaocihua.stacktonearbychests.mixin.RecipeBookWidgetAccessor;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,9 +16,12 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.fabricmc.fabric.impl.client.screen.ScreenExtensions;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.*;
+import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -116,6 +120,10 @@ public class StackToNearbyChests implements ClientModInitializer {
             }
 
             ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key, scancode, modifiers) -> {
+                if (isTextFieldActive(scr) || isInventoryTabNotSelected(scr)) {
+                    return;
+                }
+
                 ModOptions.Keymap keymap = ModOptions.get().keymap;
 
                 boolean triggered = false;
@@ -153,7 +161,11 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .build();
             }
 
-            ScreenKeyboardEvents.afterKeyPress(screen).register((screen1, key, scancode, modifiers) -> {
+            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key, scancode, modifiers) -> {
+                if (isTextFieldActive(scr) || isInventoryTabNotSelected(scr)) {
+                    return;
+                }
+
                 ModOptions.get().keymap.quickStackKey.testThenRun(() -> InventoryActions.quickStack(screenHandler));
                 ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryActions.restock(screenHandler));
             });
@@ -162,6 +174,24 @@ public class StackToNearbyChests implements ClientModInitializer {
 
     private static ButtonTextures getButtonTextures(String name) {
         return new ButtonTextures(BUTTON_TEXTURES.withSuffixedPath(name), BUTTON_TEXTURES.withSuffixedPath(name + "_highlighted"));
+    }
+
+    private static boolean isTextFieldActive(Screen screen) {
+        Element focusedElement = screen.getFocused();
+
+        if (focusedElement instanceof RecipeBookWidget) {
+            TextFieldWidget searchField = ((RecipeBookWidgetAccessor) focusedElement).getSearchField();
+            if (searchField != null && searchField.isActive()) {
+                return true;
+            }
+        }
+
+        return focusedElement instanceof TextFieldWidget textField && textField.isActive();
+    }
+
+    private static boolean isInventoryTabNotSelected(Screen screen) {
+        return screen instanceof CreativeInventoryScreen creativeInventoryScreen
+                && !creativeInventoryScreen.isInventoryTabSelected();
     }
 
     private static Vec2i getAbsolutePos(HandledScreenAccessor parent, ModOptions.IntOption x, ModOptions.IntOption y) {
