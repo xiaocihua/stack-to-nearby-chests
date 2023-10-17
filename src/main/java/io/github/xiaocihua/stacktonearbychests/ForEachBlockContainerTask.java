@@ -59,7 +59,7 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
     }
 
     @Override
-    protected boolean openNextContainerInternal() {
+    protected boolean findAndOpenNextContainer() {
         while (blocks.hasNext()) {
             BlockPos pos = blocks.next().toImmutable();
 

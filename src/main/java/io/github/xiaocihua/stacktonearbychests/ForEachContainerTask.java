@@ -2,11 +2,13 @@ package io.github.xiaocihua.stacktonearbychests;
 
 import io.github.xiaocihua.stacktonearbychests.event.OnKeyCallback;
 import io.github.xiaocihua.stacktonearbychests.event.SetScreenCallback;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.ActionResult;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -61,6 +63,14 @@ public abstract class ForEachContainerTask {
             }
             return ActionResult.PASS;
         });
+
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (isRunning()
+                    && message.getContent() instanceof TranslatableTextContent translatable
+                    && translatable.getKey().equals("container.isLocked")) {
+                getCurrentTask().openNextContainer();
+            }
+        });
     }
 
     public static ForEachContainerTask getCurrentTask() {
@@ -73,7 +83,7 @@ public abstract class ForEachContainerTask {
 
     public void start() {
         currentTask = this;
-        openNextContainer();
+        openNextContainerExceptionHandled();
     }
 
     protected void stop() {
@@ -87,10 +97,30 @@ public abstract class ForEachContainerTask {
         interrupted = true;
     }
 
+    public void onInventory(ScreenHandler screenHandler) {
+        clearTimeout();
+        action.accept(screenHandler);
+
+        openNextContainer();
+    }
+
     private void openNextContainer() {
+        if (interrupted) {
+            stop();
+            return;
+        }
+
+        if (searchInterval == 0) {
+            openNextContainerExceptionHandled();
+        } else {
+            TIMER.schedule(() -> client.execute(this::openNextContainerExceptionHandled), searchInterval, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void openNextContainerExceptionHandled() {
         // This method may be submitted to MinecraftClient for execution, so exceptions need to be handled here
         try {
-            if (openNextContainerInternal()) {
+            if (findAndOpenNextContainer()) {
                 setTimeout();
             } else if (after != null) {
                 after.start();
@@ -108,29 +138,13 @@ public abstract class ForEachContainerTask {
      * Open the next container.
      * @return {@code true} if successfully found and interacted with an eligible container
      */
-    protected abstract boolean openNextContainerInternal();
+    protected abstract boolean findAndOpenNextContainer();
 
     private void setTimeout() {
         TIMER.schedule(() -> client.execute(() -> {
             sendChatMessage("stack-to-nearby-chests.message.interruptedByTimeout");
             stop();
         }), 2, TimeUnit.SECONDS);
-    }
-
-    public void onNext(ScreenHandler screenHandler) {
-        clearTimeout();
-        action.accept(screenHandler);
-
-        if (interrupted) {
-            stop();
-            return;
-        }
-
-        if (searchInterval == 0) {
-            openNextContainer();
-        } else {
-            TIMER.schedule(() -> client.execute(this::openNextContainer), searchInterval, TimeUnit.MILLISECONDS);
-        }
     }
 
     private void clearTimeout() {
