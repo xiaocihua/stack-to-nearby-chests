@@ -14,7 +14,7 @@ public interface ClickSlotCallback {
     private static Event<ClickSlotCallback> create() {
         return EventFactory.createArrayBacked(ClickSlotCallback.class,
                 callbacks -> (syncId, slotId, button, actionType, player) ->
-                        EventUtil.forEachCallbackWithResult(callbacks, callback -> callback.update(syncId, slotId, button, actionType, player)));
+                        Callbacks.forEachWithResult(callbacks, callback -> callback.update(syncId, slotId, button, actionType, player)));
     }
 
     ActionResult update(int syncId, int slotId, int button, SlotActionType actionType, PlayerEntity player);

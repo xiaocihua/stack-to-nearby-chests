@@ -11,10 +11,10 @@ import net.minecraft.util.ActionResult;
 public interface OnKeyCallback {
 
     Event<OnKeyCallback> PRESS = EventFactory.createArrayBacked(OnKeyCallback.class,
-            callbacks -> key -> EventUtil.forEachCallbackWithResult(callbacks, callback -> callback.update(key)));
+            callbacks -> key -> Callbacks.forEachWithResult(callbacks, callback -> callback.update(key)));
 
     Event<OnKeyCallback> RELEASE = EventFactory.createArrayBacked(OnKeyCallback.class,
-            callbacks -> key -> EventUtil.forEachCallbackWithResult(callbacks, callback -> callback.update(key)));
+            callbacks -> key -> Callbacks.forEachWithResult(callbacks, callback -> callback.update(key)));
 
     ActionResult update(int key);
 }

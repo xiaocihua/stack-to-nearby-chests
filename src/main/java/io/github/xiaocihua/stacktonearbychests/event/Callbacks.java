@@ -5,9 +5,9 @@ import net.minecraft.util.ActionResult;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class EventUtil {
+public class Callbacks {
 
-    public static <T> ActionResult forEachCallbackWithResult(T[] callbacks, Function<T, ActionResult> function) {
+    public static <T> ActionResult forEachWithResult(T[] callbacks, Function<T, ActionResult> function) {
         for (T callback : callbacks) {
             ActionResult result = function.apply(callback);
             if (result != ActionResult.PASS) {
@@ -17,7 +17,7 @@ public class EventUtil {
         return ActionResult.PASS;
     }
 
-    public static <T> void forEachCallback(T[] callbacks, Consumer<T> consumer) {
+    public static <T> void forEach(T[] callbacks, Consumer<T> consumer) {
         for (T callback : callbacks) {
             consumer.accept(callback);
         }

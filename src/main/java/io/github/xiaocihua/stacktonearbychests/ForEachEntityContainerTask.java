@@ -68,7 +68,7 @@ public class ForEachEntityContainerTask extends ForEachContainerTask {
     }
 
     @Override
-    protected boolean openNextContainerInternal() {
+    protected boolean findAndOpenNextContainer() {
         while (entities.hasNext()) {
             Entity entity = entities.next();
 

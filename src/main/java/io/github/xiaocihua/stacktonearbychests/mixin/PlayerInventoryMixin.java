@@ -12,9 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerInventory.class)
-public class PlayerInventoryMixin {
-
-    @Shadow public int selectedSlot;
+public abstract class PlayerInventoryMixin {
 
     @Shadow @Final public PlayerEntity player;
 

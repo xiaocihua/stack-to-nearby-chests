@@ -12,7 +12,7 @@ import net.minecraft.util.ActionResult;
 public interface SetScreenCallback {
 
     Event<SetScreenCallback> EVENT = EventFactory.createArrayBacked(SetScreenCallback.class,
-            listeners -> screen -> EventUtil.forEachCallbackWithResult(listeners, listener -> listener.update(screen)));
+            listeners -> screen -> Callbacks.forEachWithResult(listeners, listener -> listener.update(screen)));
 
     ActionResult update(Screen screen);
 }

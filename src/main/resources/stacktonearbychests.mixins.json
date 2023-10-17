@@ -10,6 +10,7 @@
     "HandledScreenMixin",
     "HorseScreenAccessor",
     "KeyboardMixin",
+    "MessageHandlerMixin",
     "MinecraftClientMixin",
     "MinecraftServerAccessor",
     "MouseMixin",
