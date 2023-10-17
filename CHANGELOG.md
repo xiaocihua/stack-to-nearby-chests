@@ -1,22 +1,15 @@
-- The process of iterating through nearby containers is no longer performed in a separate thread to avoid potential thread-safety issues.
+- Added "Enable item favoriting" option
 
+- Fixed compatibility issues with Inventory Profiles Next
+  - Items in locked slots will no longer be quick stacked
+  - Fixed the bug that caused favorite items to sometimes lose their favorite status after sorting
 
-- Now you can quick stack all items of one type to nearby containers via shortcut keys or by dragging and dropping items to the "Quick stack to nearby containers" button
+- Fixed the bug that made the favorited item stack become unfavorited when merging it with an unfavorited item stack
 
+- Fixed timeout issue caused by locked containers
 
-- Changed all "stack to nearby containers" to "quick stack to nearby containers"
+- Fixed the bug that activated key bindings when you typed in a text field
 
-
-- No longer attempts to open blocked shulker boxes
-
-
-- Fixed creating BlockHitResult objects with the wrong side
-
-
-- Fixed an issue where, occasionally, sneaking would not cancel after quick stacking to nearby container entities
-
-
-- Updated LibGui version
-
+- The Survival Inventory tab is the only tab of the creative inventory screen where the keybindings of this mod can still be used
 
 **This version is not compatible with optifabric**
