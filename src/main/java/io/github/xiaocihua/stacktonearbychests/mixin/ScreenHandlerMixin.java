@@ -23,7 +23,7 @@ public abstract class ScreenHandlerMixin {
     @Inject(method = "updateSlotStacks(ILjava/util/List;Lnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
     private void onUpdateSlotStacks(int revision, List<ItemStack> stacks, ItemStack cursorStack, CallbackInfo ci) {
         if (ForEachContainerTask.isRunning()) {
-            ForEachContainerTask.getCurrentTask().onNext((ScreenHandler)(Object)this);
+            ForEachContainerTask.getCurrentTask().onInventory((ScreenHandler)(Object)this);
         }
     }
 
