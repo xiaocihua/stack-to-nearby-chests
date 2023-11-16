@@ -34,10 +34,13 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
+import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.LOGGER;
 import static java.util.function.Predicate.not;
 
 // Locked slots contain favorite item stacks
@@ -55,8 +58,28 @@ public class LockedSlots {
     @Nullable
     private static SlotActionType actionBeingExecuted;
 
+    private static Optional<Path> currentLockedSlotsFilePath = Optional.empty();
+
     public static void init() {
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> read(client));
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            currentLockedSlotsFilePath = getLockedSlotsFilePath(client);
+
+            if (isEnabled()) {
+                currentLockedSlotsFilePath.ifPresentOrElse(LockedSlots::read,
+                        () -> LOGGER.info("Locked slots file path is empty"));
+            }
+        });
+
+        // Before disconnect
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            if (isEnabled()) {
+                currentLockedSlotsFilePath.ifPresentOrElse(LockedSlots::write,
+                        () -> LOGGER.info("Locked slots file path is empty"));
+            }
+
+            currentLockedSlots.clear();
+            currentLockedSlotsFilePath = Optional.empty();
+        });
 
         ModOptions.get().keymap.markAsFavoriteKey.registerOnScreen(HandledScreen.class, screen -> {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -76,12 +99,6 @@ public class LockedSlots {
                 refresh(handledScreen.getScreenHandler());
                 ScreenEvents.remove(screen).register(s -> movingFavoriteItemStack = false);
             }
-        });
-
-        // Before disconnect
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            write(client);
-            currentLockedSlots.clear();
         });
 
         ClickSlotCallback.BEFORE.register((syncId, slotId, button, actionType, player) -> {
@@ -107,58 +124,41 @@ public class LockedSlots {
         });
     }
 
-    private static void read(MinecraftClient client) {
-        if (!isEnabled()) {
-            return;
-        }
-
-        Path path = getLockedSlotsFilePath(client);
-        if (path == null) {
-            return;
-        }
-
+    private static void read(Path path) {
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             Type type = new TypeToken<HashSet<Integer>>() {}.getType();
             currentLockedSlots = new Gson().fromJson(reader, type);
+        } catch (NoSuchFileException e) {
+            LOGGER.info("Locked slots file does not exist");
         } catch (IOException e) {
-            StackToNearbyChests.LOGGER.info("Locked slots file does not exist", e);
+            LOGGER.error("Failed to read locked slots file", e);
         }
     }
 
-    private static void write(MinecraftClient client) {
-        if (!isEnabled()) {
-            return;
-        }
-
-        Path path = getLockedSlotsFilePath(client);
-        if (path == null) {
-            return;
-        }
-
+    private static void write(Path path) {
         try {
             Files.createDirectories(LOCKED_SLOTS_FOLDER);
             String json = new Gson().toJson(currentLockedSlots);
             Files.writeString(path, json, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            StackToNearbyChests.LOGGER.error("Failed to write locked slots file", e);
+            LOGGER.error("Failed to write locked slots file", e);
         }
     }
 
-    @Nullable
-    private static Path getLockedSlotsFilePath(MinecraftClient client) {
+    private static Optional<Path> getLockedSlotsFilePath(MinecraftClient client) {
         IntegratedServer integratedServer = client.getServer();
         ServerInfo currentServerEntry = client.getCurrentServerEntry();
         String fileName;
         if (integratedServer != null) {
             fileName = ((MinecraftServerAccessor) integratedServer).getSession().getDirectoryName().concat(".json");
-        } else if (currentServerEntry != null){
+        } else if (currentServerEntry != null) {
             fileName = currentServerEntry.address.concat(".json").replace(":", "colon");
         } else {
-            StackToNearbyChests.LOGGER.info("Could not get level name or server address");
-            return null;
+            LOGGER.info("Could not get level name or server address");
+            return Optional.empty();
         }
 
-        return LOCKED_SLOTS_FOLDER.resolve(fileName);
+        return Optional.of(LOCKED_SLOTS_FOLDER.resolve(fileName));
     }
 
     private static boolean isEnabled() {
