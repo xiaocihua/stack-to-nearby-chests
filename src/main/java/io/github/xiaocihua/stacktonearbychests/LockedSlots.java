@@ -313,7 +313,15 @@ public class LockedSlots {
     }
 
     public static void drawFavoriteItemStyle(MatrixStack matrices, Slot slot, boolean isForeground) {
-        Identifier id = ModOptions.get().appearance.favoriteItemStyle;
+        ModOptions options = ModOptions.get();
+
+        if (!(options.appearance.alwaysShowMarkersForFavoritedItems.booleanValue()
+                || options.keymap.showMarkersForFavoritedItemsKey.isPressed()
+                || options.keymap.markAsFavoriteKey.isPressed())) {
+            return;
+        }
+
+        Identifier id = options.appearance.favoriteItemStyle;
         if (isLocked(slot) && isForeground == id.getPath().equals("gold_badge")) {
             Sprite sprite = MinecraftClient.getInstance()
                     .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
