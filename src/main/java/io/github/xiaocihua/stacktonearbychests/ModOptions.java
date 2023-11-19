@@ -88,6 +88,8 @@ public class ModOptions {
         public IntOption restockButtonPosY = new IntOption(10);
 
         public Identifier favoriteItemStyle = new Identifier(ModOptions.MOD_ID, "gold_badge");
+
+        public MutableBoolean alwaysShowMarkersForFavoritedItems = new MutableBoolean(true);
     }
 
     public static class Behavior {
@@ -380,6 +382,7 @@ public class ModOptions {
         public KeySequence restockFromNearbyContainersKey = KeySequence.empty();
         public KeySequence quickStackKey = KeySequence.empty();
         public KeySequence restockKey = KeySequence.empty();
+        public KeySequence showMarkersForFavoritedItemsKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_ALT));
         public KeySequence markAsFavoriteKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_ALT, GLFW.GLFW_MOUSE_BUTTON_2 - KeySequence.MOUSE_BUTTON_CODE_OFFSET));
         public KeySequence openModOptionsScreenKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_CONTROL, GLFW.GLFW_KEY_S, GLFW.GLFW_KEY_C));
     }
