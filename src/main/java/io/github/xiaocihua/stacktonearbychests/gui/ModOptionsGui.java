@@ -12,6 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Locale;
 
 import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
@@ -43,9 +45,9 @@ public class ModOptionsGui extends LightweightGuiDescription {
     public ModOptionsGui() {
         root = new WPlainPanel();
         setRootPanel(root);
-        root.setSize(ROOT_WIDTH, 245);
+        root.setSize(ROOT_WIDTH, 240);
         root.add(createTitle(), 0, 0, ROOT_WIDTH, 20);
-        root.add(createTabs(), 0, 20, ROOT_WIDTH, 193);
+        root.add(createTabs(), 0, 20, ROOT_WIDTH, 188);
         root.add(createBottomBar(), 0, 208, ROOT_WIDTH, 32);
         root.validate(this);
     }
@@ -102,6 +104,11 @@ public class ModOptionsGui extends LightweightGuiDescription {
         favoriteItemStyle.setBorder();
         appearance.add(createLabeled(favoriteItemStyleLabel, favoriteItemStyle, 160), 350, 20);
 
+        WToggleButton alwaysShowMarkersForFavoritedItemsCheckBox = createCheckbox("alwaysShowMarkersForFavoritedItems",
+                options.appearance.alwaysShowMarkersForFavoritedItems,
+                MinecraftClient.getInstance().textRenderer.wrapLines(Text.translatable(PREFIX + "alwaysShowMarkersForFavoritedItems.tooltip"), 150));
+        appearance.add(alwaysShowMarkersForFavoritedItemsCheckBox);
+
         appearance.add(createCheckbox("showStackToNearbyContainersButton", options.appearance.showStackToNearbyContainersButton));
         appearance.add(createCheckbox("showRestockFromNearbyContainersButton", options.appearance.showRestockFromNearbyContainersButton));
         appearance.add(createCheckbox("showQuickStackButton", options.appearance.showQuickStackButton));
@@ -116,6 +123,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         appearance.add(createIntTextField("quickStackButtonPosY", options.appearance.quickStackButtonPosY).withTooltip(tooltip), 230, 20);
         appearance.add(createIntTextField("restockButtonPosX", options.appearance.restockButtonPosX).withTooltip(tooltip), 215, 20);
         appearance.add(createIntTextField("restockButtonPosY", options.appearance.restockButtonPosY).withTooltip(tooltip), 215, 20);
+
         return appearance;
     }
 
@@ -185,15 +193,16 @@ public class ModOptionsGui extends LightweightGuiDescription {
     }
 
     private WBox createKeymap() {
-        WBox keymap = new WBoxCustom(Axis.VERTICAL).setInsets(Insets.ROOT_PANEL);
+        WBox keymap = createCard().setSpacing(4);
 
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "stackToNearbyContainers"), options.keymap.stackToNearbyContainersKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainers"), options.keymap.quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainersKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restockFromNearbyContainers"), options.keymap.restockFromNearbyContainersKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "quickStack"), options.keymap.quickStackKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restock"), options.keymap.restockKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "markAsFavorite"), options.keymap.markAsFavoriteKey));
-        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "openModOptionsScreen"), options.keymap.openModOptionsScreenKey));
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "stackToNearbyContainers"), options.keymap.stackToNearbyContainersKey), 380, 18);
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainers"), options.keymap.quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainersKey), 380, 18);
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restockFromNearbyContainers"), options.keymap.restockFromNearbyContainersKey), 380, 18);
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "quickStack"), options.keymap.quickStackKey), 380, 18);
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "restock"), options.keymap.restockKey), 380, 18);
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "markAsFavorite"), options.keymap.markAsFavoriteKey), 380, 18);
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "showMarkersForFavoritedItems"), options.keymap.showMarkersForFavoritedItemsKey), 380, 18);
+        keymap.add(new KeymapEntry(Text.translatable(PREFIX + "openModOptionsScreen"), options.keymap.openModOptionsScreenKey), 380, 18);
 
         WLabel hint = new WLabel(Text.translatable(PREFIX + "keyMapHint").setStyle(Style.EMPTY.withItalic(true)), 0xBFBFBF)
                 .setVerticalAlignment(VerticalAlignment.CENTER);
@@ -229,7 +238,18 @@ public class ModOptionsGui extends LightweightGuiDescription {
     }
 
     private WToggleButton createCheckbox(String s, MutableBoolean isOn) {
-        var checkbox = new WToggleButton(CHECKED, UNCHECKED, Text.translatable(PREFIX + s));
+        return createCheckbox(s, isOn, null);
+    }
+
+    private WToggleButton createCheckbox(String s, MutableBoolean isOn, @Nullable List<OrderedText> tooltip) {
+        var checkbox = new WToggleButton(CHECKED, UNCHECKED, Text.translatable(PREFIX + s)) {
+            @Override
+            public void addTooltip(TooltipBuilder builder) {
+                if (tooltip != null) {
+                    builder.add(tooltip.toArray(new OrderedText[0]));
+                }
+            }
+        };
 
         checkbox.setColor(TEXT_COLOR, TEXT_COLOR);
         checkbox.setToggle(isOn.booleanValue());
