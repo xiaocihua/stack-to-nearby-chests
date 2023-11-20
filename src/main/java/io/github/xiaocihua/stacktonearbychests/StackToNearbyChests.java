@@ -47,6 +47,7 @@ public class StackToNearbyChests implements ClientModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final boolean IS_IPN_MOD_LOADED = FabricLoader.getInstance().isModLoaded("inventoryprofilesnext");
+    public static final boolean IS_EASY_SHULKER_BOXES_MOD_LOADED = FabricLoader.getInstance().isModLoaded("easyshulkerboxes");
 
     private static final Identifier BUTTON_TEXTURE = new Identifier(ModOptions.MOD_ID, "textures/buttons.png");
 
