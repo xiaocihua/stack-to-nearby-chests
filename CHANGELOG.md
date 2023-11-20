@@ -1,16 +1,21 @@
-- The process of iterating through nearby containers is no longer performed in a separate thread to avoid potential thread-safety issues.
+- Added "Enable item favoriting" option
 
+- Fixed compatibility issues with Inventory Profiles Next
+    - Items in locked slots will no longer be quick stacked
+    - Fixed the bug that caused favorite items to sometimes lose their favorite status after sorting
 
-- Now you can quick stack all items of one type to nearby containers via shortcut keys or by dragging and dropping items to the "Quick stack to nearby containers" button.
+- Fixed the bug that made the favorited item stack become unfavorited when merging it with an unfavorited item stack
 
+- Fixed timeout issue caused by locked containers
 
-- Changed all "stack to nearby containers" to "quick stack to nearby containers".
+- Fixed the bug that activated key bindings when you typed in a text field
 
+- The Survival Inventory tab is the only tab of the creative inventory screen where the keybindings of this mod can still be used
 
-- No longer attempts to open blocked shulker boxes.
+- Fixed a possible issue where favorited items do not stay favorited after leaving and reentering a world
 
+- Added "Always show markers for favorited items" toggle. When disabled, markers for favorited items will be hidden until you press the key you assigned in Keymap settings. (Default: Left Alt)
 
-- Fixed creating BlockHitResult objects with the wrong side.
+- Fixed the issue that favorited items do not stay favorited after leaving and reentering a world when used together with Easy Shulker Boxes mod
 
-
-- Fixed an issue where, occasionally, sneaking would not cancel after quick stacking to nearby container entities.
+- Updated Fabric API version to 0.76.1.
