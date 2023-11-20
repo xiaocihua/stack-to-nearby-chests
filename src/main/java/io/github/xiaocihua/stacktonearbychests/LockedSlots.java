@@ -211,7 +211,11 @@ public class LockedSlots {
 
     public static void onSetStack(int slotIndex, ItemStack stack) {
         if (stack.isEmpty()) {
-            if (actionBeingExecuted == null || actionBeingExecuted == SlotActionType.THROW) {
+            if (actionBeingExecuted == null) {
+                if (!StackToNearbyChests.IS_EASY_SHULKER_BOXES_MOD_LOADED) {
+                    unLock(slotIndex);
+                }
+            } else if (actionBeingExecuted == SlotActionType.THROW) {
                 unLock(slotIndex);
             } else if (actionBeingExecuted == SlotActionType.PICKUP_ALL) {
                 if (unLock(slotIndex)) {
