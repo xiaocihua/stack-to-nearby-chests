@@ -194,7 +194,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 && !creativeInventoryScreen.isInventoryTabSelected();
     }
 
-    private static Vec2i getAbsolutePos(HandledScreenAccessor parent, ModOptions.IntOption x, ModOptions.IntOption y) {
+    public static Vec2i getAbsolutePos(HandledScreenAccessor parent, ModOptions.IntOption x, ModOptions.IntOption y) {
         return new Vec2i(parent.getX() + parent.getBackgroundWidth() + x.intValue(),
                 parent.getY() + parent.getBackgroundHeight() / 2 + y.intValue());
     }
@@ -205,7 +205,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 .append(Text.translatable("stack-to-nearby-chests.tooltip.hint").setStyle(Style.EMPTY.withItalic(true).withColor(Formatting.DARK_GRAY)));
     }
 
-    private static boolean isContainerScreen(Screen screen) {
+    public static boolean isContainerScreen(Screen screen) {
         if (!(screen instanceof HandledScreen<?>)) {
             return false;
         } else if (
