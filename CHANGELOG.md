@@ -1,3 +1,3 @@
-- Fixed the issue that favorited items do not stay favorited after leaving and reentering a world when used together with Metal Bundles mod
+- Added exclusion areas for EMI and REI ([#28](https://github.com/xiaocihua/stack-to-nearby-chests/pull/28) by [@Abbie5](https://github.com/Abbie5))
 
 **This version is not compatible with optifabric**
