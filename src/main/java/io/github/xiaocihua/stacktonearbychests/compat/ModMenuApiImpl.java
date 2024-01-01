@@ -1,4 +1,4 @@
-package io.github.xiaocihua.stacktonearbychests;
+package io.github.xiaocihua.stacktonearbychests.compat;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

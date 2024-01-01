@@ -20,13 +20,13 @@
       "io.github.xiaocihua.stacktonearbychests.StackToNearbyChests"
     ],
     "modmenu": [
-      "io.github.xiaocihua.stacktonearbychests.ModMenuApiImpl"
+      "io.github.xiaocihua.stacktonearbychests.compat.ModMenuApiImpl"
     ],
     "emi": [
-      "io.github.xiaocihua.stacktonearbychests.EmiPluginImpl"
+      "io.github.xiaocihua.stacktonearbychests.compat.EmiPluginImpl"
     ],
     "rei_client": [
-      "io.github.xiaocihua.stacktonearbychests.ReiClientPluginImpl"
+      "io.github.xiaocihua.stacktonearbychests.compat.ReiClientPluginImpl"
     ]
   },
   "mixins": [
