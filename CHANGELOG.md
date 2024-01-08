@@ -1,7 +1,3 @@
-- Fixed a possible issue where favorited items do not stay favorited after leaving and reentering a world
-
-- Added "Always show markers for favorited items" toggle. When disabled, markers for favorited items will be hidden until you press the key you assigned in Keymap settings. (Default: Left Alt)
-
-- Fixed the issue that favorited items do not stay favorited after leaving and reentering a world when used together with Easy Shulker Boxes mod
+- Added exclusion areas for EMI and REI ([#28](https://github.com/xiaocihua/stack-to-nearby-chests/pull/28) by [@Abbie5](https://github.com/Abbie5))
 
 **This version is not compatible with optifabric**
