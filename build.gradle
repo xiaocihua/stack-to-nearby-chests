@@ -1,15 +1,14 @@
 plugins {
-    id 'fabric-loom' version '1.2-SNAPSHOT'
-    id 'io.github.juuxel.loom-quiltflower' version '1.10.0'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = "${project.archives_base_name}-mc${project.minecraft_version}"
 version = project.mod_version
 group = project.maven_group
+
+base {
+    archivesName = "${project.archives_base_name}-mc${project.minecraft_version}"
+}
 
 repositories {
     // Add repositories to retrieve artifacts from in here.
@@ -27,9 +26,31 @@ repositories {
     maven {
         url = "https://maven.shedaniel.me/"
     }
-    maven {
-        url = "https://maven.architectury.dev/"
+//    maven {
+//        url = "https://maven.architectury.dev/"
+//    }
+}
+
+repositories.named("Mojang", MavenArtifactRepository) {
+    artifactUrls ArtifactRepositoryContainer.MAVEN_CENTRAL_URL
+}
+
+loom {
+    runs {
+        client {
+            runDir = "run1.20.1"
+            vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar")
+        }
     }
+
+//    splitEnvironmentSourceSets()
+//
+//    mods {
+//        modid {
+//            sourceSet sourceSets.main
+//            sourceSet sourceSets.client
+//        }
+//    }
 }
 
 dependencies {
@@ -45,9 +66,11 @@ dependencies {
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
     // modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+
     modImplementation include("io.github.cottonmc:LibGui:${project.LibGui_version}")
 
-    modCompileOnly "com.terraformersmc:modmenu:4.0.6"
+    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
 //    modLocalRuntime "dev.emi:emi-fabric:${project.emi_version}"
@@ -61,7 +84,7 @@ processResources {
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.mod_version
+        expand "version": project.version
     }
 }
 
@@ -75,27 +98,22 @@ java {
     // if it is present.
     // If you remove this line, sources will not be generated.
     withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
-    }
-}
-
-loom {
-    runs {
-        client {
-            runDir = "run1.20.1"
-            vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar")
-        }
+        rename { "${it}_${project.base.archivesName.get()}"}
     }
 }
 
 // configure the maven publication
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        create("mavenJava", MavenPublication) {
+            artifactId = project.archives_base_name
             from components.java
         }
     }
