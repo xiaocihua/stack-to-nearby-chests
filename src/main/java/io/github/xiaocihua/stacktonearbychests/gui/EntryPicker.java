@@ -7,7 +7,7 @@ import io.github.cottonmc.cotton.gui.widget.WTextField;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
-import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -160,7 +160,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByName(String searchStr) {
             return Registry.BLOCK.stream()
-                    .filter(block -> block instanceof BlockWithEntity)
+                    .filter(block -> block instanceof BlockEntityProvider)
                     .filter(block -> StringUtils.containsIgnoreCase(block.getName().toString(), searchStr))
                     .map(Registry.BLOCK::getId)
                     .toList();
@@ -169,7 +169,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByID(String searchStr) {
             return Registry.BLOCK.stream()
-                    .filter(block -> block instanceof BlockWithEntity)
+                    .filter(block -> block instanceof BlockEntityProvider)
                     .map(Registry.BLOCK::getId)
                     .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
                     .toList();
