@@ -2,6 +2,7 @@ package io.github.xiaocihua.stacktonearbychests.mixin;
 
 import io.github.xiaocihua.stacktonearbychests.KeySequence;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
+import io.github.xiaocihua.stacktonearbychests.event.DisconnectCallback;
 import io.github.xiaocihua.stacktonearbychests.event.SetScreenCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -32,5 +33,10 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTick(CallbackInfo ci) {
         KeySequence.reCheckPressedKeys();
+    }
+
+    @Inject(method = "onDisconnected", at = @At("RETURN"))
+    private void afterDisconnected(CallbackInfo ci) {
+        DisconnectCallback.EVENT.invoker().update();
     }
 }
