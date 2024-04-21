@@ -6,6 +6,7 @@
   "client": [
     "ClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerMixin",
+    "ClientPlayNetworkHandlerMixin",
     "HandledScreenAccessor",
     "HandledScreenMixin",
     "HorseScreenAccessor",

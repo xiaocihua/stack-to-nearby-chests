@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.ActionResult;
 
+@FunctionalInterface
 public interface ClickSlotCallback {
 
     Event<ClickSlotCallback> BEFORE = create();
