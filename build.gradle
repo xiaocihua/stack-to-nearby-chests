@@ -40,6 +40,7 @@ loom {
         client {
             runDir = "run1.20.1"
             vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar")
+            programArgs("--width=1280",  "--height=720")
         }
     }
 

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.xiaocihua.stacktonearbychests.event.ClickSlotCallback;
+import io.github.xiaocihua.stacktonearbychests.event.DisconnectCallback;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
 import io.github.xiaocihua.stacktonearbychests.mixin.MinecraftServerAccessor;
 import net.fabricmc.api.EnvType;
@@ -69,8 +70,7 @@ public class LockedSlots {
             }
         });
 
-        // Before disconnect
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+        DisconnectCallback.EVENT.register(() -> {
             if (isEnabled()) {
                 currentLockedSlotsFilePath.ifPresentOrElse(LockedSlots::write,
                         () -> LOGGER.info("Locked slots file path is empty"));
