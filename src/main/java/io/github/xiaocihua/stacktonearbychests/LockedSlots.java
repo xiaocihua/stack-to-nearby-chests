@@ -124,6 +124,8 @@ public class LockedSlots {
     }
 
     private static void read(Path path) {
+        LOGGER.info("Reading locked slot indices from {}", path.getFileName());
+        
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             Type type = new TypeToken<HashSet<Integer>>() {}.getType();
             currentLockedSlots = new Gson().fromJson(reader, type);
@@ -135,6 +137,8 @@ public class LockedSlots {
     }
 
     private static void write(Path path) {
+        LOGGER.info("Writing locked slot indices to {}", path.getFileName());
+
         try {
             Files.createDirectories(LOCKED_SLOTS_FOLDER);
             String json = new Gson().toJson(currentLockedSlots);
