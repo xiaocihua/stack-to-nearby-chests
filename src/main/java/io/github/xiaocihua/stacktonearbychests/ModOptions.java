@@ -17,9 +17,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+
+import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class ModOptions {
@@ -46,12 +49,15 @@ public class ModOptions {
             return new GsonBuilder().registerTypeAdapter(Identifier.class, new IdentifierAdapter().nullSafe())
                     .create()
                     .fromJson(reader, ModOptions.class);
+        } catch (NoSuchFileException e) {
+            LOGGER.info("Options file does not exist, creating a new one");
         } catch (IOException | JsonSyntaxException e) {
-            StackToNearbyChests.LOGGER.info("Failed to read options file, creating a new one", e);
-            ModOptions modOptions = getDefault();
-            modOptions.write();
-            return modOptions;
+            LOGGER.info("Failed to read options file, creating a new one", e);
         }
+
+        ModOptions modOptions = getDefault();
+        modOptions.write();
+        return modOptions;
     }
 
     public void write() {
@@ -63,7 +69,7 @@ public class ModOptions {
                     .toJson(this);
             Files.writeString(OPTIONS_FILE, json, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            StackToNearbyChests.LOGGER.error("Failed to write options file", e);
+            LOGGER.error("Failed to write options file", e);
         }
     }
 
