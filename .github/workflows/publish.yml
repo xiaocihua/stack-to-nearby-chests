@@ -3,8 +3,8 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.5.4 for Minecraft 1.19.4
-  VERSION: 0.5.4
+  RELEASE_NAME: 0.5.5 for Minecraft 1.19.4
+  VERSION: 0.5.5
 
 permissions:
   contents: write
@@ -58,3 +58,6 @@ jobs:
             17
             18
             19
+            20
+            21
+            22
