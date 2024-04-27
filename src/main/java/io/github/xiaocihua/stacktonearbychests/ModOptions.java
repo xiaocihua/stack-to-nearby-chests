@@ -288,7 +288,13 @@ public class ModOptions {
                 "ironchests:copper_chest",
                 "ironchests:dirt_chest",
                 "ironchests:obsidian_chest",
-                "ironchests:netherite_chest");
+                "ironchests:netherite_chest",
+                "ironchests:iron_barrel",
+                "ironchests:gold_barrel",
+                "ironchests:crystal_barrel",
+                "ironchests:copper_barrel",
+                "ironchests:obsidian_barrel",
+                "ironchests:netherite_barrel");
         public Set<String> stackingTargetEntities = Set.of("minecraft:chest_boat",
                 "minecraft:trader_llama",
                 "minecraft:chest_minecart",
@@ -498,7 +504,13 @@ public class ModOptions {
                 "ironchests:copper_chest",
                 "ironchests:dirt_chest",
                 "ironchests:obsidian_chest",
-                "ironchests:netherite_chest");
+                "ironchests:netherite_chest",
+                "ironchests:iron_barrel",
+                "ironchests:gold_barrel",
+                "ironchests:crystal_barrel",
+                "ironchests:copper_barrel",
+                "ironchests:obsidian_barrel",
+                "ironchests:netherite_barrel");
         public Set<String> restockingSourceEntities = Set.of("minecraft:chest_boat",
                 "minecraft:trader_llama",
                 "minecraft:chest_minecart",
