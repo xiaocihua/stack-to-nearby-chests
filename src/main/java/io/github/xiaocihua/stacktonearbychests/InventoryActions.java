@@ -57,7 +57,7 @@ public class InventoryActions {
     }
 
     public static boolean canMerge(ItemStack stack, ItemStack otherStack) {
-        return stack.getCount() < stack.getMaxCount() && ItemStack.canCombine(stack, otherStack);
+        return stack.getCount() < stack.getMaxCount() && ItemStack.areItemsAndComponentsEqual(stack, otherStack);
     }
 
     public static void forEachContainer(Consumer<ScreenHandler> action, Collection<String> blockFilter, Collection<String> entityFilter) {
@@ -130,7 +130,7 @@ public class InventoryActions {
                                 .getId(slot.getStack().getItem())
                                 .toString()))
                 .forEach(slot -> slots.containerSlots().stream()
-                        .filter(containerSlot -> ItemStack.canCombine(slot.getStack(), containerSlot.getStack()))
+                        .filter(containerSlot -> ItemStack.areItemsAndComponentsEqual(slot.getStack(), containerSlot.getStack()))
                         .peek(containerSlot -> {
                             pickup(screenHandler, containerSlot);
                             pickup(screenHandler, slot);

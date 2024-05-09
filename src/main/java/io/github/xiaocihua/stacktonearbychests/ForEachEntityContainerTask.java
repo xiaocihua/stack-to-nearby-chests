@@ -23,7 +23,7 @@ import static io.github.xiaocihua.stacktonearbychests.MathUtil.getBox;
 public class ForEachEntityContainerTask extends ForEachContainerTask {
 
     private final ClientPlayerInteractionManager interactionManager;
-    private final float squaredReachDistance;
+    private final double squaredReachDistance;
     private final Entity cameraEntity;
 
     private final Iterator<Entity> entities;
@@ -38,7 +38,7 @@ public class ForEachEntityContainerTask extends ForEachContainerTask {
                                       ) {
         super(client, player, action);
         this.interactionManager = interactionManager;
-        float reachDistance = interactionManager.getReachDistance();
+        double reachDistance = player.getEntityInteractionRange();
         this.squaredReachDistance = MathHelper.square(reachDistance);
         this.cameraEntity = cameraEntity;
 

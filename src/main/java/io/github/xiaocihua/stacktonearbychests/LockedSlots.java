@@ -251,7 +251,7 @@ public class LockedSlots {
                     if (cursorStack.isEmpty()) {
                         lock(slot);
                         movingFavoriteItemStack = false;
-                    } else if (!ItemStack.canCombine(cursorStack, slotStack)) { // Swap the slot with the cursor
+                    } else if (!ItemStack.areItemsAndComponentsEqual(cursorStack, slotStack)) { // Swap the slot with the cursor
                         if (!isLocked(slot)) {
                             movingFavoriteItemStack = false;
                         }
@@ -262,7 +262,7 @@ public class LockedSlots {
                         unLock(slot);
                         movingFavoriteItemStack = true;
                     } else if (!cursorStack.isEmpty()
-                            && !ItemStack.canCombine(cursorStack, slotStack)) { // Swap the slot with the cursor
+                            && !ItemStack.areItemsAndComponentsEqual(cursorStack, slotStack)) { // Swap the slot with the cursor
                         if (isLocked(slot)) {
                             movingFavoriteItemStack = true;
                         }

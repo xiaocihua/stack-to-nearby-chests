@@ -30,7 +30,7 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
 
     private final World world;
     private final ClientPlayerInteractionManager interactionManager;
-    private final float squaredReachDistance;
+    private final double squaredReachDistance;
     private final Entity cameraEntity;
 
     private final Collection<String> filter;
@@ -50,7 +50,7 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
         super(client, player, action);
         this.world = world;
         this.interactionManager = interactionManager;
-        float reachDistance = interactionManager.getReachDistance();
+        double reachDistance = player.getBlockInteractionRange();
         this.squaredReachDistance = MathHelper.square(reachDistance);
         this.cameraEntity = cameraEntity;
         this.blocks = getBlocksInBox(getBox(cameraEntity.getCameraPosVec(0), reachDistance))
@@ -139,7 +139,11 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
             return false;
         }
 
-        Box box = ShulkerEntity.calculateBoundingBox(state.get(ShulkerBoxBlock.FACING), 0.0F, 0.5F).offset(pos).contract(1.0E-6);
+        // Copy from ShulkerBoxBlock#canOpen(BlockState, World, BlockPos, ShulkerBoxBlockEntity)
+        Box box = ShulkerEntity.calculateBoundingBox(1.0F, state.get(ShulkerBoxBlock.FACING), 0.0F, 0.5F)
+                .offset(pos)
+                .contract(1.0E-6);
+
         return !world.isSpaceEmpty(box);
     }
 
