@@ -78,46 +78,10 @@ public class StackToNearbyChests implements ClientModInitializer {
         boolean showButtonTooltip = appearanceOption.showButtonTooltip.booleanValue();
 
         if (screen instanceof AbstractInventoryScreen<?> inventoryScreen) {
-            if (ModOptions.get().appearance.showStackToNearbyContainersButton.booleanValue()) {
-                var buttonWidget = new PosUpdatableButtonWidget.Builder(inventoryScreen)
-                        .setTextures(getButtonTextures("quick_stack_to_nearby_containers_button"))
-                        .setTooltip(showButtonTooltip ? getTooltipWithHint("stack-to-nearby-chests.tooltip.stackToNearbyContainersButton") : null)
-                        .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.stackToNearbyContainersButtonPosX.intValue(),
-                                parent.getY() + appearanceOption.stackToNearbyContainersButtonPosY.intValue()))
-                        .setPressAction(button -> {
-                            ScreenHandler screenHandler = inventoryScreen.getScreenHandler();
-                            ItemStack cursorStack = screenHandler.getCursorStack();
-                            if (cursorStack.isEmpty()) {
-                                InventoryActions.stackToNearbyContainers();
-                            } else {
-                                Item item = cursorStack.getItem();
 
-                                screenHandler.slots.stream()
-                                        .filter(slot -> slot.inventory instanceof PlayerInventory)
-                                        .filter(slot -> slot.getIndex() < 36) // 36: feet, 37: legs, 38: chest, 39: head, 40: offhand
-                                        .filter(not(LockedSlots::isLocked))
-                                        .filter(slot -> !slot.hasStack() || InventoryActions.canMerge(slot.getStack(), cursorStack))
-                                        .peek(slot -> InventoryActions.pickup(screenHandler, slot))
-                                        .anyMatch(slot -> cursorStack.isEmpty());
-
-                                InventoryActions.stackToNearbyContainers(item);
-                            }
-                        })
-                        .build();
-
-                currentStackToNearbyContainersButton = Optional.ofNullable(buttonWidget);
-
-                ((ScreenExtensions) screen).fabric_getRemoveEvent().register(s -> currentStackToNearbyContainersButton = Optional.empty());
-            }
-
-            if (ModOptions.get().appearance.showRestockFromNearbyContainersButton.booleanValue()) {
-                new PosUpdatableButtonWidget.Builder(inventoryScreen)
-                        .setTextures(getButtonTextures("restock_from_nearby_containers_button"))
-                        .setTooltip(showButtonTooltip ? getTooltipWithHint("stack-to-nearby-chests.tooltip.restockFromNearbyContainersButton") : null)
-                        .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.restockFromNearbyContainersButtonPosX.intValue(),
-                                parent.getY() + appearanceOption.restockFromNearbyContainersButtonPosY.intValue()))
-                        .setPressAction(button -> InventoryActions.restockFromNearbyContainers())
-                        .build();
+            if (screen instanceof InventoryScreen
+                    || screen instanceof CreativeInventoryScreen && appearanceOption.showTheButtonsOnTheCreativeInventoryScreen.booleanValue()) {
+                addButtonsOnInventoryScreen((ScreenExtensions) screen, inventoryScreen, showButtonTooltip, appearanceOption);
             }
 
             ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key, scancode, modifiers) -> {
@@ -170,6 +134,50 @@ public class StackToNearbyChests implements ClientModInitializer {
                 ModOptions.get().keymap.quickStackKey.testThenRun(() -> InventoryActions.quickStack(screenHandler));
                 ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryActions.restock(screenHandler));
             });
+        }
+    }
+
+    private static void addButtonsOnInventoryScreen(ScreenExtensions screen, AbstractInventoryScreen<?> inventoryScreen, boolean showButtonTooltip, ModOptions.Appearance appearanceOption) {
+        if (ModOptions.get().appearance.showStackToNearbyContainersButton.booleanValue()) {
+            var buttonWidget = new PosUpdatableButtonWidget.Builder(inventoryScreen)
+                    .setTextures(getButtonTextures("quick_stack_to_nearby_containers_button"))
+                    .setTooltip(showButtonTooltip ? getTooltipWithHint("stack-to-nearby-chests.tooltip.stackToNearbyContainersButton") : null)
+                    .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.stackToNearbyContainersButtonPosX.intValue(),
+                            parent.getY() + appearanceOption.stackToNearbyContainersButtonPosY.intValue()))
+                    .setPressAction(button -> {
+                        ScreenHandler screenHandler = inventoryScreen.getScreenHandler();
+                        ItemStack cursorStack = screenHandler.getCursorStack();
+                        if (cursorStack.isEmpty()) {
+                            InventoryActions.stackToNearbyContainers();
+                        } else {
+                            Item item = cursorStack.getItem();
+
+                            screenHandler.slots.stream()
+                                    .filter(slot -> slot.inventory instanceof PlayerInventory)
+                                    .filter(slot -> slot.getIndex() < 36) // 36: feet, 37: legs, 38: chest, 39: head, 40: offhand
+                                    .filter(not(LockedSlots::isLocked))
+                                    .filter(slot -> !slot.hasStack() || InventoryActions.canMerge(slot.getStack(), cursorStack))
+                                    .peek(slot -> InventoryActions.pickup(screenHandler, slot))
+                                    .anyMatch(slot -> cursorStack.isEmpty());
+
+                            InventoryActions.stackToNearbyContainers(item);
+                        }
+                    })
+                    .build();
+
+            currentStackToNearbyContainersButton = Optional.ofNullable(buttonWidget);
+
+            screen.fabric_getRemoveEvent().register(s -> currentStackToNearbyContainersButton = Optional.empty());
+        }
+
+        if (ModOptions.get().appearance.showRestockFromNearbyContainersButton.booleanValue()) {
+            new PosUpdatableButtonWidget.Builder(inventoryScreen)
+                    .setTextures(getButtonTextures("restock_from_nearby_containers_button"))
+                    .setTooltip(showButtonTooltip ? getTooltipWithHint("stack-to-nearby-chests.tooltip.restockFromNearbyContainersButton") : null)
+                    .setPosUpdater(parent -> new Vec2i(parent.getX() + appearanceOption.restockFromNearbyContainersButtonPosX.intValue(),
+                            parent.getY() + appearanceOption.restockFromNearbyContainersButtonPosY.intValue()))
+                    .setPressAction(button -> InventoryActions.restockFromNearbyContainers())
+                    .build();
         }
     }
 
