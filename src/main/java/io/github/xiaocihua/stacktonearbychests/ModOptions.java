@@ -96,6 +96,8 @@ public class ModOptions {
         public Identifier favoriteItemStyle = new Identifier(ModOptions.MOD_ID, "gold_badge");
 
         public MutableBoolean alwaysShowMarkersForFavoritedItems = new MutableBoolean(true);
+
+        public MutableBoolean showTheButtonsOnTheCreativeInventoryScreen = new MutableBoolean(true);
     }
 
     public static class Behavior {
