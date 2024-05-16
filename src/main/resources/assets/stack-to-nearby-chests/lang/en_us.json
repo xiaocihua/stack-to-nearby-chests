@@ -17,7 +17,7 @@
 
   "stack-to-nearby-chests.options.title": "Stack to Nearby Chests Mod Options",
   "stack-to-nearby-chests.options.appearance": "Appearance",
-  "stack-to-nearby-chests.options.favoriteItemStyle": "Style of favorite items",
+  "stack-to-nearby-chests.options.favoriteItemStyle": "Marker style for favorited items",
   "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems": "Always show markers for favorited items",
   "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems.tooltip": "When disabled, markers for favorited items will be hidden until you press the key you assigned in Keymap settings. (Default: Left Alt)",
   "stack-to-nearby-chests.options.showStackToNearbyContainersButton": "Show quick stack to nearby containers button",
@@ -25,7 +25,7 @@
   "stack-to-nearby-chests.options.showQuickStackButton": "Show quick stack button",
   "stack-to-nearby-chests.options.showRestockButton": "Show restock button",
   "stack-to-nearby-chests.options.showTheButtonsOnTheCreativeInventoryScreen": "Show the buttons on the Creative inventory screen",
-  "stack-to-nearby-chests.options.showButtonTooltip": "Show button tooltip",
+  "stack-to-nearby-chests.options.showButtonTooltip": "Show button tooltips",
   "stack-to-nearby-chests.options.stackToNearbyContainersButtonPosX": "Quick stack to nearby containers button position X",
   "stack-to-nearby-chests.options.stackToNearbyContainersButtonPosY": "Quick stack to nearby containers button position Y",
   "stack-to-nearby-chests.options.restockFromNearbyContainersButtonPosX": "Restock from nearby containers button position X",
