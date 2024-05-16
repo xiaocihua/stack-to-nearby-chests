@@ -17,9 +17,9 @@
 
   "stack-to-nearby-chests.options.title": "堆叠到附近的箱子 模组设置",
   "stack-to-nearby-chests.options.appearance": "外观",
-  "stack-to-nearby-chests.options.favoriteItemStyle": "已收藏物品标记样式",
+  "stack-to-nearby-chests.options.favoriteItemStyle": "物品收藏标记样式",
   "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems": "总是显示物品收藏标记",
-  "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems.tooltip": "禁用后，已收藏物品的标记只会在按住按键映射中分配的按键时显示。（默认：左Alt）",
+  "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems.tooltip": "禁用后，物品收藏标记只会在按住按键映射中分配的按键时显示。（默认：左Alt）",
   "stack-to-nearby-chests.options.showStackToNearbyContainersButton": "显示快速堆叠到附近的容器按钮",
   "stack-to-nearby-chests.options.showRestockFromNearbyContainersButton": "显示从附近的容器中补货按钮",
   "stack-to-nearby-chests.options.showQuickStackButton": "显示快速堆叠按钮",
