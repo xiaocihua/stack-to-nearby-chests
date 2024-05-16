@@ -24,6 +24,7 @@
   "stack-to-nearby-chests.options.showRestockFromNearbyContainersButton": "显示从附近的容器中补货按钮",
   "stack-to-nearby-chests.options.showQuickStackButton": "显示快速堆叠按钮",
   "stack-to-nearby-chests.options.showRestockButton": "显示补货按钮",
+  "stack-to-nearby-chests.options.showTheButtonsOnTheCreativeInventoryScreen": "在创造模式物品栏界面上显示按钮",
   "stack-to-nearby-chests.options.showButtonTooltip": "显示按钮工具提示",
   "stack-to-nearby-chests.options.stackToNearbyContainersButtonPosX": "快速堆叠到附近的容器按钮位置 X",
   "stack-to-nearby-chests.options.stackToNearbyContainersButtonPosY": "快速堆叠到附近的容器按钮位置 Y",
