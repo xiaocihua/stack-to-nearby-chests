@@ -1,9 +1,7 @@
 package io.github.xiaocihua.stacktonearbychests;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.ShulkerBoxBlock;
+import io.github.xiaocihua.stacktonearbychests.compat.SophisticatedStorageCompat;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.block.enums.ChestType;
@@ -116,15 +114,17 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
 
     private boolean isOpenable(World world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (!(blockEntity instanceof Inventory) && state.getBlock() != Blocks.ENDER_CHEST) {
+        if (!(blockEntity instanceof Inventory || SophisticatedStorageCompat.isModContainer(block))
+                && block != Blocks.ENDER_CHEST) {
             return false;
         }
         if (blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity && isShulkerBoxBlocked(state, world, pos, shulkerBoxBlockEntity)) {
             return false;
         }
         if (state.getBlock() instanceof ChestBlock || state.getBlock() == Blocks.ENDER_CHEST) {
-            if (ChestBlock.isChestBlocked(world, pos)){
+            if (ChestBlock.isChestBlocked(world, pos)) {
                 return false;
             }
             return getTheOtherHalfOfLargeChest(world, pos)

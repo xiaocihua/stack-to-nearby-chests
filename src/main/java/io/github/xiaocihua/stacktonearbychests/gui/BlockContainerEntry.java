@@ -3,6 +3,7 @@ package io.github.xiaocihua.stacktonearbychests.gui;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
+import io.github.xiaocihua.stacktonearbychests.compat.SophisticatedStorageCompat;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -24,7 +25,17 @@ public class BlockContainerEntry extends SelectableEntryList.Entry<Identifier> {
         super(id);
         Optional<Block> block = Registries.BLOCK.getOrEmpty(id);
         icon = block.map(b -> new ItemIcon(b.asItem()));
-        name = block.<Text>map(Block::getName).orElse(Text.of(id.toString()));
+        name = block.map(this::getName)
+                .orElse(Text.of(id.toString()));
+    }
+
+    public Text getName(Block block) {
+        if (SophisticatedStorageCompat.isModBlock(block)) {
+            String blockName = block.getName().getString().replace("%s%s","");
+            return Text.of(blockName);
+        }
+
+        return block.getName();
     }
 
     @Override
