@@ -47,7 +47,7 @@ public class StackToNearbyChests implements ClientModInitializer {
     public static final boolean IS_IPN_MOD_LOADED = FabricLoader.getInstance().isModLoaded("inventoryprofilesnext");
     public static final boolean IS_EASY_SHULKER_BOXES_MOD_LOADED = FabricLoader.getInstance().isModLoaded("easyshulkerboxes");
 
-    private static final Identifier BUTTON_TEXTURES = new Identifier(ModOptions.MOD_ID, "widget/");
+    private static final Identifier BUTTON_TEXTURES = Identifier.of(ModOptions.MOD_ID, "widget/");
 
     public static Optional<PosUpdatableButtonWidget> currentStackToNearbyContainersButton = Optional.empty();
 

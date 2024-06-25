@@ -218,8 +218,8 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 	public static abstract class Entry<D> extends WWidget {
 
 		protected static final int TEXT_COLOR = 16119285;
-		private static final BackgroundPainter UNSELECTED = BackgroundPainter.createNinePatch(new Identifier(MOD_ID, "textures/background_dark.png"));
-		private static final BackgroundPainter SELECTED = BackgroundPainter.createNinePatch(new Identifier(MOD_ID, "textures/background_dark_selected.png"));
+		private static final BackgroundPainter UNSELECTED = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark.png"));
+		private static final BackgroundPainter SELECTED = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark_selected.png"));
 		protected Optional<SelectableEntryList<D>> parentList = Optional.empty();
 		protected boolean isSelected = false;
 

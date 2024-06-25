@@ -93,7 +93,7 @@ public class ModOptions {
         public IntOption restockButtonPosX = new IntOption(6);
         public IntOption restockButtonPosY = new IntOption(10);
 
-        public Identifier favoriteItemStyle = new Identifier(ModOptions.MOD_ID, "gold_badge");
+        public Identifier favoriteItemStyle = Identifier.of(ModOptions.MOD_ID, "gold_badge");
 
         public MutableBoolean alwaysShowMarkersForFavoritedItems = new MutableBoolean(true);
 
@@ -755,7 +755,7 @@ public class ModOptions {
 
         @Override
         public Identifier read(JsonReader in) throws IOException {
-            return new Identifier(in.nextString());
+            return Identifier.of(in.nextString());
         }
 
         @Override

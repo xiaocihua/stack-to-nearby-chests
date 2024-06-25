@@ -30,10 +30,10 @@ import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
 public class ModOptionsGui extends LightweightGuiDescription {
     public static final String PREFIX = MOD_ID + ".options.";
     public static final int TEXT_COLOR = 0xF5F5F5;
-    public static final BackgroundPainter BACKGROUND_DARK = BackgroundPainter.createNinePatch(new Identifier(MOD_ID, "textures/background_dark.png"));
-    public static final BackgroundPainter BACKGROUND_LIGHT = BackgroundPainter.createNinePatch(new Identifier(MOD_ID, "textures/background_light.png"));
-    private static final Identifier CHECKED = new Identifier(MOD_ID, "textures/checkbox_checked.png");
-    private static final Identifier UNCHECKED = new Identifier(MOD_ID, "textures/checkbox_unchecked.png");
+    public static final BackgroundPainter BACKGROUND_DARK = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark.png"));
+    public static final BackgroundPainter BACKGROUND_LIGHT = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_light.png"));
+    private static final Identifier CHECKED = Identifier.of(MOD_ID, "textures/checkbox_checked.png");
+    private static final Identifier UNCHECKED = Identifier.of(MOD_ID, "textures/checkbox_unchecked.png");
 
     private static final int ROOT_WIDTH = 400;
     private final WPlainPanel root;
@@ -90,13 +90,13 @@ public class ModOptionsGui extends LightweightGuiDescription {
 
             public void setCurrent(Identifier id) {
                 super.setLabel(Text.translatable(MOD_ID + ".resource." + id.getPath()));
-                super.setIcon(new TextureIcon(new Identifier(id.getNamespace(), String.format(Locale.ROOT, "textures/item/%s%s", id.getPath(), ".png"))));
+                super.setIcon(new TextureIcon(Identifier.of(id.getNamespace(), String.format(Locale.ROOT, "textures/item/%s%s", id.getPath(), ".png"))));
                 options.appearance.favoriteItemStyle = id;
             }
 
             @Override
             public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
-                ScreenDrawing.texturedRect(context, x + 1, y + 1, 18, 18, new Identifier(MOD_ID, "textures/slot_background.png"), 0xFF_FFFFFF);
+                ScreenDrawing.texturedRect(context, x + 1, y + 1, 18, 18, Identifier.of(MOD_ID, "textures/slot_background.png"), 0xFF_FFFFFF);
                 super.paint(context, x, y, mouseX, mouseY);
             }
         };

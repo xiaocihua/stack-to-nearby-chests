@@ -47,10 +47,10 @@ import static java.util.function.Predicate.not;
 @Environment(EnvType.CLIENT)
 public class LockedSlots {
     private static final Path LOCKED_SLOTS_FOLDER = ModOptions.MOD_OPTIONS_DIR.resolve("locked-slots");
-    public static final List<Identifier> FAVORITE_ITEM_TAGS = List.of(new Identifier(ModOptions.MOD_ID, "gold_badge"),
-            new Identifier(ModOptions.MOD_ID, "red_background"),
-            new Identifier(ModOptions.MOD_ID, "gold_border"),
-            new Identifier(ModOptions.MOD_ID, "iron_border"));
+    public static final List<Identifier> FAVORITE_ITEM_TAGS = List.of(Identifier.of(ModOptions.MOD_ID, "gold_badge"),
+            Identifier.of(ModOptions.MOD_ID, "red_background"),
+            Identifier.of(ModOptions.MOD_ID, "gold_border"),
+            Identifier.of(ModOptions.MOD_ID, "iron_border"));
 
     private static HashSet<Integer> currentLockedSlots = new HashSet<>();
     private static boolean movingFavoriteItemStack = false;
@@ -332,7 +332,7 @@ public class LockedSlots {
         if (isLocked(slot) && isForeground == id.getPath().equals("gold_badge")) {
             Sprite sprite = MinecraftClient.getInstance()
                     .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-                    .apply(new Identifier(id.getNamespace(), "item/" + id.getPath()));
+                    .apply(Identifier.of(id.getNamespace(), "item/" + id.getPath()));
             RenderSystem.setShaderTexture(0, sprite.getAtlasId());
             context.drawSprite(slot.x, slot.y, isForeground ? 300 : 200, 16, 16, sprite);
         }

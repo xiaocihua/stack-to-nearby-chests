@@ -267,9 +267,9 @@ public class WTabPanelCustom extends WPanel {
     @Environment(EnvType.CLIENT)
     final static class Painters {
         static final BackgroundPainter SELECTED_TAB =
-                BackgroundPainter.createNinePatch(new Identifier(ModOptions.MOD_ID, "textures/selected_tab.png"));
+                BackgroundPainter.createNinePatch(Identifier.of(ModOptions.MOD_ID, "textures/selected_tab.png"));
         static final BackgroundPainter UNSELECTED_TAB =
-                BackgroundPainter.createNinePatch(new Identifier(ModOptions.MOD_ID, "textures/background_dark.png"));
+                BackgroundPainter.createNinePatch(Identifier.of(ModOptions.MOD_ID, "textures/background_dark.png"));
     }
 
     private final class WTab extends WWidget {

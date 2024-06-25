@@ -106,7 +106,7 @@ public abstract class EntryPicker extends WBox {
 
     @Override
     public BackgroundPainter getBackgroundPainter() {
-        return BackgroundPainter.createNinePatch(new Identifier(MOD_ID, "textures/background_dark_bordered.png"));
+        return BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark_bordered.png"));
     }
 
     @Override

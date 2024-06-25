@@ -29,7 +29,7 @@ public class BlackWhiteList extends WBoxCustom {
         var titleLabel = new WLabel(title, TEXT_COLOR).setVerticalAlignment(VerticalAlignment.CENTER);
         add(titleLabel, 12);
 
-        this.list = new SelectableEntryList<>(data.stream().map(Identifier::new).toList(), entrySupplier)
+        this.list = new SelectableEntryList<>(data.stream().map(Identifier::of).toList(), entrySupplier)
                 .setChangedListener(identifiers -> dataChangeListener.accept(identifiers.stream().map(Identifier::toString).collect(Collectors.toSet())));
 
         var buttons = new WBoxCustom(Axis.HORIZONTAL);
