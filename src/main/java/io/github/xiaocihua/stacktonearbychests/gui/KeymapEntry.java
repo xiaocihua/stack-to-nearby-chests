@@ -13,7 +13,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class KeymapEntry extends WBox {
     private static final int KEYBINDING_WIDTH = 165;
-    private static final int RESET_BUTTON_WIDTH = 40;
+    private static final int RESET_BUTTON_WIDTH = 55;
 
     private final WText text;
     private final KeyBindingWidget keybinding;
