@@ -115,15 +115,15 @@ public class ModOptionsGui extends LightweightGuiDescription {
         appearance.add(createCheckbox("showRestockButton", options.appearance.showRestockButton));
         appearance.add(createCheckbox("showTheButtonsOnTheCreativeInventoryScreen", options.appearance.showTheButtonsOnTheCreativeInventoryScreen));
         appearance.add(createCheckbox("showButtonTooltip", options.appearance.showButtonTooltip));
-        appearance.add(createIntTextField("stackToNearbyContainersButtonPosX", options.appearance.stackToNearbyContainersButtonPosX), 342, 20);
-        appearance.add(createIntTextField("stackToNearbyContainersButtonPosY", options.appearance.stackToNearbyContainersButtonPosY), 342, 20);
-        appearance.add(createIntTextField("restockFromNearbyContainersButtonPosX", options.appearance.restockFromNearbyContainersButtonPosX), 340, 20);
-        appearance.add(createIntTextField("restockFromNearbyContainersButtonPosY", options.appearance.restockFromNearbyContainersButtonPosY), 340, 20);
+        appearance.add(createIntTextField("stackToNearbyContainersButtonPosX", options.appearance.stackToNearbyContainersButtonPosX), 362, 20);
+        appearance.add(createIntTextField("stackToNearbyContainersButtonPosY", options.appearance.stackToNearbyContainersButtonPosY), 362, 20);
+        appearance.add(createIntTextField("restockFromNearbyContainersButtonPosX", options.appearance.restockFromNearbyContainersButtonPosX), 360, 20);
+        appearance.add(createIntTextField("restockFromNearbyContainersButtonPosY", options.appearance.restockFromNearbyContainersButtonPosY), 360, 20);
         String tooltip = PREFIX + "buttonPos.tooltip";
-        appearance.add(createIntTextField("quickStackButtonPosX", options.appearance.quickStackButtonPosX).withTooltip(tooltip), 230, 20);
-        appearance.add(createIntTextField("quickStackButtonPosY", options.appearance.quickStackButtonPosY).withTooltip(tooltip), 230, 20);
-        appearance.add(createIntTextField("restockButtonPosX", options.appearance.restockButtonPosX).withTooltip(tooltip), 215, 20);
-        appearance.add(createIntTextField("restockButtonPosY", options.appearance.restockButtonPosY).withTooltip(tooltip), 215, 20);
+        appearance.add(createIntTextField("quickStackButtonPosX", options.appearance.quickStackButtonPosX).withTooltip(tooltip), 250, 20);
+        appearance.add(createIntTextField("quickStackButtonPosY", options.appearance.quickStackButtonPosY).withTooltip(tooltip), 250, 20);
+        appearance.add(createIntTextField("restockButtonPosX", options.appearance.restockButtonPosX).withTooltip(tooltip), 235, 20);
+        appearance.add(createIntTextField("restockButtonPosY", options.appearance.restockButtonPosY).withTooltip(tooltip), 235, 20);
 
         return appearance;
     }
@@ -194,7 +194,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
     }
 
     private WBox createKeymap() {
-        WBox keymap = createCard().setSpacing(4);
+        WBox keymap = createCard().setSpacing(10);
 
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "stackToNearbyContainers"), options.keymap.stackToNearbyContainersKey), 380, 18);
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainers"), options.keymap.quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainersKey), 380, 18);
