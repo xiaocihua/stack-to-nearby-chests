@@ -17,7 +17,8 @@ import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class TextFieldWithLabel extends WBoxCustom {
-    private static final int RESET_BUTTON_WIDTH = 40;
+    private static final int RESET_BUTTON_WIDTH = 55;
+    private static final int TEXT_FIELD_WIDTH = 40;
 
     private final WLabel label;
     private final WTextField textField;
@@ -55,7 +56,7 @@ public class TextFieldWithLabel extends WBoxCustom {
     public void layout() {
         int labelWidth = MinecraftClient.getInstance().textRenderer.getWidth(label.getText().asOrderedText()) + 7;
         label.setSize(labelWidth, height);
-        textField.setSize(width - labelWidth - RESET_BUTTON_WIDTH, height);
+        textField.setSize(TEXT_FIELD_WIDTH, height);
         resetButton.setSize(RESET_BUTTON_WIDTH, height);
 
         super.layout();
