@@ -1,5 +1,3 @@
-- Fixed compatibility issues with Sophisticated Storage
-
-- Added more chests from Reinforced Chests/Barrels/Shulker Boxes ([#36](https://github.com/xiaocihua/stack-to-nearby-chests/issues/36) by [LumenylCal](https://github.com/LumenylCal))
+- Added Russian translation ([#39](https://github.com/xiaocihua/stack-to-nearby-chests/issues/39) by [SecretiXz](https://github.com/SecretiXz))
 
 **This version is not compatible with optifabric**
