@@ -3,9 +3,9 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.5.9 for Minecraft 1.21
+  RELEASE_NAME: 0.5.9 for Minecraft 1.21-1.21.1
   VERSION: 0.5.9
-  MC_VERSION: mc1.21
+  MC_VERSION: mc1.21.1
 
 permissions:
   contents: write
@@ -55,6 +55,7 @@ jobs:
           loaders: fabric
           game-versions: |
             1.21
+            1.21.1
           java: |
             21
             22
