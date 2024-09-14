@@ -1,3 +1,3 @@
-- Added Russian translation ([#39](https://github.com/xiaocihua/stack-to-nearby-chests/issues/39) by [SecretiXz](https://github.com/SecretiXz))
+- Added Traditional Chinese localization ([#40](https://github.com/xiaocihua/stack-to-nearby-chests/pull/40) by [yichifauzi](https://github.com/yichifauzi))
 
 **This version is not compatible with optifabric**
