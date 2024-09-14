@@ -3,8 +3,8 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.5.9 for Minecraft 1.19.3
-  VERSION: 0.5.9
+  RELEASE_NAME: 0.5.10 for Minecraft 1.19.3
+  VERSION: 0.5.10
 
 permissions:
   contents: write
