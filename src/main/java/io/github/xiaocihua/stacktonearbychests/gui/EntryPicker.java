@@ -7,6 +7,8 @@ import io.github.cottonmc.cotton.gui.widget.WTextField;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import io.github.cottonmc.cotton.gui.widget.data.Texture;
+import juuxel.libninepatch.NinePatch;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.registry.Registries;
@@ -106,7 +108,8 @@ public abstract class EntryPicker extends WBox {
 
     @Override
     public BackgroundPainter getBackgroundPainter() {
-        return BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark_bordered.png"));
+        return BackgroundPainter.createNinePatch(new Texture(Identifier.of(MOD_ID, "textures/background_dark_bordered.png")),
+                builder -> builder.mode(NinePatch.Mode.STRETCHING).cornerSize(4).cornerUv(0.25f));
     }
 
     @Override

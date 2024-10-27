@@ -22,7 +22,7 @@ public class BlockContainerEntry extends SelectableEntryList.Entry<Identifier> {
 
     public BlockContainerEntry(Identifier id) {
         super(id);
-        Optional<Block> block = Registries.BLOCK.getOrEmpty(id);
+        Optional<Block> block = Registries.BLOCK.getOptionalValue(id);
         icon = block.map(b -> new ItemIcon(b.asItem()));
         name = block.<Text>map(Block::getName).orElse(Text.of(id.toString()));
     }

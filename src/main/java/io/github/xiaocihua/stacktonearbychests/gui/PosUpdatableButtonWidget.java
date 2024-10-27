@@ -12,7 +12,6 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -39,8 +38,9 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         posUpdater.ifPresent(updater -> setPos(updater.apply((HandledScreenAccessor) parent)));
-        Identifier identifier = this.textures.get(this.isNarratable(), this.isHovered());
-        context.drawGuiTexture(identifier, this.getX(), this.getY(), this.width, this.height);
+        super.renderWidget(context, mouseX, mouseY, delta);
+//        Identifier identifier = this.textures.get(this.isNarratable(), this.isHovered());
+//        context.drawGuiTexture(identifier, this.getX(), this.getY(), this.width, this.height);
     }
 
     public void setPos(Vec2i pos) {

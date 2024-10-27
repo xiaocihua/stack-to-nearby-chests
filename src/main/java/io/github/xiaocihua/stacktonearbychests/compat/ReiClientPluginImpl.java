@@ -8,7 +8,8 @@ import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.screen.ExclusionZones;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,9 @@ public class ReiClientPluginImpl implements REIClientPlugin {
             List<Rectangle> zones = new ArrayList<>();
             ModOptions.Appearance appearanceOption = ModOptions.get().appearance;
 
-            if (screen instanceof AbstractInventoryScreen<?> inventoryScreen) {
-                int parentX = ((HandledScreenAccessor) inventoryScreen).getX();
-                int parentY = ((HandledScreenAccessor) inventoryScreen).getY();
+            if (screen instanceof InventoryScreen || screen instanceof CreativeInventoryScreen) {
+                int parentX = ((HandledScreenAccessor) screen).getX();
+                int parentY = ((HandledScreenAccessor) screen).getY();
 
                 if (ModOptions.get().appearance.showStackToNearbyContainersButton.booleanValue()) {
                     zones.add(new Rectangle(

@@ -7,8 +7,10 @@ import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
+import io.github.cottonmc.cotton.gui.widget.data.Texture;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
 import io.github.xiaocihua.stacktonearbychests.ModOptions;
+import juuxel.libninepatch.NinePatch;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -267,7 +269,8 @@ public class WTabPanelCustom extends WPanel {
     @Environment(EnvType.CLIENT)
     final static class Painters {
         static final BackgroundPainter SELECTED_TAB =
-                BackgroundPainter.createNinePatch(Identifier.of(ModOptions.MOD_ID, "textures/selected_tab.png"));
+                BackgroundPainter.createNinePatch(new Texture(Identifier.of(ModOptions.MOD_ID, "textures/selected_tab.png")),
+                        builder -> builder.mode(NinePatch.Mode.STRETCHING).cornerSize(4).cornerUv(0.25f));
         static final BackgroundPainter UNSELECTED_TAB =
                 BackgroundPainter.createNinePatch(Identifier.of(ModOptions.MOD_ID, "textures/background_dark.png"));
     }

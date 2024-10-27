@@ -1,12 +1,19 @@
 package io.github.xiaocihua.stacktonearbychests.gui;
 
+import io.github.cottonmc.cotton.gui.client.Scissors;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayDeque;
 import java.util.stream.Collectors;
+
+/**
+ * Copy from {@link io.github.cottonmc.cotton.gui.client.Scissors}
+ */
 
 /**
  * Contains a stack for GL scissors for restricting the drawn area of a widget.
@@ -15,7 +22,7 @@ import java.util.stream.Collectors;
  */
 @Environment(EnvType.CLIENT)
 public final class ScissorsBugFix {
-    private static final ArrayDeque<Frame> STACK = new ArrayDeque<>();
+    private static final ArrayDeque<ScissorsBugFix.Frame> STACK = new ArrayDeque<>();
 
     private ScissorsBugFix() {
     }
@@ -23,15 +30,33 @@ public final class ScissorsBugFix {
     /**
      * Pushes a new scissor frame onto the stack and refreshes the scissored area.
      *
-     * @param x      the frame's X coordinate
-     * @param y      the frame's Y coordinate
-     * @param width  the frame's width in pixels
+     * @param x the frame's X coordinate
+     * @param y the frame's Y coordinate
+     * @param width the frame's width in pixels
      * @param height the frame's height in pixels
      * @return the pushed frame
      */
-    public static Frame push(int x, int y, int width, int height) {
-        Frame frame = new Frame(x, y, width, height);
+    public static ScissorsBugFix.Frame push(int x, int y, int width, int height) {
+        return push(null, x, y, width, height);
+    }
+
+    /**
+     * Pushes a new scissor frame onto the stack and refreshes the scissored area.
+     *
+     * <p>If the draw context is not null, any buffered content in it will be drawn
+     * when refreshing the scissor state.
+     *
+     * @param context the associated draw context, or null if not provided
+     * @param x the frame's X coordinate
+     * @param y the frame's Y coordinate
+     * @param width the frame's width in pixels
+     * @param height the frame's height in pixels
+     * @return the pushed frame
+     */
+    public static ScissorsBugFix.Frame push(@Nullable DrawContext context, int x, int y, int width, int height) {
+        ScissorsBugFix.Frame frame = new ScissorsBugFix.Frame(x, y, width, height, context);
         STACK.push(frame);
+        if (context != null) context.draw();
         refreshScissors();
 
         return frame;
@@ -47,7 +72,8 @@ public final class ScissorsBugFix {
             throw new IllegalStateException("No scissors on the stack!");
         }
 
-        STACK.pop();
+        var frame = STACK.pop();
+        if (frame.context != null) frame.context.draw();
         refreshScissors();
     }
 
@@ -65,7 +91,7 @@ public final class ScissorsBugFix {
         int width = -1;
         int height = -1;
 
-        for (Frame frame : STACK) {
+        for (ScissorsBugFix.Frame frame : STACK) {
             if (x < frame.x) {
                 x = frame.x;
             }
@@ -100,7 +126,7 @@ public final class ScissorsBugFix {
      */
     static void checkStackIsEmpty() {
         if (!STACK.isEmpty()) {
-            throw new IllegalStateException("Unpopped scissor frames: " + STACK.stream().map(Frame::toString).collect(Collectors.joining(", ")));
+            throw new IllegalStateException("Unpopped scissor frames: " + STACK.stream().map(ScissorsBugFix.Frame::toString).collect(Collectors.joining(", ")));
         }
     }
 
@@ -112,8 +138,9 @@ public final class ScissorsBugFix {
         private final int y;
         private final int width;
         private final int height;
+        private final @Nullable DrawContext context;
 
-        private Frame(int x, int y, int width, int height) {
+        private Frame(int x, int y, int width, int height, @Nullable DrawContext context) {
             if (width < 0) throw new IllegalArgumentException("Negative width for a stack frame");
             if (height < 0) throw new IllegalArgumentException("Negative height for a stack frame");
 
@@ -121,6 +148,7 @@ public final class ScissorsBugFix {
             this.y = y;
             this.width = width;
             this.height = height;
+            this.context = context;
         }
 
         /**
@@ -130,7 +158,7 @@ public final class ScissorsBugFix {
          *                               <li>this frame is not on the stack, or</li>
          *                               <li>this frame is not the topmost element on the stack</li>
          *                               </ul>
-         * @see ScissorsBugFix#pop()
+         * @see Scissors#pop()
          */
         @Override
         public void close() {

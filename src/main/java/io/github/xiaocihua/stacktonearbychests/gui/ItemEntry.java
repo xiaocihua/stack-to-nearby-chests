@@ -24,7 +24,7 @@ public class ItemEntry extends SelectableEntryList.Entry<Identifier> {
 
     public ItemEntry(Identifier id) {
         super(id);
-        Optional<Item> item = Registries.ITEM.getOrEmpty(id);
+        Optional<Item> item = Registries.ITEM.getOptionalValue(id);
         icon = item.<Icon>map(ItemIcon::new).orElse(new TextureIcon(MissingSprite.getMissingSpriteId()));
         name = item.map(Item::getName).orElse(Text.of(id.toString()));
     }

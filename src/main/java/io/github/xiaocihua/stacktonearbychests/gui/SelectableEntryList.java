@@ -8,6 +8,8 @@ import io.github.cottonmc.cotton.gui.widget.WScrollBar;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
+import io.github.cottonmc.cotton.gui.widget.data.Texture;
+import juuxel.libninepatch.NinePatch;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
@@ -219,7 +221,8 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 
 		protected static final int TEXT_COLOR = 16119285;
 		private static final BackgroundPainter UNSELECTED = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark.png"));
-		private static final BackgroundPainter SELECTED = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark_selected.png"));
+		private static final BackgroundPainter SELECTED = BackgroundPainter.createNinePatch(new Texture(Identifier.of(MOD_ID, "textures/background_dark_selected.png")),
+				builder -> builder.mode(NinePatch.Mode.STRETCHING).cornerSize(4).cornerUv(0.25f));
 		protected Optional<SelectableEntryList<D>> parentList = Optional.empty();
 		protected boolean isSelected = false;
 

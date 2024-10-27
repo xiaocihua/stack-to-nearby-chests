@@ -2,7 +2,6 @@ package io.github.xiaocihua.stacktonearbychests;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.xiaocihua.stacktonearbychests.event.ClickSlotCallback;
 import io.github.xiaocihua.stacktonearbychests.event.DisconnectCallback;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
@@ -15,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -333,8 +333,9 @@ public class LockedSlots {
             Sprite sprite = MinecraftClient.getInstance()
                     .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
                     .apply(Identifier.of(id.getNamespace(), "item/" + id.getPath()));
-            RenderSystem.setShaderTexture(0, sprite.getAtlasId());
-            context.drawSprite(slot.x, slot.y, isForeground ? 300 : 200, 16, 16, sprite);
+
+            context.drawSpriteStretched(isForeground ? RenderLayer::getGuiTexturedOverlay : RenderLayer::getGuiTextured,
+                    sprite, slot.x, slot.y, 16, 16);
         }
     }
 

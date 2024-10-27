@@ -7,7 +7,8 @@ import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
 import io.github.xiaocihua.stacktonearbychests.ModOptions;
 import io.github.xiaocihua.stacktonearbychests.StackToNearbyChests;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
-import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 
 public class EmiPluginImpl implements EmiPlugin {
     @Override
@@ -15,9 +16,9 @@ public class EmiPluginImpl implements EmiPlugin {
         registry.addGenericExclusionArea((screen, consumer) -> {
             ModOptions.Appearance appearanceOption = ModOptions.get().appearance;
 
-            if (screen instanceof AbstractInventoryScreen<?> inventoryScreen) {
-                int parentX = ((HandledScreenAccessor) inventoryScreen).getX();
-                int parentY = ((HandledScreenAccessor) inventoryScreen).getY();
+            if (screen instanceof InventoryScreen || screen instanceof CreativeInventoryScreen) {
+                int parentX = ((HandledScreenAccessor) screen).getX();
+                int parentY = ((HandledScreenAccessor) screen).getY();
 
                 if (ModOptions.get().appearance.showStackToNearbyContainersButton.booleanValue()) {
                     consumer.accept(new Bounds(
