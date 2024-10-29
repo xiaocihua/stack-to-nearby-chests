@@ -98,6 +98,8 @@ public class ModOptions {
         public MutableBoolean alwaysShowMarkersForFavoritedItems = new MutableBoolean(true);
 
         public MutableBoolean showTheButtonsOnTheCreativeInventoryScreen = new MutableBoolean(true);
+
+        public MutableBoolean enableFavoritingSoundEffect = new MutableBoolean(true);
     }
 
     public static class Behavior {

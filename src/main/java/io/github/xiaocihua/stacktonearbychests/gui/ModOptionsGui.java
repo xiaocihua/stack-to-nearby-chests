@@ -109,6 +109,8 @@ public class ModOptionsGui extends LightweightGuiDescription {
                 MinecraftClient.getInstance().textRenderer.wrapLines(Text.translatable(PREFIX + "alwaysShowMarkersForFavoritedItems.tooltip"), 150));
         appearance.add(alwaysShowMarkersForFavoritedItemsCheckBox);
 
+        appearance.add(createCheckbox("enableFavoritingSoundEffect", options.appearance.enableFavoritingSoundEffect));
+
         appearance.add(createCheckbox("showStackToNearbyContainersButton", options.appearance.showStackToNearbyContainersButton));
         appearance.add(createCheckbox("showRestockFromNearbyContainersButton", options.appearance.showRestockFromNearbyContainersButton));
         appearance.add(createCheckbox("showQuickStackButton", options.appearance.showQuickStackButton));

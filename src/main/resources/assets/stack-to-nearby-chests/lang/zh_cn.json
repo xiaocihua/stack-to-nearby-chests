@@ -20,6 +20,7 @@
   "stack-to-nearby-chests.options.favoriteItemStyle": "物品收藏标记样式",
   "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems": "总是显示物品收藏标记",
   "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems.tooltip": "禁用后，物品收藏标记只会在按住按键映射中分配的按键时显示。（默认：左Alt）",
+  "stack-to-nearby-chests.options.enableFavoritingSoundEffect": "将物品标记为收藏时播放音效",
   "stack-to-nearby-chests.options.showStackToNearbyContainersButton": "显示快速堆叠到附近的容器按钮",
   "stack-to-nearby-chests.options.showRestockFromNearbyContainersButton": "显示从附近的容器中补货按钮",
   "stack-to-nearby-chests.options.showQuickStackButton": "显示快速堆叠按钮",
