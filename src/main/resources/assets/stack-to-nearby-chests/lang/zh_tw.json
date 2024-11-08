@@ -7,7 +7,7 @@
 
   "stack-to-nearby-chests.message.actionInterrupted": "動作已中斷",
   "stack-to-nearby-chests.message.interruptedByTimeout": "動作已中斷，原因：逾時",
-  "stack-to-nearby-chests.message.exceptionOccurredWhileClickingSlot": "點擊物品槽位時發生異常，請檢查記錄檔",
+  "stack-to-nearby-chests.message.exceptionOccurredWhileClickingSlot": "點擊物品欄位時發生異常，請檢查記錄檔",
   "stack-to-nearby-chests.message.exceptionOccurred": "發生異常，請檢查記錄檔",
 
   "stack-to-nearby-chests.resource.gold_badge": "金徽章",
@@ -20,6 +20,7 @@
   "stack-to-nearby-chests.options.favoriteItemStyle": "物品收藏標記樣式",
   "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems": "總是顯示物品收藏標記",
   "stack-to-nearby-chests.options.alwaysShowMarkersForFavoritedItems.tooltip": "停用後，物品收藏標記只會在按住按鍵映射中分配的按鍵時顯示。（預設：左 Alt）",
+  "stack-to-nearby-chests.options.enableFavoritingSoundEffect": "將物品標記為收藏時播放音效",
   "stack-to-nearby-chests.options.showStackToNearbyContainersButton": "顯示快速堆疊到附近的容器按鈕",
   "stack-to-nearby-chests.options.showRestockFromNearbyContainersButton": "顯示從附近的容器中補貨按鈕",
   "stack-to-nearby-chests.options.showQuickStackButton": "顯示快速堆疊按鈕",
@@ -51,8 +52,8 @@
   "stack-to-nearby-chests.options.restockingSources": "補貨來源",
   "stack-to-nearby-chests.options.restockingSourceEntities": "補貨來源實體",
   "stack-to-nearby-chests.options.itemsThatWillNotBeRestocked": "不會受補貨操作影響的物品",
-  "stack-to-nearby-chests.options.entryPicker.searchByName": "按名稱搜尋",
-  "stack-to-nearby-chests.options.entryPicker.searchByID": "按 ID 搜尋",
+  "stack-to-nearby-chests.options.entryPicker.searchByName": "依名稱搜尋",
+  "stack-to-nearby-chests.options.entryPicker.searchByID": "依 ID 搜尋",
   "stack-to-nearby-chests.options.entryPicker.add": "新增",
   "stack-to-nearby-chests.options.entryPicker.cancel": "取消",
   "stack-to-nearby-chests.options.entryPicker.addItemsToList": "向清單新增物品",
@@ -65,9 +66,9 @@
   "stack-to-nearby-chests.options.restock": "補貨",
   "stack-to-nearby-chests.options.markAsFavorite": "標記為收藏",
   "stack-to-nearby-chests.options.showMarkersForFavoritedItems": "顯示物品收藏標記",
-  "stack-to-nearby-chests.options.openModOptionsScreen": "打開模組選項介面",
+  "stack-to-nearby-chests.options.openModOptionsScreen": "開啟模組選項介面",
   "stack-to-nearby-chests.options.reset": "重設",
-  "stack-to-nearby-chests.options.keyMapHint": "使用退格鍵清空按鍵綁定。",
+  "stack-to-nearby-chests.options.keyMapHint": "使用 Backspace 鍵清空按鍵綁定。",
   "stack-to-nearby-chests.options.done": "完成",
   "stack-to-nearby-chests.options.searchInterval.tooltip": "對上一個容器的操作結束到開啟下一個容器之間的時間（單位：毫秒）"
 }
