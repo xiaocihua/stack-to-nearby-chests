@@ -1,5 +1,6 @@
 package io.github.xiaocihua.stacktonearbychests;
 
+import io.github.xiaocihua.stacktonearbychests.mixin.ShulkerBoxBlockInvoker;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
@@ -66,7 +67,7 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
             if (searchedBlocks.contains(pos)) {
                 continue;
             }
-            if (!isOpenable(world, pos)) {
+            if (!canOpen(world, pos)) {
                 continue;
             }
             BlockState state = world.getBlockState(pos);
@@ -114,13 +115,14 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
         return false;
     }
 
-    private boolean isOpenable(World world, BlockPos pos) {
+    private boolean canOpen(World world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (!(blockEntity instanceof Inventory) && state.getBlock() != Blocks.ENDER_CHEST) {
             return false;
         }
-        if (blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity && isShulkerBoxBlocked(state, world, pos, shulkerBoxBlockEntity)) {
+        if (blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity
+                && !ShulkerBoxBlockInvoker.invokeCanOpen(state, world, pos, shulkerBoxBlockEntity)) {
             return false;
         }
         if (state.getBlock() instanceof ChestBlock || state.getBlock() == Blocks.ENDER_CHEST) {
@@ -132,19 +134,6 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
                     .orElse(true);
         }
         return true;
-    }
-
-    private boolean isShulkerBoxBlocked(BlockState state, World world, BlockPos pos, ShulkerBoxBlockEntity shulkerBoxBlockEntity) {
-        if (shulkerBoxBlockEntity.getAnimationStage() != ShulkerBoxBlockEntity.AnimationStage.CLOSED) {
-            return false;
-        }
-
-        // Copy from ShulkerBoxBlock#canOpen(BlockState, World, BlockPos, ShulkerBoxBlockEntity)
-        Box box = ShulkerEntity.calculateBoundingBox(1.0F, state.get(ShulkerBoxBlock.FACING), 0.0F, 0.5F)
-                .offset(pos)
-                .contract(1.0E-6);
-
-        return !world.isSpaceEmpty(box);
     }
 
     private Optional<BlockPos> getTheOtherHalfOfLargeChest(World world, BlockPos pos) {

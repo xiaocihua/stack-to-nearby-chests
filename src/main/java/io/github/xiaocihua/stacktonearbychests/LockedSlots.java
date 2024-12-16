@@ -327,7 +327,7 @@ public class LockedSlots {
         }
     }
 
-    public static void drawFavoriteItemStyle(DrawContext context, Slot slot, boolean isForeground) {
+    public static void drawFavoriteItemStyle(DrawContext context, Slot slot) {
         ModOptions options = ModOptions.get();
 
         if (!(options.appearance.alwaysShowMarkersForFavoritedItems.booleanValue()
@@ -337,13 +337,11 @@ public class LockedSlots {
         }
 
         Identifier id = options.appearance.favoriteItemStyle;
-        if (isLocked(slot) && isForeground == id.getPath().equals("gold_badge")) {
-            Sprite sprite = MinecraftClient.getInstance()
-                    .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-                    .apply(Identifier.of(id.getNamespace(), "item/" + id.getPath()));
-
-            context.drawSpriteStretched(isForeground ? RenderLayer::getGuiTexturedOverlay : RenderLayer::getGuiTextured,
-                    sprite, slot.x, slot.y, 16, 16);
+        boolean isForeground = id.getPath().equals("gold_badge");
+        Identifier sprite = Identifier.of(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
+        if (isLocked(slot)) {
+            context.drawTexture(isForeground ? RenderLayer::getGuiTexturedOverlay : RenderLayer::getGuiTextured,
+                    sprite, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
         }
     }
 

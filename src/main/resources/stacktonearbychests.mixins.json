@@ -16,7 +16,8 @@
     "PlayerInventoryMixin",
     "RecipeBookWidgetAccessor",
     "RecipeBookWidgetMixin",
-    "ScreenHandlerMixin"
+    "ScreenHandlerMixin",
+    "ShulkerBoxBlockInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

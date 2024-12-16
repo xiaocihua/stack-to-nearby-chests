@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.8-SNAPSHOT'
+    id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -38,7 +38,7 @@ repositories.named("Mojang", MavenArtifactRepository) {
 loom {
     runs {
         client {
-            runDir = "run1.21.3"
+            runDir = "run1.21.4"
             vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar")
             programArgs("--width=1280",  "--height=720")
         }

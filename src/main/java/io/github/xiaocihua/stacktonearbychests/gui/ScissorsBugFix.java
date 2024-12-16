@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 @Environment(EnvType.CLIENT)
 public final class ScissorsBugFix {
-    private static final ArrayDeque<ScissorsBugFix.Frame> STACK = new ArrayDeque<>();
+    private static final ArrayDeque<Frame> STACK = new ArrayDeque<>();
 
     private ScissorsBugFix() {
     }
@@ -36,7 +36,7 @@ public final class ScissorsBugFix {
      * @param height the frame's height in pixels
      * @return the pushed frame
      */
-    public static ScissorsBugFix.Frame push(int x, int y, int width, int height) {
+    public static Frame push(int x, int y, int width, int height) {
         return push(null, x, y, width, height);
     }
 
@@ -53,8 +53,8 @@ public final class ScissorsBugFix {
      * @param height the frame's height in pixels
      * @return the pushed frame
      */
-    public static ScissorsBugFix.Frame push(@Nullable DrawContext context, int x, int y, int width, int height) {
-        ScissorsBugFix.Frame frame = new ScissorsBugFix.Frame(x, y, width, height, context);
+    public static Frame push(@Nullable DrawContext context, int x, int y, int width, int height) {
+        Frame frame = new Frame(x, y, width, height, context);
         STACK.push(frame);
         if (context != null) context.draw();
         refreshScissors();
@@ -91,7 +91,7 @@ public final class ScissorsBugFix {
         int width = -1;
         int height = -1;
 
-        for (ScissorsBugFix.Frame frame : STACK) {
+        for (Frame frame : STACK) {
             if (x < frame.x) {
                 x = frame.x;
             }
@@ -126,7 +126,7 @@ public final class ScissorsBugFix {
      */
     static void checkStackIsEmpty() {
         if (!STACK.isEmpty()) {
-            throw new IllegalStateException("Unpopped scissor frames: " + STACK.stream().map(ScissorsBugFix.Frame::toString).collect(Collectors.joining(", ")));
+            throw new IllegalStateException("Unpopped scissor frames: " + STACK.stream().map(Frame::toString).collect(Collectors.joining(", ")));
         }
     }
 
