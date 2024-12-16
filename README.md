@@ -6,9 +6,9 @@ The code to iterate over all nearby containers is from [clientcommands](https://
 
 ## Installation
 1. [Install Fabric Loader](https://fabricmc.net/wiki/player:tutorials:start#installing_fabric_loader)
-2. Download the [Fabric API](https://minecraft.curseforge.com/projects/fabric)
+2. Download the [Fabric API](https://github.com/FabricMC/fabric/releases)
 3. Download this mod from the [releases page](https://github.com/xiaocihua/stack-to-nearby-chests/releases)
-4. Place the two mods downloaded above in the `mods` folder
+4. Place both the downloaded Fabric API and this mod's .jar file in the `mods` folder
 
 ## Features
 - **Press Left Ctrl + S + C to open the mod options screen and configure the mod's appearance, behavior, and key mappings.**
