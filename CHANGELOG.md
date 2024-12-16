@@ -1,7 +1,7 @@
-- Support [More Chests Variants (MCV)](https://modrinth.com/mod/more-chest-variants-lieonlion) ([#41](https://github.com/xiaocihua/stack-to-nearby-chests/pull/41) by [FelixAgairu](https://github.com/FelixAgairu))
+- Updated zh_tw.json ([#47](https://github.com/xiaocihua/stack-to-nearby-chests/pull/47) by [@notlin4](https://github.com/notlin4))
 
-- Added a sound effect when favoriting and unfavoriting items, with an option to disable it in the mod settings
+- Lowered the required Fabric API version to 0.106.1 for compatibility with Minecraft 1.21.2.
 
-- Updated to Minecraft 1.21.3
+- Updated to Minecraft 1.21.4
 
 **This version is not compatible with optifabric**

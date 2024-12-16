@@ -3,9 +3,9 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.5.11 for Minecraft 1.21.2-1.21.3
-  VERSION: 0.5.11
-  MC_VERSION: mc1.21.3
+  RELEASE_NAME: 0.5.12 for Minecraft 1.21.2-1.21.4
+  VERSION: 0.5.12
+  MC_VERSION: mc1.21.4
 
 permissions:
   contents: write
@@ -56,6 +56,8 @@ jobs:
           game-versions: |
             1.21.2
             1.21.3
+            1.21.4
           java: |
             21
             22
+            23
