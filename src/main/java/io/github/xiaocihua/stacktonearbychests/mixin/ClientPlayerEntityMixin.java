@@ -20,14 +20,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Inject(method = "dropSelectedItem", at = @At("HEAD"), cancellable = true)
     private void beforeDropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
-        if (LockedSlots.beforeDropSelectedItem(getInventory().selectedSlot) == ActionResult.FAIL) {
+        if (LockedSlots.beforeDropSelectedItem(getInventory().getSelectedSlot()) == ActionResult.FAIL) {
             cir.setReturnValue(false);
         }
     }
 
     @Inject(method = "dropSelectedItem", at = @At("TAIL"))
     private void afterDropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
-        LockedSlots.afterDropSelectedItem(getInventory().selectedSlot);
+        LockedSlots.afterDropSelectedItem(getInventory().getSelectedSlot());
     }
 
 }

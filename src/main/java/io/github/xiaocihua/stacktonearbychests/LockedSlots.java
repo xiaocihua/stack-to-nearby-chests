@@ -361,7 +361,7 @@ public class LockedSlots {
     }
 
     public static ActionResult onSwapItemWithOffhand() {
-        int selectedSlotIndex = MinecraftClient.getInstance().player.getInventory().selectedSlot;
+        int selectedSlotIndex = MinecraftClient.getInstance().player.getInventory().getSelectedSlot();
         boolean isSelectedSlotLocked = isLocked(selectedSlotIndex);
 
         if (isSelectedSlotLocked && ModOptions.get().behavior.favoriteItemsCannotBeSwappedWithOffhand.booleanValue()) {
