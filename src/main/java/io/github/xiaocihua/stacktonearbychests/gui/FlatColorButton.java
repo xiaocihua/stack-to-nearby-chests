@@ -77,11 +77,11 @@ public class FlatColorButton extends WButton {
         }
 
         if (label != null) {
-            int color = 0xE0E0E0;
+            int color = ModOptionsGui.BUTTON_LABEL_COLOR;
             if (!enabled) {
-                color = 0xA0A0A0;
+                color = ModOptionsGui.BUTTON_LABEL_COLOR_DISABLED;
             } /*else if (hovered) {
-				color = 0xFFFFA0;
+				color = 0xFFFFFFA0;
 			}*/
 
             int xOffset = (icon != null && alignment == HorizontalAlignment.LEFT) ? 18 : 0;

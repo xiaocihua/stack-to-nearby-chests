@@ -3,7 +3,7 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.5.13 for Minecraft 1.21.5
+  RELEASE_NAME: 0.5.13 for Minecraft 1.21.6-1.21.7
   VERSION: 0.5.13
   MC_VERSION: mc1.21.5
 
@@ -54,7 +54,8 @@ jobs:
 
           loaders: fabric
           game-versions: |
-            1.21.5
+            1.21.6
+            1.21.7
           java: |
             21
             22

@@ -11,16 +11,14 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ServerInfo;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.texture.Sprite;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -336,12 +334,19 @@ public class LockedSlots {
             return;
         }
 
+        if (!isLocked(slot)) {
+            return;
+        }
+
         Identifier id = options.appearance.favoriteItemStyle;
         boolean isForeground = id.getPath().equals("gold_badge");
         Identifier sprite = Identifier.of(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
-        if (isLocked(slot)) {
-            context.drawTexture(isForeground ? RenderLayer::getGuiTexturedOverlay : RenderLayer::getGuiTextured,
-                    sprite, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
+        if (isForeground) {
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, sprite, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
+        } else {
+            context.state.goDownLayer();
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, sprite, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
+            context.state.goUpLayer();
         }
     }
 

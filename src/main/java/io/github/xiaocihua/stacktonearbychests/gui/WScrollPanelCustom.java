@@ -2,10 +2,7 @@ package io.github.xiaocihua.stacktonearbychests.gui;
 
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
-import io.github.cottonmc.cotton.gui.widget.WPanel;
-import io.github.cottonmc.cotton.gui.widget.WScrollBar;
-import io.github.cottonmc.cotton.gui.widget.WScrollPanel;
-import io.github.cottonmc.cotton.gui.widget.WWidget;
+import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import net.fabricmc.api.EnvType;
@@ -16,7 +13,7 @@ import net.minecraft.client.gui.DrawContext;
 /**
  * Copy from {@link WScrollPanel}
  */
-public class WScrollPanelCustom extends WClippedPanelCustom {
+public class WScrollPanelCustom extends WClippedPanel {
 	private static final int SCROLL_BAR_SIZE = 8;
 	private final WWidget widget;
 	/**

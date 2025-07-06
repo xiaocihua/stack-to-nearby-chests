@@ -29,7 +29,9 @@ import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
 
 public class ModOptionsGui extends LightweightGuiDescription {
     public static final String PREFIX = MOD_ID + ".options.";
-    public static final int TEXT_COLOR = 0xF5F5F5;
+    public static final int TEXT_COLOR = 0xFFF5F5F5;
+    public static final int BUTTON_LABEL_COLOR = 0xFFE0E0E0;
+    public static final int BUTTON_LABEL_COLOR_DISABLED = 0xFFA0A0A0;
     public static final BackgroundPainter BACKGROUND_DARK = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark.png"));
     public static final BackgroundPainter BACKGROUND_LIGHT = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_light.png"));
     private static final Identifier CHECKED = Identifier.of(MOD_ID, "textures/checkbox_checked.png");

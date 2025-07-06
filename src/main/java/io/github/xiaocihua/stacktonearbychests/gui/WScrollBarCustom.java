@@ -38,16 +38,16 @@ public class WScrollBarCustom extends WScrollBar {
         }
 
         if (axis == Axis.HORIZONTAL) {
-            ScreenDrawing.coloredRect(context, x + getHandlePosition(), y, getHandleSize(), height, handleColor);
+            ScreenDrawing.coloredRect(context, x + getHandlePosition(), y, getHandleSize(), getHeight(), handleColor);
 
             if (isFocused()) {
-                ScreenDrawing.coloredRect(context, x + getHandlePosition(), y, getHandleSize(), height, 0xFF_686868);
+                ScreenDrawing.coloredRect(context, x + getHandlePosition(), y, getHandleSize(), getHeight(), 0xFF_686868);
             }
         } else {
-            ScreenDrawing.coloredRect(context, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), handleColor);
+            ScreenDrawing.coloredRect(context, x + 1, y + 1 + getHandlePosition(), getWidth() - 2, getHandleSize(), handleColor);
 
             if (isFocused()) {
-                ScreenDrawing.coloredRect(context, x + 1, y + 1 + getHandlePosition(), width - 2, getHandleSize(), 0xFF_686868);
+                ScreenDrawing.coloredRect(context, x + 1, y + 1 + getHandlePosition(), getWidth() - 2, getHandleSize(), 0xFF_686868);
             }
         }
     }

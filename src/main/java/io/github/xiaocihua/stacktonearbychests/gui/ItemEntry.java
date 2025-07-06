@@ -37,6 +37,6 @@ public class ItemEntry extends SelectableEntryList.Entry<Identifier> {
         int fontWidth = MinecraftClient.getInstance().textRenderer.getWidth(name.asOrderedText());
         int fontHeight = MinecraftClient.getInstance().textRenderer.fontHeight + 2;
         icon.paint(context, x + inset, y + (height - iconSize) / 2, 16);
-        ScreenDrawing.drawString(context, name.asOrderedText(), x + width - inset - fontWidth, y + (height - fontHeight) / 2 + 2, TEXT_COLOR);
+        ScreenDrawing.drawString(context, name.asOrderedText(), x + width - inset - fontWidth, y + (height - fontHeight) / 2 + 2, ModOptionsGui.TEXT_COLOR);
     }
 }
