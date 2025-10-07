@@ -220,7 +220,7 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 
 	public static abstract class Entry<D> extends WWidget {
 
-		protected static final int TEXT_COLOR = 16119285;
+		protected static final int TEXT_COLOR = 0xFF_F5F5F5;
 		private static final BackgroundPainter UNSELECTED = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark.png"));
 		private static final BackgroundPainter SELECTED = BackgroundPainter.createNinePatch(new Texture(Identifier.of(MOD_ID, "textures/background_dark_selected.png")),
 				builder -> builder.mode(NinePatch.Mode.STRETCHING).cornerSize(4).cornerUv(0.25f));

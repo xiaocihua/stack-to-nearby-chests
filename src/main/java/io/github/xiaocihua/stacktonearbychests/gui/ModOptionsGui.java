@@ -30,7 +30,7 @@ import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
 
 public class ModOptionsGui extends LightweightGuiDescription {
     public static final String PREFIX = MOD_ID + ".options.";
-    public static final int TEXT_COLOR = 0xF5F5F5;
+    public static final int TEXT_COLOR = 0xFF_F5F5F5;
     public static final BackgroundPainter BACKGROUND_DARK = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark.png"));
     public static final BackgroundPainter BACKGROUND_LIGHT = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_light.png"));
     private static final Identifier CHECKED = Identifier.of(MOD_ID, "textures/checkbox_checked.png");
@@ -208,7 +208,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "showMarkersForFavoritedItems"), options.keymap.showMarkersForFavoritedItemsKey), 380, 18);
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "openModOptionsScreen"), options.keymap.openModOptionsScreenKey), 380, 18);
 
-        WLabel hint = new WLabel(Text.translatable(PREFIX + "keyMapHint").setStyle(Style.EMPTY.withItalic(true)), 0xBFBFBF)
+        WLabel hint = new WLabel(Text.translatable(PREFIX + "keyMapHint").setStyle(Style.EMPTY.withItalic(true)), 0xFF_BFBFBF)
                 .setVerticalAlignment(VerticalAlignment.CENTER);
         keymap.add(hint);
 

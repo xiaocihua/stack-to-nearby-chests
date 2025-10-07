@@ -77,9 +77,9 @@ public class FlatColorButton extends WButton {
         }
 
         if (label != null) {
-            int color = 0xE0E0E0;
+            int color = 0xFF_E0E0E0;
             if (!enabled) {
-                color = 0xA0A0A0;
+                color = 0xFF_A0A0A0;
             } /*else if (hovered) {
 				color = 0xFFFFA0;
 			}*/
