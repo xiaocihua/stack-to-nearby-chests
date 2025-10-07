@@ -9,6 +9,7 @@ import io.github.cottonmc.cotton.gui.widget.icon.TextureIcon;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import io.github.xiaocihua.stacktonearbychests.ModOptions;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.MutableText;
@@ -81,11 +82,11 @@ public class ModOptionsGui extends LightweightGuiDescription {
             }
 
             @Override
-            public InputResult onClick(int x, int y, int button) {
-                int amount = Screen.hasShiftDown() ? -1 : 1;
+            public InputResult onClick(Click click, boolean doubled) {
+                int amount = MinecraftClient.getInstance().isShiftPressed() ? -1 : 1;
                 index = MathHelper.floorMod(index + amount, LockedSlots.FAVORITE_ITEM_TAGS.size());
                 setCurrent(LockedSlots.FAVORITE_ITEM_TAGS.get(index));
-                return super.onClick(x, y, button);
+                return super.onClick(click, doubled);
             }
 
             public void setCurrent(Identifier id) {

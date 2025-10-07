@@ -12,6 +12,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Texture;
 import juuxel.libninepatch.NinePatch;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
@@ -241,7 +242,7 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 		}
 
 		@Override
-		public InputResult onClick(int x, int y, int button) {
+		public InputResult onClick(Click click, boolean doubled) {
 			this.isSelected = !this.isSelected;
 			if (isSelected) {
 				parentList.ifPresent(parent -> parent.select(data));

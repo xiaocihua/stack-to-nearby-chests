@@ -11,6 +11,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ServerInfo;
@@ -337,10 +338,10 @@ public class LockedSlots {
         }
 
         Identifier id = options.appearance.favoriteItemStyle;
-        boolean isForeground = id.getPath().equals("gold_badge");
+//        boolean isForeground = id.getPath().equals("gold_badge");
         Identifier sprite = Identifier.of(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
         if (isLocked(slot)) {
-            context.drawTexture(isForeground ? RenderLayer::getGuiTexturedOverlay : RenderLayer::getGuiTextured,
+            context.drawTexture(RenderPipelines.GUI_TEXTURED,
                     sprite, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
         }
     }
