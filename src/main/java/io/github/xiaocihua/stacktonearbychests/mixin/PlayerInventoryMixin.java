@@ -18,7 +18,7 @@ public abstract class PlayerInventoryMixin {
 
     @Inject(method = "setStack", at = @At("HEAD"))
     private void onSetStack(int slot, ItemStack stack, CallbackInfo ci) {
-        if (player.getWorld().isClient) {
+        if (player.getEntityWorld().isClient()) {
             LockedSlots.onSetStack(slot, stack);
         }
     }

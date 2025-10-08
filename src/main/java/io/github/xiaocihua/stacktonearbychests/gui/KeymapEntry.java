@@ -7,7 +7,9 @@ import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
 import io.github.xiaocihua.stacktonearbychests.KeySequence;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
@@ -58,9 +60,9 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public InputResult onClick(int x, int y, int button) {
+        public InputResult onClick(Click click, boolean doubled) {
             if (isFocused()) {
-                keySequence.addMouseButton(button);
+                keySequence.addMouseButton(click.button());
             } else {
                 requestFocus();
             }
@@ -70,11 +72,11 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public InputResult onKeyPressed(int ch, int key, int modifiers) {
-            switch (ch) {
+        public InputResult onKeyPressed(KeyInput input) {
+            switch (input.key()) {
                 case GLFW.GLFW_KEY_ENTER -> releaseFocus();
                 case GLFW.GLFW_KEY_BACKSPACE -> keySequence.clear();
-                default -> keySequence.addKey(ch);
+                default -> keySequence.addKey(input.key());
             }
             setLabel();
 

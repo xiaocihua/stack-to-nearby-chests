@@ -21,6 +21,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.*;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -83,7 +84,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 addButtonsOnInventoryScreen((HandledScreen<?>) screen, showButtonTooltip, appearanceOption);
             }
 
-            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key, scancode, modifiers) -> {
+            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, context) -> {
                 if (isTextFieldActive(scr) || isInventoryTabNotSelected(scr)) {
                     return;
                 }
@@ -125,7 +126,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .build();
             }
 
-            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key, scancode, modifiers) -> {
+            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, context) -> {
                 if (isTextFieldActive(scr) || isInventoryTabNotSelected(scr)) {
                     return;
                 }

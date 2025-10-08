@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import org.lwjgl.glfw.GLFW;
@@ -55,9 +56,9 @@ public final class KeySequence {
     }
 
     public static boolean isKeyPressed(int key) {
-        long window = MinecraftClient.getInstance().getWindow().getHandle();
+        Window window = MinecraftClient.getInstance().getWindow();
         return isMouseButton(key)
-                ? GLFW.glfwGetMouseButton(window, key + MOUSE_BUTTON_CODE_OFFSET) == GLFW.GLFW_PRESS
+                ? GLFW.glfwGetMouseButton(window.getHandle(), key + MOUSE_BUTTON_CODE_OFFSET) == GLFW.GLFW_PRESS
                 : InputUtil.isKeyPressed(window, key);
     }
 

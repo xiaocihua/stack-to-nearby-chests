@@ -9,6 +9,7 @@ import io.github.cottonmc.cotton.gui.widget.icon.TextureIcon;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import io.github.xiaocihua.stacktonearbychests.ModOptions;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.MutableText;
@@ -29,7 +30,7 @@ import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
 
 public class ModOptionsGui extends LightweightGuiDescription {
     public static final String PREFIX = MOD_ID + ".options.";
-    public static final int TEXT_COLOR = 0xF5F5F5;
+    public static final int TEXT_COLOR = 0xFF_F5F5F5;
     public static final BackgroundPainter BACKGROUND_DARK = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark.png"));
     public static final BackgroundPainter BACKGROUND_LIGHT = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_light.png"));
     private static final Identifier CHECKED = Identifier.of(MOD_ID, "textures/checkbox_checked.png");
@@ -81,11 +82,11 @@ public class ModOptionsGui extends LightweightGuiDescription {
             }
 
             @Override
-            public InputResult onClick(int x, int y, int button) {
-                int amount = Screen.hasShiftDown() ? -1 : 1;
+            public InputResult onClick(Click click, boolean doubled) {
+                int amount = MinecraftClient.getInstance().isShiftPressed() ? -1 : 1;
                 index = MathHelper.floorMod(index + amount, LockedSlots.FAVORITE_ITEM_TAGS.size());
                 setCurrent(LockedSlots.FAVORITE_ITEM_TAGS.get(index));
-                return super.onClick(x, y, button);
+                return super.onClick(click, doubled);
             }
 
             public void setCurrent(Identifier id) {
@@ -207,7 +208,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "showMarkersForFavoritedItems"), options.keymap.showMarkersForFavoritedItemsKey), 380, 18);
         keymap.add(new KeymapEntry(Text.translatable(PREFIX + "openModOptionsScreen"), options.keymap.openModOptionsScreenKey), 380, 18);
 
-        WLabel hint = new WLabel(Text.translatable(PREFIX + "keyMapHint").setStyle(Style.EMPTY.withItalic(true)), 0xBFBFBF)
+        WLabel hint = new WLabel(Text.translatable(PREFIX + "keyMapHint").setStyle(Style.EMPTY.withItalic(true)), 0xFF_BFBFBF)
                 .setVerticalAlignment(VerticalAlignment.CENTER);
         keymap.add(hint);
 

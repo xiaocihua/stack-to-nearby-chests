@@ -15,9 +15,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
@@ -295,8 +298,8 @@ public class WTabPanelCustom extends WPanel {
 
         @Environment(EnvType.CLIENT)
         @Override
-        public InputResult onClick(int x, int y, int button) {
-            super.onClick(x, y, button);
+        public InputResult onClick(Click click, boolean doubled) {
+            super.onClick(click, doubled);
 
             MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
@@ -311,9 +314,9 @@ public class WTabPanelCustom extends WPanel {
 
         @Environment(EnvType.CLIENT)
         @Override
-        public InputResult onKeyPressed(int ch, int key, int modifiers) {
-            if (isActivationKey(ch)) {
-                onClick(0, 0, 0);
+        public InputResult onKeyPressed(KeyInput input) {
+            if (isActivationKey(input.key())) {
+                onClick(new Click(0,0, new MouseInput(0,0)), false);
                 return InputResult.PROCESSED;
             }
 
