@@ -5,7 +5,7 @@ import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsGui;
 import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsScreen;
 import io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget;
 import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
-import io.github.xiaocihua.stacktonearbychests.mixin.HorseScreenAccessor;
+import io.github.xiaocihua.stacktonearbychests.mixin.MountScreenAccessor;
 import io.github.xiaocihua.stacktonearbychests.mixin.RecipeBookWidgetAccessor;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -232,7 +232,7 @@ public class StackToNearbyChests implements ClientModInitializer {
         ) {
             return false;
         } else if (screen instanceof HorseScreen) {
-            return ((HorseScreenAccessor) screen).getEntity() instanceof AbstractDonkeyEntity abstractDonkeyEntity
+            return ((MountScreenAccessor) screen).getMount() instanceof AbstractDonkeyEntity abstractDonkeyEntity
                     && abstractDonkeyEntity.hasChest();
         }
 
