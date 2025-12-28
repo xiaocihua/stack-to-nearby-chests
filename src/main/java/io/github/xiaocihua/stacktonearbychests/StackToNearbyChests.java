@@ -231,7 +231,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                         || screen instanceof CreativeInventoryScreen
         ) {
             return false;
-        } else if (screen instanceof HorseScreen) {
+        } else if (screen instanceof MountScreen) {
             return ((MountScreenAccessor) screen).getMount() instanceof AbstractDonkeyEntity abstractDonkeyEntity
                     && abstractDonkeyEntity.hasChest();
         }
