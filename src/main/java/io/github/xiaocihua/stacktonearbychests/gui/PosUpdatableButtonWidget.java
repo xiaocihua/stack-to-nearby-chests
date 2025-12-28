@@ -35,9 +35,9 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void drawIcon(DrawContext context, int mouseX, int mouseY, float delta) {
         posUpdater.ifPresent(updater -> setPos(updater.apply((HandledScreenAccessor) parent)));
-        super.renderWidget(context, mouseX, mouseY, delta);
+        super.drawIcon(context, mouseX, mouseY, delta);
 //        Identifier identifier = this.textures.get(this.isNarratable(), this.isHovered());
 //        context.drawGuiTexture(identifier, this.getX(), this.getY(), this.width, this.height);
     }
