@@ -25,7 +25,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     public abstract T getScreenHandler();
 
     @Inject(method = "drawSlot", at = @At("TAIL"))
-    private void drawAfter(DrawContext context, Slot slot, CallbackInfo ci) {
+    private void drawAfter(DrawContext context, Slot slot, int x, int y, CallbackInfo ci) {
         LockedSlots.drawFavoriteItemStyle(context, slot);
     }
 }
