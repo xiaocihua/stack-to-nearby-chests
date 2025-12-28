@@ -3,8 +3,8 @@ name: Publish on Github, Curseforge & Modrinth
 on: [ workflow_dispatch ]
 
 env:
-  RELEASE_NAME: 0.5.14 for Minecraft 1.21.9-1.21.11
-  VERSION: 0.5.14
+  RELEASE_NAME: 0.5.15 for Minecraft 1.21.11
+  VERSION: 0.5.15
   MC_VERSION: mc1.21.11
 
 permissions:
