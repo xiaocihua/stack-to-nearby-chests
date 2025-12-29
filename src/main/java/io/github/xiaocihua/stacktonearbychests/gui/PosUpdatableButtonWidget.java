@@ -11,7 +11,6 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -26,7 +25,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
                                      int height,
                                      ButtonTextures textures,
                                      PressAction pressAction,
-                                     Text text,
+                                     net.minecraft.text.Text text,
                                      HandledScreen<?> parent,
                                      Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater) {
         super(0, 0, width, height, textures, pressAction, text);
@@ -36,9 +35,9 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void drawIcon(DrawContext context, int mouseX, int mouseY, float delta) {
         posUpdater.ifPresent(updater -> setPos(updater.apply((HandledScreenAccessor) parent)));
-        super.renderWidget(context, mouseX, mouseY, delta);
+        super.drawIcon(context, mouseX, mouseY, delta);
 //        Identifier identifier = this.textures.get(this.isNarratable(), this.isHovered());
 //        context.drawGuiTexture(identifier, this.getX(), this.getY(), this.width, this.height);
     }
@@ -55,7 +54,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
         private PressAction pressAction = button -> {};
         @Nullable
         private Tooltip tooltip;
-        private Text text = ScreenTexts.EMPTY;
+        private net.minecraft.text.Text text = ScreenTexts.EMPTY;
         private final HandledScreen<?> parent;
         private Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater = Optional.empty();
 
@@ -79,7 +78,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
             return this;
         }
 
-        public Builder setTooltip(@Nullable Text content) {
+        public Builder setTooltip(@Nullable net.minecraft.text.Text content) {
             if (content != null) {
                 this.tooltip = Tooltip.of(content);
             }
@@ -91,7 +90,7 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
             return this;
         }
 
-        public Builder setText(Text text) {
+        public Builder setText(net.minecraft.text.Text text) {
             this.text = text;
             return this;
         }
