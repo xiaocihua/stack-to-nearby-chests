@@ -3,13 +3,13 @@ package io.github.xiaocihua.stacktonearbychests;
 import io.github.xiaocihua.stacktonearbychests.event.OnKeyCallback;
 import io.github.xiaocihua.stacktonearbychests.event.SetScreenCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.DeathScreen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableTextContent;
-import net.minecraft.util.ActionResult;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.DeathScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -22,9 +22,9 @@ public abstract class ForEachContainerTask {
     private static final ScheduledThreadPoolExecutor TIMER = new ScheduledThreadPoolExecutor(1);
     private static ForEachContainerTask currentTask;
 
-    protected final MinecraftClient client;
-    protected final ClientPlayerEntity player;
-    protected final Consumer<ScreenHandler> action;
+    protected final Minecraft client;
+    protected final LocalPlayer player;
+    protected final Consumer<AbstractContainerMenu> action;
 
     private boolean interrupted;
     private final int searchInterval;
@@ -32,7 +32,7 @@ public abstract class ForEachContainerTask {
     @Nullable
     private ForEachContainerTask after;
 
-    public ForEachContainerTask(MinecraftClient client, ClientPlayerEntity player, Consumer<ScreenHandler> action) {
+    public ForEachContainerTask(Minecraft client, LocalPlayer player, Consumer<AbstractContainerMenu> action) {
         this.client = client;
         this.player = player;
         this.action = action;
@@ -44,13 +44,13 @@ public abstract class ForEachContainerTask {
             if (isRunning()) {
                 if (screen instanceof DeathScreen) {
                     currentTask.interrupt();
-                    return ActionResult.PASS;
+                    return InteractionResult.PASS;
                 }
 
-                return ActionResult.FAIL;
+                return InteractionResult.FAIL;
             }
 
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         });
 
         OnKeyCallback.PRESS.register(key -> {
@@ -59,14 +59,14 @@ public abstract class ForEachContainerTask {
                     currentTask.interrupt();
                 }
 
-                return ActionResult.FAIL;
+                return InteractionResult.FAIL;
             }
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         });
 
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             if (isRunning()
-                    && message.getContent() instanceof TranslatableTextContent translatable
+                    && message.getContents() instanceof TranslatableContents translatable
                     && translatable.getKey().equals("container.isLocked")) {
                 getCurrentTask().openNextContainer();
             }
@@ -87,7 +87,7 @@ public abstract class ForEachContainerTask {
     }
 
     protected void stop() {
-        player.closeHandledScreen();
+        player.closeContainer();
         TIMER.getQueue().clear();
         currentTask = null;
     }
@@ -97,7 +97,7 @@ public abstract class ForEachContainerTask {
         interrupted = true;
     }
 
-    public void onInventory(ScreenHandler screenHandler) {
+    public void onInventory(AbstractContainerMenu screenHandler) {
         clearTimeout();
         action.accept(screenHandler);
 
@@ -156,6 +156,6 @@ public abstract class ForEachContainerTask {
     }
 
     private void sendChatMessage(String key) {
-        MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.translatable(key));
+        Minecraft.getInstance().gui.getChat().addMessage(Component.translatable(key));
     }
 }

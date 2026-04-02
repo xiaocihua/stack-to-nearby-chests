@@ -1,20 +1,19 @@
 package io.github.xiaocihua.stacktonearbychests.event;
 
-import net.minecraft.util.ActionResult;
-
 import java.util.function.Consumer;
 import java.util.function.Function;
+import net.minecraft.world.InteractionResult;
 
 public class EventUtil {
 
-    public static <T> ActionResult forEachCallbackWithResult(T[] callbacks, Function<T, ActionResult> function) {
+    public static <T> InteractionResult forEachCallbackWithResult(T[] callbacks, Function<T, InteractionResult> function) {
         for (T callback : callbacks) {
-            ActionResult result = function.apply(callback);
-            if (result != ActionResult.PASS) {
+            InteractionResult result = function.apply(callback);
+            if (result != InteractionResult.PASS) {
                 return result;
             }
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     public static <T> void forEachCallback(T[] callbacks, Consumer<T> consumer) {

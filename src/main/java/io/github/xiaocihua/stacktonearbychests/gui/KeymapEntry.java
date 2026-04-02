@@ -7,10 +7,10 @@ import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
 import io.github.xiaocihua.stacktonearbychests.KeySequence;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 public class KeymapEntry extends WBox {
@@ -21,7 +21,7 @@ public class KeymapEntry extends WBox {
     private final KeyBindingWidget keybinding;
     private final WButton resetButton;
 
-    public KeymapEntry(Text text, KeySequence keySequence) {
+    public KeymapEntry(Component text, KeySequence keySequence) {
         super(Axis.HORIZONTAL);
 
         this.text = new WText(text, ModOptionsGui.TEXT_COLOR).setVerticalAlignment(VerticalAlignment.CENTER);
@@ -30,7 +30,7 @@ public class KeymapEntry extends WBox {
         keybinding = new KeyBindingWidget(keySequence);
         add(keybinding);
 
-        resetButton = new FlatColorButton(Text.translatable("stack-to-nearby-chests.options.reset"))
+        resetButton = new FlatColorButton(Component.translatable("stack-to-nearby-chests.options.reset"))
                 .setBorder()
                 .setOnClick(keybinding::reset);
         add(resetButton);
@@ -60,7 +60,7 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public InputResult onClick(Click click, boolean doubled) {
+        public InputResult onClick(MouseButtonEvent click, boolean doubled) {
             if (isFocused()) {
                 keySequence.addMouseButton(click.button());
             } else {
@@ -72,7 +72,7 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public InputResult onKeyPressed(KeyInput input) {
+        public InputResult onKeyPressed(KeyEvent input) {
             switch (input.key()) {
                 case GLFW.GLFW_KEY_ENTER -> releaseFocus();
                 case GLFW.GLFW_KEY_BACKSPACE -> keySequence.clear();
@@ -88,7 +88,7 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+        public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
             if (isFocused()) {
                 drawBorder(context, x, y, width, height, 0xFF_F5F5F5);
             }

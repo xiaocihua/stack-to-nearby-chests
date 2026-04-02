@@ -9,11 +9,11 @@ import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.data.Texture;
 import juuxel.libninepatch.NinePatch;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.EntityBlock;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -43,11 +43,11 @@ public abstract class EntryPicker extends WBox {
         title = new WLabel(getTitle(), TEXT_COLOR);
         add(title);
 
-        searchByName = new WTextField(Text.translatable(PREFIX + "searchByName"))
+        searchByName = new WTextField(Component.translatable(PREFIX + "searchByName"))
                 .setChangedListener(searchStr -> entryList.setData(searchByName(searchStr)));
         add(searchByName);
 
-        searchByID = new WTextField(Text.translatable(PREFIX + "searchByID"))
+        searchByID = new WTextField(Component.translatable(PREFIX + "searchByID"))
                 .setChangedListener(searchStr -> entryList.setData(searchByID(searchStr)));
         add(searchByID);
 
@@ -57,14 +57,14 @@ public abstract class EntryPicker extends WBox {
         bottomBar = new WBoxCustom(Axis.HORIZONTAL);
         bottomBar.setHorizontalAlignment(HorizontalAlignment.RIGHT);
 
-        var addButton = new FlatColorButton(Text.translatable(PREFIX + "add")).setBorder()
+        var addButton = new FlatColorButton(Component.translatable(PREFIX + "add")).setBorder()
                 .setOnClick(() -> {
                     consumer.accept(entryList.getSelectedData());
                     close();
                 });
         bottomBar.add(addButton, 50);
 
-        var cancelButton = new FlatColorButton(Text.translatable(PREFIX + "cancel")).setBorder()
+        var cancelButton = new FlatColorButton(Component.translatable(PREFIX + "cancel")).setBorder()
                 .setOnClick(this::close);
         bottomBar.add(cancelButton, 50);
 
@@ -84,7 +84,7 @@ public abstract class EntryPicker extends WBox {
         super.layout();
     }
 
-    public abstract Text getTitle();
+    public abstract Component getTitle();
 
     public abstract List<Identifier> searchByName(String searchStr);
 
@@ -101,14 +101,14 @@ public abstract class EntryPicker extends WBox {
     }
 
     @Override
-    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+    public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
         getBackgroundPainter().paintBackground(context, x, y, this);
         super.paint(context, x, y, mouseX, mouseY);
     }
 
     @Override
     public BackgroundPainter getBackgroundPainter() {
-        return BackgroundPainter.createNinePatch(new Texture(Identifier.of(MOD_ID, "textures/background_dark_bordered.png")),
+        return BackgroundPainter.createNinePatch(new Texture(Identifier.fromNamespaceAndPath(MOD_ID, "textures/background_dark_bordered.png")),
                 builder -> builder.mode(NinePatch.Mode.STRETCHING).cornerSize(4).cornerUv(0.25f));
     }
 
@@ -125,21 +125,21 @@ public abstract class EntryPicker extends WBox {
         }
 
         @Override
-        public Text getTitle() {
-            return Text.translatable(PREFIX + "addItemsToList");
+        public Component getTitle() {
+            return Component.translatable(PREFIX + "addItemsToList");
         }
 
         @Override
         public List<Identifier> searchByName(String searchStr) {
-            return Registries.ITEM.stream()
+            return BuiltInRegistries.ITEM.stream()
                     .filter(item -> StringUtils.containsIgnoreCase(item.getName().getString(), searchStr))
-                    .map(Registries.ITEM::getId)
+                    .map(BuiltInRegistries.ITEM::getKey)
                     .toList();
         }
 
         @Override
         public List<Identifier> searchByID(String searchStr) {
-            return Registries.ITEM.getIds().stream()
+            return BuiltInRegistries.ITEM.keySet().stream()
                     .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
                     .toList();
         }
@@ -158,24 +158,24 @@ public abstract class EntryPicker extends WBox {
         }
 
         @Override
-        public Text getTitle() {
-            return Text.translatable(PREFIX + "addContainersToList");
+        public Component getTitle() {
+            return Component.translatable(PREFIX + "addContainersToList");
         }
 
         @Override
         public List<Identifier> searchByName(String searchStr) {
-            return Registries.BLOCK.stream()
-                    .filter(block -> block instanceof BlockEntityProvider)
+            return BuiltInRegistries.BLOCK.stream()
+                    .filter(block -> block instanceof EntityBlock)
                     .filter(block -> StringUtils.containsIgnoreCase(block.getName().toString(), searchStr))
-                    .map(Registries.BLOCK::getId)
+                    .map(BuiltInRegistries.BLOCK::getKey)
                     .toList();
         }
 
         @Override
         public List<Identifier> searchByID(String searchStr) {
-            return Registries.BLOCK.stream()
-                    .filter(block -> block instanceof BlockEntityProvider)
-                    .map(Registries.BLOCK::getId)
+            return BuiltInRegistries.BLOCK.stream()
+                    .filter(block -> block instanceof EntityBlock)
+                    .map(BuiltInRegistries.BLOCK::getKey)
                     .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
                     .toList();
         }
@@ -193,21 +193,21 @@ public abstract class EntryPicker extends WBox {
         }
 
         @Override
-        public Text getTitle() {
-            return Text.translatable(PREFIX + "addContainersToList");
+        public Component getTitle() {
+            return Component.translatable(PREFIX + "addContainersToList");
         }
 
         @Override
         public List<Identifier> searchByName(String searchStr) {
-            return Registries.ENTITY_TYPE.stream()
-                    .filter(entityType -> StringUtils.containsIgnoreCase(entityType.getName().getString(), searchStr))
-                    .map(Registries.ENTITY_TYPE::getId)
+            return BuiltInRegistries.ENTITY_TYPE.stream()
+                    .filter(entityType -> StringUtils.containsIgnoreCase(entityType.getDescription().getString(), searchStr))
+                    .map(BuiltInRegistries.ENTITY_TYPE::getKey)
                     .toList();
         }
 
         @Override
         public List<Identifier> searchByID(String searchStr) {
-            return Registries.ENTITY_TYPE.getIds().stream()
+            return BuiltInRegistries.ENTITY_TYPE.keySet().stream()
                     .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
                     .toList();
         }

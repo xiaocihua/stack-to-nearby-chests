@@ -8,7 +8,7 @@ import com.google.gson.stream.JsonWriter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
@@ -93,7 +93,7 @@ public class ModOptions {
         public IntOption restockButtonPosX = new IntOption(6);
         public IntOption restockButtonPosY = new IntOption(10);
 
-        public Identifier favoriteItemStyle = Identifier.of(ModOptions.MOD_ID, "gold_badge");
+        public Identifier favoriteItemStyle = Identifier.fromNamespaceAndPath(ModOptions.MOD_ID, "gold_badge");
 
         public MutableBoolean alwaysShowMarkersForFavoritedItems = new MutableBoolean(true);
 
@@ -851,7 +851,7 @@ public class ModOptions {
 
         @Override
         public Identifier read(JsonReader in) throws IOException {
-            return Identifier.of(in.nextString());
+            return Identifier.parse(in.nextString());
         }
 
         @Override

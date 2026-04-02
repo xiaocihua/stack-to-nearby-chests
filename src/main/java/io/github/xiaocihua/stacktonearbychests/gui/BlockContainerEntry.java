@@ -5,36 +5,35 @@ import io.github.cottonmc.cotton.gui.widget.icon.Icon;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
 import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class BlockContainerEntry extends SelectableEntryList.Entry<Identifier> {
 
     private final Optional<Icon> icon;
-    private final Text name;
+    private final Component name;
 
     public BlockContainerEntry(Identifier id) {
         super(id);
-        Optional<Block> block = Registries.BLOCK.getOptionalValue(id);
+        Optional<Block> block = BuiltInRegistries.BLOCK.getOptional(id);
         icon = block.map(b -> new ItemIcon(b.asItem()));
-        name = block.<Text>map(Block::getName).orElse(Text.of(id.toString()));
+        name = block.<Component>map(Block::getName).orElse(Component.nullToEmpty(id.toString()));
     }
 
     @Override
-    public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+    public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
         super.paint(context, x, y, mouseX, mouseY);
         int iconSize = 16;
         int inset = 6;
-        int fontWidth = MinecraftClient.getInstance().textRenderer.getWidth(name.asOrderedText());
-        int fontHeight = MinecraftClient.getInstance().textRenderer.fontHeight + 2;
+        int fontWidth = Minecraft.getInstance().font.width(name.getVisualOrderText());
+        int fontHeight = Minecraft.getInstance().font.lineHeight + 2;
         icon.ifPresent(i -> i.paint(context, x + inset, y + (height - iconSize) / 2, 16));
-        ScreenDrawing.drawString(context, name.asOrderedText(), x + width - inset - fontWidth, y + (height - fontHeight) / 2 + 2, TEXT_COLOR);
+        ScreenDrawing.drawString(context, name.getVisualOrderText(), x + width - inset - fontWidth, y + (height - fontHeight) / 2 + 2, TEXT_COLOR);
     }
 }

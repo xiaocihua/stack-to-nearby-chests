@@ -13,19 +13,19 @@ import io.github.xiaocihua.stacktonearbychests.ModOptions;
 import juuxel.libninepatch.NinePatch;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -111,14 +111,14 @@ public class WTabPanelCustom extends WPanel {
      */
     public static class Tab {
         @Nullable
-        private final Text title;
+        private final Component title;
         @Nullable
         private final Icon icon;
         private final WWidget widget;
         @Nullable
         private final Consumer<TooltipBuilder> tooltip;
 
-        private Tab(@Nullable Text title, @Nullable Icon icon, WWidget widget, @Nullable Consumer<TooltipBuilder> tooltip) {
+        private Tab(@Nullable Component title, @Nullable Icon icon, WWidget widget, @Nullable Consumer<TooltipBuilder> tooltip) {
             if (title == null && icon == null) {
                 throw new IllegalArgumentException("A tab must have a title or an icon");
             }
@@ -135,7 +135,7 @@ public class WTabPanelCustom extends WPanel {
          * @return the title, or null if there's no title
          */
         @Nullable
-        public Text getTitle() {
+        public Component getTitle() {
             return title;
         }
 
@@ -175,9 +175,9 @@ public class WTabPanelCustom extends WPanel {
          */
         public static final class Builder {
             private final WWidget widget;
-            private final List<Text> tooltip = new ArrayList<>();
+            private final List<Component> tooltip = new ArrayList<>();
             @Nullable
-            private Text title;
+            private Component title;
             @Nullable
             private Icon icon;
 
@@ -198,7 +198,7 @@ public class WTabPanelCustom extends WPanel {
              * @return this builder
              * @throws NullPointerException if the title is null
              */
-            public Builder title(Text title) {
+            public Builder title(Component title) {
                 this.title = Objects.requireNonNull(title, "title");
                 return this;
             }
@@ -222,7 +222,7 @@ public class WTabPanelCustom extends WPanel {
              * @return this builder
              * @throws NullPointerException if the line array is null
              */
-            public Builder tooltip(Text... lines) {
+            public Builder tooltip(Component... lines) {
                 Objects.requireNonNull(lines, "lines");
                 Collections.addAll(tooltip, lines);
 
@@ -236,7 +236,7 @@ public class WTabPanelCustom extends WPanel {
              * @return this builder
              * @throws NullPointerException if the line collection is null
              */
-            public Builder tooltip(Collection<? extends Text> lines) {
+            public Builder tooltip(Collection<? extends Component> lines) {
                 Objects.requireNonNull(lines, "lines");
                 tooltip.addAll(lines);
                 return this;
@@ -256,7 +256,7 @@ public class WTabPanelCustom extends WPanel {
                         @Environment(EnvType.CLIENT)
                         @Override
                         public void accept(TooltipBuilder builder) {
-                            builder.add(Builder.this.tooltip.toArray(new Text[0]));
+                            builder.add(Builder.this.tooltip.toArray(new Component[0]));
                         }
                     };
                 }
@@ -272,10 +272,10 @@ public class WTabPanelCustom extends WPanel {
     @Environment(EnvType.CLIENT)
     final static class Painters {
         static final BackgroundPainter SELECTED_TAB =
-                BackgroundPainter.createNinePatch(new Texture(Identifier.of(ModOptions.MOD_ID, "textures/selected_tab.png")),
+                BackgroundPainter.createNinePatch(new Texture(Identifier.fromNamespaceAndPath(ModOptions.MOD_ID, "textures/selected_tab.png")),
                         builder -> builder.mode(NinePatch.Mode.STRETCHING).cornerSize(4).cornerUv(0.25f));
         static final BackgroundPainter UNSELECTED_TAB =
-                BackgroundPainter.createNinePatch(Identifier.of(ModOptions.MOD_ID, "textures/background_dark.png"));
+                BackgroundPainter.createNinePatch(Identifier.fromNamespaceAndPath(ModOptions.MOD_ID, "textures/background_dark.png"));
     }
 
     private final class WTab extends WWidget {
@@ -298,10 +298,10 @@ public class WTabPanelCustom extends WPanel {
 
         @Environment(EnvType.CLIENT)
         @Override
-        public InputResult onClick(Click click, boolean doubled) {
+        public InputResult onClick(MouseButtonEvent click, boolean doubled) {
             super.onClick(click, doubled);
 
-            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
             for (WTab tab : tabWidgets) {
                 tab.selected = (tab == this);
@@ -314,9 +314,9 @@ public class WTabPanelCustom extends WPanel {
 
         @Environment(EnvType.CLIENT)
         @Override
-        public InputResult onKeyPressed(KeyInput input) {
+        public InputResult onKeyPressed(KeyEvent input) {
             if (isActivationKey(input.key())) {
-                onClick(new Click(0,0, new MouseInput(0,0)), false);
+                onClick(new MouseButtonEvent(0,0, new MouseButtonInfo(0,0)), false);
                 return InputResult.PROCESSED;
             }
 
@@ -325,13 +325,13 @@ public class WTabPanelCustom extends WPanel {
 
         @Environment(EnvType.CLIENT)
         @Override
-        public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
-            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-            Text title = data.getTitle();
+        public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+            Font renderer = Minecraft.getInstance().font;
+            Component title = data.getTitle();
             Icon icon = data.getIcon();
 
             if (title != null) {
-                int width = TAB_WIDTH + renderer.getWidth(title);
+                int width = TAB_WIDTH + renderer.width(title);
                 if (icon == null) width = Math.max(TAB_WIDTH, width - ICON_SIZE);
 
                 if (this.width != width) {
@@ -346,17 +346,17 @@ public class WTabPanelCustom extends WPanel {
 
             if (title != null) {
                 int titleX = (icon != null) ? iconX + ICON_SIZE + 1 : 1;
-                int titleY = (height - TAB_PADDING - renderer.fontHeight) / 2 + 1;
+                int titleY = (height - TAB_PADDING - renderer.lineHeight) / 2 + 1;
                 int width = (icon != null) ? this.width - iconX - ICON_SIZE : this.width;
                 HorizontalAlignment align = (icon != null) ? HorizontalAlignment.LEFT : HorizontalAlignment.CENTER;
 
                 int color = ModOptionsGui.TEXT_COLOR;
 
                 if (isFocused()) {
-                    title = title.copy().setStyle(Style.EMPTY.withUnderline(true));
+                    title = title.copy().setStyle(Style.EMPTY.withUnderlined(true));
                 }
 
-                ScreenDrawing.drawString(context, title.asOrderedText(), align, x + titleX, y + titleY, width, color);
+                ScreenDrawing.drawString(context, title.getVisualOrderText(), align, x + titleX, y + titleY, width, color);
             }
 
             if (icon != null) {
@@ -372,14 +372,14 @@ public class WTabPanelCustom extends WPanel {
 
         @Environment(EnvType.CLIENT)
         @Override
-        public void addNarrations(NarrationMessageBuilder builder) {
-            Text label = data.getTitle();
+        public void addNarrations(NarrationElementOutput builder) {
+            Component label = data.getTitle();
 
             if (label != null) {
-                builder.put(NarrationPart.TITLE, Text.translatable(NarrationMessages.TAB_TITLE_KEY, label));
+                builder.add(NarratedElementType.TITLE, Component.translatable(NarrationMessages.TAB_TITLE_KEY, label));
             }
 
-            builder.put(NarrationPart.POSITION, Text.translatable(NarrationMessages.TAB_POSITION_KEY, tabWidgets.indexOf(this) + 1, tabWidgets.size()));
+            builder.add(NarratedElementType.POSITION, Component.translatable(NarrationMessages.TAB_POSITION_KEY, tabWidgets.indexOf(this) + 1, tabWidgets.size()));
         }
     }
 }
