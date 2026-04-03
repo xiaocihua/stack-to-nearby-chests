@@ -7,7 +7,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
 import io.github.xiaocihua.stacktonearbychests.KeySequence;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -88,7 +88,7 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+        public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
             if (isFocused()) {
                 drawBorder(context, x, y, width, height, 0xFF_F5F5F5);
             }

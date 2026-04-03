@@ -1,5 +1,5 @@
 plugins {
-     id 'fabric-loom' version "${loom_version}"
+    id "net.fabricmc.fabric-loom" version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -16,11 +16,12 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
+
     maven {
-        name = "CottonMC"
-        url = "https://server.bbkr.space/artifactory/libs-release"
+        name = "AlexIIL"
+        url = "https://staging.alexiil.uk/maven/"
     }
-    maven{
+    maven {
         url = "https://maven.terraformersmc.com/releases/"
     }
     maven {
@@ -40,7 +41,7 @@ loom {
         client {
             runDir = "run${minecraft_version}"
             vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar")
-            programArgs("--width=1280",  "--height=720")
+            programArgs("--width=1280", "--height=720")
         }
     }
 
@@ -57,41 +58,40 @@ loom {
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     // Uncomment the following line to enable the deprecated Fabric API modules.
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
-    // modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+    // implementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_api_version}"
 
-    modImplementation include("io.github.cottonmc:LibGui:${project.LibGui_version}")
+    implementation include("io.github.cottonmc:LibGui:${project.LibGui_version}")
 
-    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+    compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
-//    modLocalRuntime "dev.emi:emi-fabric:${project.emi_version}"
+//    compileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
+//    localRuntime "dev.emi:emi-fabric:${project.emi_version}"
 
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
-    modCompileOnly "me.shedaniel.cloth:basic-math:+"
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
-//    modLocalRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+//    compileOnly "me.shedaniel.cloth:basic-math:+"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
+//    localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 }
 
 processResources {
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": inputs.properties.version
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 21
+    it.options.release = 25
 }
 
 java {
@@ -100,13 +100,13 @@ java {
     // If you remove this line, sources will not be generated.
     withSourcesJar()
 
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.base.archivesName.get()}"}
+        rename { "${it}_${project.base.archivesName.get()}" }
     }
 }
 

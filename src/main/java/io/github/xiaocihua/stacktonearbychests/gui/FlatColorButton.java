@@ -4,9 +4,10 @@ import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.WButton;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
-import java.util.OptionalInt;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+
+import java.util.OptionalInt;
 
 public class FlatColorButton extends WButton {
 
@@ -55,7 +56,7 @@ public class FlatColorButton extends WButton {
     }
 
     @Override
-    public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+    public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
         boolean hovered = (mouseX >= 0 && mouseY >= 0 && mouseX < getWidth() && mouseY < getHeight());
         boolean enabled = isEnabled();
         Icon icon = getIcon();
@@ -88,7 +89,7 @@ public class FlatColorButton extends WButton {
         }
     }
 
-    protected void drawBorder(GuiGraphics context, int x, int y, int width, int height, int color) {
+    protected void drawBorder(GuiGraphicsExtractor context, int x, int y, int width, int height, int color) {
         ScreenDrawing.coloredRect(context, x, y, width, 1, color);
         ScreenDrawing.coloredRect(context, x, y + height - 1, width, 1, color);
         ScreenDrawing.coloredRect(context, x, y, 1, height, color);

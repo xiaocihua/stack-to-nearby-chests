@@ -5,7 +5,7 @@ import io.github.xiaocihua.stacktonearbychests.mixin.AbstractContainerScreenAcce
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -31,13 +31,13 @@ public class PosUpdatableButtonWidget extends ImageButton {
         super(0, 0, width, height, textures, pressAction, text);
         this.parent = parent;
         this.posUpdater = posUpdater;
-        Screens.getButtons(parent).add(this);
+        Screens.getWidgets(parent).add(this);
     }
 
     @Override
-    public void renderContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
+    public void extractContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         posUpdater.ifPresent(updater -> setPos(updater.apply((AbstractContainerScreenAccessor) parent)));
-        super.renderContents(context, mouseX, mouseY, delta);
+        super.extractContents(context, mouseX, mouseY, delta);
 //        Identifier identifier = this.textures.get(this.isNarratable(), this.isHovered());
 //        context.drawGuiTexture(identifier, this.getX(), this.getY(), this.width, this.height);
     }

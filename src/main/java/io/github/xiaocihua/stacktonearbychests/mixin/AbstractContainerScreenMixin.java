@@ -1,12 +1,13 @@
 package io.github.xiaocihua.stacktonearbychests.mixin;
 
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,10 +22,10 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
     }
 
     @Shadow
-    public abstract T getMenu();
+    public abstract @NonNull T getMenu();
 
-    @Inject(method = "renderSlot", at = @At("TAIL"))
-    private void drawAfter(GuiGraphics context, Slot slot, int x, int y, CallbackInfo ci) {
-        LockedSlots.drawFavoriteItemStyle(context, slot);
+    @Inject(method = "extractSlot", at = @At("TAIL"))
+    private void drawAfter(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+        LockedSlots.drawFavoriteItemStyle(graphics, slot);
     }
 }

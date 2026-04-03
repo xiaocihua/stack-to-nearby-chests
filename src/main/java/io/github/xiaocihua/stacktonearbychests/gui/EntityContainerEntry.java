@@ -2,7 +2,7 @@ package io.github.xiaocihua.stacktonearbychests.gui;
 
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -17,7 +17,7 @@ public class EntityContainerEntry extends SelectableEntryList.Entry<Identifier>{
         name = BuiltInRegistries.ENTITY_TYPE.getOptional(id).map(EntityType::getDescription).orElse(Component.nullToEmpty(id.toString()));
     }
 
-    public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+    public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
         super.paint(context, x, y, mouseX, mouseY);
         int inset = 6;
         int fontWidth = Minecraft.getInstance().font.width(name.getVisualOrderText());

@@ -15,7 +15,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.KeyEvent;
@@ -325,7 +325,7 @@ public class WTabPanelCustom extends WPanel {
 
         @Environment(EnvType.CLIENT)
         @Override
-        public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+        public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
             Font renderer = Minecraft.getInstance().font;
             Component title = data.getTitle();
             Icon icon = data.getIcon();

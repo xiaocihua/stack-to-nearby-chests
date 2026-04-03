@@ -9,14 +9,16 @@ import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.data.Texture;
 import juuxel.libninepatch.NinePatch;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.EntityBlock;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -101,8 +103,8 @@ public abstract class EntryPicker extends WBox {
     }
 
     @Override
-    public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
-        getBackgroundPainter().paintBackground(context, x, y, this);
+    public void paint(@NonNull GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
+        Objects.requireNonNull(getBackgroundPainter()).paintBackground(context, x, y, this);
         super.paint(context, x, y, mouseX, mouseY);
     }
 
@@ -132,7 +134,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByName(String searchStr) {
             return BuiltInRegistries.ITEM.stream()
-                    .filter(item -> StringUtils.containsIgnoreCase(item.getName().getString(), searchStr))
+                    .filter(item -> Strings.CI.contains(ItemEntry.getItemName(item).getString(), searchStr))
                     .map(BuiltInRegistries.ITEM::getKey)
                     .toList();
         }
@@ -140,7 +142,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByID(String searchStr) {
             return BuiltInRegistries.ITEM.keySet().stream()
-                    .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
+                    .filter(identifier -> Strings.CI.contains(identifier.toString(), searchStr))
                     .toList();
         }
 
@@ -166,7 +168,7 @@ public abstract class EntryPicker extends WBox {
         public List<Identifier> searchByName(String searchStr) {
             return BuiltInRegistries.BLOCK.stream()
                     .filter(block -> block instanceof EntityBlock)
-                    .filter(block -> StringUtils.containsIgnoreCase(block.getName().toString(), searchStr))
+                    .filter(block -> Strings.CI.contains(block.getName().toString(), searchStr))
                     .map(BuiltInRegistries.BLOCK::getKey)
                     .toList();
         }
@@ -176,7 +178,7 @@ public abstract class EntryPicker extends WBox {
             return BuiltInRegistries.BLOCK.stream()
                     .filter(block -> block instanceof EntityBlock)
                     .map(BuiltInRegistries.BLOCK::getKey)
-                    .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
+                    .filter(identifier -> Strings.CI.contains(identifier.toString(), searchStr))
                     .toList();
         }
 
@@ -200,7 +202,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByName(String searchStr) {
             return BuiltInRegistries.ENTITY_TYPE.stream()
-                    .filter(entityType -> StringUtils.containsIgnoreCase(entityType.getDescription().getString(), searchStr))
+                    .filter(entityType -> Strings.CI.contains(entityType.getDescription().getString(), searchStr))
                     .map(BuiltInRegistries.ENTITY_TYPE::getKey)
                     .toList();
         }
@@ -208,7 +210,7 @@ public abstract class EntryPicker extends WBox {
         @Override
         public List<Identifier> searchByID(String searchStr) {
             return BuiltInRegistries.ENTITY_TYPE.keySet().stream()
-                    .filter(identifier -> StringUtils.containsIgnoreCase(identifier.toString(), searchStr))
+                    .filter(identifier -> Strings.CI.contains(identifier.toString(), searchStr))
                     .toList();
         }
 

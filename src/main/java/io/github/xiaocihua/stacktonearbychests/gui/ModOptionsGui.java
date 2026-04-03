@@ -8,15 +8,8 @@ import io.github.cottonmc.cotton.gui.widget.data.*;
 import io.github.cottonmc.cotton.gui.widget.icon.TextureIcon;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import io.github.xiaocihua.stacktonearbychests.ModOptions;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Locale;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -24,6 +17,13 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Locale;
 
 import static io.github.xiaocihua.stacktonearbychests.ModOptions.MOD_ID;
 
@@ -95,7 +95,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
             }
 
             @Override
-            public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+            public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
                 ScreenDrawing.texturedRect(context, x + 1, y + 1, 18, 18, Identifier.fromNamespaceAndPath(MOD_ID, "textures/slot_background.png"), 0xFF_FFFFFF);
                 super.paint(context, x, y, mouseX, mouseY);
             }

@@ -1,8 +1,9 @@
 package io.github.xiaocihua.stacktonearbychests.event;
 
+import net.minecraft.world.InteractionResult;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
-import net.minecraft.world.InteractionResult;
 
 public class EventUtil {
 

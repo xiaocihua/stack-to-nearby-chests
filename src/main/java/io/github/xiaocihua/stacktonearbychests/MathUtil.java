@@ -1,13 +1,15 @@
 package io.github.xiaocihua.stacktonearbychests;
 
-import static net.minecraft.util.Mth.clamp;
-import static net.minecraft.util.Mth.floor;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NonNull;
+
+import static net.minecraft.util.Mth.clamp;
+import static net.minecraft.util.Mth.floor;
 
 public class MathUtil {
 
@@ -49,20 +51,34 @@ public class MathUtil {
         Direction[] dirs = dir == null ? Direction.values() : new Direction[]{dir};
         voxel.forAllBoxes((x1, y1, z1, x2, y2, z2) -> {
             AABB box = new AABB(x1, y1, z1, x2, y2, z2).move(blockPos);
-            for (Direction face : dirs) {
-                AABB faceBox = getFace(box, face);
-                // Since the faces are axis aligned, it's a simple clamp operation
-                Vec3 val = new Vec3(clamp(pos.x, faceBox.minX, faceBox.maxX),
-                        clamp(pos.y, faceBox.minY, faceBox.maxY),
-                        clamp(pos.z, faceBox.minZ, faceBox.maxZ));
-                double distanceSq = val.distanceToSqr(pos);
-                if (distanceSq < result.distanceSq) {
-                    result.val = val;
-                    result.distanceSq = distanceSq;
-                }
-            }
+            getClosestPointOnBox(pos, box, dirs, result);
         });
         return result.val;
+    }
+
+    public static Vec3 getClosestPoint(Entity entity, Vec3 pos) {
+        ClosestPosResult result = new ClosestPosResult();
+        getClosestPointOnBox(pos, entity.getBoundingBox(), Direction.values(), result);
+        return  result.val;
+    }
+
+    private static void getClosestPointOnBox(Vec3 pos, AABB box, Direction[] dirs, ClosestPosResult result) {
+        for (Direction face : dirs) {
+            AABB faceBox = getFace(box, face);
+            Vec3 val = getClosestPointOnFace(pos, faceBox);
+            double distanceSq = val.distanceToSqr(pos);
+            if (distanceSq < result.distanceSq) {
+                result.val = val;
+                result.distanceSq = distanceSq;
+            }
+        }
+    }
+
+    private static @NonNull Vec3 getClosestPointOnFace(Vec3 pos, AABB faceBox) {
+        // Since the faces are axis aligned, it's a simple clamp operation
+        return new Vec3(clamp(pos.x, faceBox.minX, faceBox.maxX),
+                clamp(pos.y, faceBox.minY, faceBox.maxY),
+                clamp(pos.z, faceBox.minZ, faceBox.maxZ));
     }
 
     /**

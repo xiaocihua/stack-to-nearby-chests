@@ -3,14 +3,15 @@ package io.github.xiaocihua.stacktonearbychests.gui;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 
 import static io.github.xiaocihua.stacktonearbychests.gui.ModOptionsGui.TEXT_COLOR;
 

@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 
 @FunctionalInterface
 public interface ClickSlotCallback {
@@ -18,5 +18,5 @@ public interface ClickSlotCallback {
                         EventUtil.forEachCallbackWithResult(callbacks, callback -> callback.update(syncId, slotId, button, actionType, player)));
     }
 
-    InteractionResult update(int syncId, int slotId, int button, ClickType actionType, Player player);
+    InteractionResult update(int syncId, int slotId, int button, ContainerInput actionType, Player player);
 }

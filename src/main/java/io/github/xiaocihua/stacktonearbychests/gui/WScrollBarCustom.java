@@ -5,7 +5,7 @@ import io.github.cottonmc.cotton.gui.widget.WScrollBar;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /**
  * Copy from {@link WScrollBar}
@@ -22,7 +22,7 @@ public class WScrollBarCustom extends WScrollBar {
     }
 
     @Override
-    public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+    public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
         ScreenDrawing.coloredRect(context, x, y, width, height, 0xFF_262626);
 
         if (maxValue <= 0) return;

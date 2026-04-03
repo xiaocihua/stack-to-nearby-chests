@@ -10,7 +10,7 @@ public class EndWorldTickExecutor {
     private static final Queue<Runnable> tasks = new LinkedList<>();
 
     public static void init() {
-        ClientTickEvents.END_WORLD_TICK.register(world -> {
+        ClientTickEvents.END_LEVEL_TICK.register(world -> {
             while (tasks.peek() != null) {
                 tasks.poll().run();
             }

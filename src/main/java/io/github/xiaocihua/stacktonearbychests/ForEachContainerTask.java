@@ -156,6 +156,6 @@ public abstract class ForEachContainerTask {
     }
 
     private void sendChatMessage(String key) {
-        Minecraft.getInstance().gui.getChat().addMessage(Component.translatable(key));
+        Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.translatable(key));
     }
 }

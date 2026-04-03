@@ -11,7 +11,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -23,7 +23,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -56,7 +56,7 @@ public class LockedSlots {
     private static boolean movingFavoriteItemStack = false;
     private static Slot quickMoveDestination;
     @Nullable
-    private static ClickType actionBeingExecuted;
+    private static ContainerInput actionBeingExecuted;
 
     private static Optional<Path> currentLockedSlotsFilePath = Optional.empty();
 
@@ -110,10 +110,10 @@ public class LockedSlots {
             @Nullable
             Slot slot = slotId < 0 ? null : player.containerMenu.getSlot(slotId);
             if (isLocked(slot) && (
-                    actionType == ClickType.PICKUP && ModOptions.get().behavior.favoriteItemsCannotBePickedUp.booleanValue()
-                            || actionType == ClickType.QUICK_MOVE && ModOptions.get().behavior.favoriteItemStacksCannotBeQuickMoved.booleanValue()
-                            || actionType == ClickType.SWAP && ModOptions.get().behavior.favoriteItemStacksCannotBeSwapped.booleanValue()
-                            || actionType == ClickType.THROW && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()
+                    actionType == ContainerInput.PICKUP && ModOptions.get().behavior.favoriteItemsCannotBePickedUp.booleanValue()
+                            || actionType == ContainerInput.QUICK_MOVE && ModOptions.get().behavior.favoriteItemStacksCannotBeQuickMoved.booleanValue()
+                            || actionType == ContainerInput.SWAP && ModOptions.get().behavior.favoriteItemStacksCannotBeSwapped.booleanValue()
+                            || actionType == ContainerInput.THROW && ModOptions.get().behavior.favoriteItemStacksCannotBeThrown.booleanValue()
             )) {
                 return InteractionResult.FAIL;
             }
@@ -224,9 +224,9 @@ public class LockedSlots {
                 if (!StackToNearbyChests.IS_EASY_SHULKER_BOXES_MOD_LOADED) {
                     unLock(slotIndex);
                 }
-            } else if (actionBeingExecuted == ClickType.THROW) {
+            } else if (actionBeingExecuted == ContainerInput.THROW) {
                 unLock(slotIndex);
-            } else if (actionBeingExecuted == ClickType.PICKUP_ALL) {
+            } else if (actionBeingExecuted == ContainerInput.PICKUP_ALL) {
                 if (unLock(slotIndex)) {
                     movingFavoriteItemStack = true;
                 }
@@ -238,7 +238,7 @@ public class LockedSlots {
         quickMoveDestination = destination;
     }
 
-    private static void afterClickSlot(int slotId, int button, ClickType actionType, Player player) {
+    private static void afterClickSlot(int slotId, int button, ContainerInput actionType, Player player) {
         AbstractContainerMenu screenHandler = player.containerMenu;
         @Nullable
         Slot slot = slotId < 0 ? null : screenHandler.getSlot(slotId);
@@ -325,7 +325,7 @@ public class LockedSlots {
         }
     }
 
-    public static void drawFavoriteItemStyle(GuiGraphics context, Slot slot) {
+    public static void drawFavoriteItemStyle(GuiGraphicsExtractor context, Slot slot) {
         ModOptions options = ModOptions.get();
 
         if (!(options.appearance.alwaysShowMarkersForFavoritedItems.booleanValue()
