@@ -79,7 +79,8 @@ public class StackToNearbyChests implements ClientModInitializer {
 
         if (screen instanceof InventoryScreen || screen instanceof CreativeModeInventoryScreen) {
 
-            if (appearanceOption.showTheButtonsOnTheCreativeInventoryScreen.booleanValue()) {
+            if (screen instanceof InventoryScreen
+                    || (screen instanceof CreativeModeInventoryScreen && appearanceOption.showTheButtonsOnTheCreativeInventoryScreen.booleanValue())) {
                 addButtonsOnInventoryScreen((AbstractContainerScreen<?>) screen, showButtonTooltip, appearanceOption);
             }
 
