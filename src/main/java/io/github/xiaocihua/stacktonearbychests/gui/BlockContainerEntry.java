@@ -22,8 +22,14 @@ public class BlockContainerEntry extends SelectableEntryList.Entry<Identifier> {
     public BlockContainerEntry(Identifier id) {
         super(id);
         Optional<Block> block = BuiltInRegistries.BLOCK.getOptional(id);
-        icon = block.map(b -> new ItemIcon(b.asItem()));
-        name = block.<Component>map(Block::getName).orElse(Component.nullToEmpty(id.toString()));
+        icon = block.filter(BlockContainerEntry::areComponentsBound)
+                    .map(b -> new ItemIcon(b.asItem()));
+        name = block.<Component>map(b -> areComponentsBound(b) ? b.getName() : Component.literal(id.toString()))
+                    .orElse(Component.nullToEmpty(id.toString()));
+    }
+
+    private static boolean areComponentsBound(Block block) {
+        return block.asItem().builtInRegistryHolder().areComponentsBound();
     }
 
     @Override

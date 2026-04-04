@@ -15,19 +15,27 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+
 import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class ItemEntry extends SelectableEntryList.Entry<Identifier> {
 
-    private final Icon icon;
+    private final Optional<Icon> icon;
     private final Component name;
 
     public ItemEntry(Identifier id) {
         super(id);
         Optional<Item> item = BuiltInRegistries.ITEM.getOptional(id);
-        icon = item.<Icon>map(ItemIcon::new).orElse(new TextureIcon(MissingTextureAtlasSprite.getLocation()));
-        name = item.map(ItemEntry::getItemName).orElse(Component.nullToEmpty(id.toString()));
+        icon = item.filter(ItemEntry::areComponentsBound)
+                   .map(ItemIcon::new);
+        name = item.map(i -> areComponentsBound(i) ? getItemName(i) : Component.literal(id.toString()))
+                   .orElse(Component.nullToEmpty(id.toString()));
+    }
+
+    private static boolean areComponentsBound(Item item) {
+        return item.asItem().builtInRegistryHolder().areComponentsBound();
     }
 
     @Override
@@ -37,7 +45,7 @@ public class ItemEntry extends SelectableEntryList.Entry<Identifier> {
         int inset = 6;
         int fontWidth = Minecraft.getInstance().font.width(name.getVisualOrderText());
         int fontHeight = Minecraft.getInstance().font.lineHeight + 2;
-        icon.paint(context, x + inset, y + (height - iconSize) / 2, 16);
+        icon.ifPresent(i -> i.paint(context, x + inset, y + (height - iconSize) / 2, 16));
         ScreenDrawing.drawString(context, name.getVisualOrderText(), x + width - inset - fontWidth, y + (height - fontHeight) / 2 + 2, TEXT_COLOR);
     }
 

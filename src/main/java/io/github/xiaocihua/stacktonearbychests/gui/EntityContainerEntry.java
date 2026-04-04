@@ -14,7 +14,9 @@ public class EntityContainerEntry extends SelectableEntryList.Entry<Identifier>{
 
     public EntityContainerEntry(Identifier id) {
         super(id);
-        name = BuiltInRegistries.ENTITY_TYPE.getOptional(id).map(EntityType::getDescription).orElse(Component.nullToEmpty(id.toString()));
+        name = BuiltInRegistries.ENTITY_TYPE.getOptional(id)
+                .map(EntityType::getDescription)
+                .orElse(Component.nullToEmpty(id.toString()));
     }
 
     public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
