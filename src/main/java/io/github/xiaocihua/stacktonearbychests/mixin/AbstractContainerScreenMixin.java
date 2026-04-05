@@ -24,8 +24,13 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
     @Shadow
     public abstract T getMenu();
 
+    @Inject(method = "renderSlot", at = @At("HEAD"))
+    private void drawBefore(GuiGraphics context, Slot slot, int i, int j, CallbackInfo ci) {
+        LockedSlots.drawFavoriteItemStyle(context, slot, true);
+    }
+
     @Inject(method = "renderSlot", at = @At("TAIL"))
-    private void drawAfter(GuiGraphics context, Slot slot, int x, int y, CallbackInfo ci) {
-        LockedSlots.drawFavoriteItemStyle(context, slot);
+    private void drawAfter(GuiGraphics context, Slot slot, int i, int j, CallbackInfo ci) {
+        LockedSlots.drawFavoriteItemStyle(context, slot, false);
     }
 }

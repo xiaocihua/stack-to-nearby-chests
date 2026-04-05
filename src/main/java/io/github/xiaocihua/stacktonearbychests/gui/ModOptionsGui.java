@@ -74,7 +74,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         MutableComponent favoriteItemStyleLabel = Component.translatable(PREFIX + "favoriteItemStyle");
 
         var favoriteItemStyle = new FlatColorButton() {
-            private int index = LockedSlots.FAVORITE_ITEM_TAGS.indexOf(options.appearance.favoriteItemStyle);
+            private int index = LockedSlots.FAVORITE_INDICATOR_STYLES.indexOf(options.appearance.favoriteItemStyle);
 
             {
                 setCurrent(options.appearance.favoriteItemStyle);
@@ -83,8 +83,8 @@ public class ModOptionsGui extends LightweightGuiDescription {
             @Override
             public InputResult onClick(MouseButtonEvent click, boolean doubled) {
                 int amount = Minecraft.getInstance().hasShiftDown() ? -1 : 1;
-                index = Mth.positiveModulo(index + amount, LockedSlots.FAVORITE_ITEM_TAGS.size());
-                setCurrent(LockedSlots.FAVORITE_ITEM_TAGS.get(index));
+                index = Mth.positiveModulo(index + amount, LockedSlots.FAVORITE_INDICATOR_STYLES.size());
+                setCurrent(LockedSlots.FAVORITE_INDICATOR_STYLES.get(index));
                 return super.onClick(click, doubled);
             }
 
