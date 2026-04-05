@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.LOGGER;
 import static java.util.function.Predicate.not;
@@ -47,10 +48,14 @@ import static java.util.function.Predicate.not;
 @Environment(EnvType.CLIENT)
 public class LockedSlots {
     private static final Path LOCKED_SLOTS_FOLDER = ModOptions.MOD_OPTIONS_DIR.resolve("locked-slots");
-    public static final List<ResourceLocation> FAVORITE_ITEM_TAGS = List.of(ResourceLocation.fromNamespaceAndPath(ModOptions.MOD_ID, "gold_badge"),
+    public static final List<ResourceLocation> FOREGROUND_FAVORITE_INDICATOR_STYLES = List.of(
+            ResourceLocation.fromNamespaceAndPath(ModOptions.MOD_ID, "gold_badge"));
+    public static final List<ResourceLocation> BACKGROUND_FAVORITE_INDICATOR_STYLES = List.of(
             ResourceLocation.fromNamespaceAndPath(ModOptions.MOD_ID, "red_background"),
             ResourceLocation.fromNamespaceAndPath(ModOptions.MOD_ID, "gold_border"),
             ResourceLocation.fromNamespaceAndPath(ModOptions.MOD_ID, "iron_border"));
+    public static final List<ResourceLocation> FAVORITE_INDICATOR_STYLES =
+            Stream.concat(FOREGROUND_FAVORITE_INDICATOR_STYLES.stream(), BACKGROUND_FAVORITE_INDICATOR_STYLES.stream()).toList();
 
     private static HashSet<Integer> currentLockedSlots = new HashSet<>();
     private static boolean movingFavoriteItemStack = false;
@@ -131,9 +136,10 @@ public class LockedSlots {
 
     private static void read(Path path) {
         LOGGER.info("Reading locked slot indices from {}", path.getFileName());
-        
+
         try (BufferedReader reader = Files.newBufferedReader(path)) {
-            Type type = new TypeToken<HashSet<Integer>>() {}.getType();
+            Type type = new TypeToken<HashSet<Integer>>() {
+            }.getType();
             currentLockedSlots = new Gson().fromJson(reader, type);
         } catch (NoSuchFileException e) {
             LOGGER.info("Locked slots file does not exist");
@@ -309,6 +315,7 @@ public class LockedSlots {
 
     /**
      * Unfavorite all empty slots.
+     *
      * @return If any slots have been unmarked as favorites.
      */
     private static boolean refresh(AbstractContainerMenu screenHandler) {
@@ -325,7 +332,7 @@ public class LockedSlots {
         }
     }
 
-    public static void drawFavoriteItemStyle(GuiGraphics context, Slot slot) {
+    public static void drawFavoriteItemStyle(GuiGraphics context, Slot slot, boolean isBackground) {
         ModOptions options = ModOptions.get();
 
         if (!(options.appearance.alwaysShowMarkersForFavoritedItems.booleanValue()
@@ -335,11 +342,13 @@ public class LockedSlots {
         }
 
         ResourceLocation id = options.appearance.favoriteItemStyle;
-//        boolean isForeground = id.getPath().equals("gold_badge");
-        ResourceLocation sprite = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
-        if (isLocked(slot)) {
-            context.blit(RenderPipelines.GUI_TEXTURED,
-                    sprite, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
+        if (isBackground && BACKGROUND_FAVORITE_INDICATOR_STYLES.contains(id) ||
+                !isBackground && FOREGROUND_FAVORITE_INDICATOR_STYLES.contains(id)) {
+            ResourceLocation sprite = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
+            if (isLocked(slot)) {
+                context.blit(RenderPipelines.GUI_TEXTURED,
+                        sprite, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
+            }
         }
     }
 
