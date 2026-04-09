@@ -2,9 +2,9 @@ package io.github.xiaocihua.stacktonearbychests.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
 
 @FunctionalInterface
 public interface ClickSlotCallback {
@@ -18,5 +18,5 @@ public interface ClickSlotCallback {
                         EventUtil.forEachCallbackWithResult(callbacks, callback -> callback.update(syncId, slotId, button, actionType, player)));
     }
 
-    ActionResult update(int syncId, int slotId, int button, SlotActionType actionType, PlayerEntity player);
+    InteractionResult update(int syncId, int slotId, int button, ClickType actionType, Player player);
 }

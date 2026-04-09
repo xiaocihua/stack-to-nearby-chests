@@ -1,34 +1,34 @@
 package io.github.xiaocihua.stacktonearbychests.gui;
 
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
-import io.github.xiaocihua.stacktonearbychests.mixin.HandledScreenAccessor;
+import io.github.xiaocihua.stacktonearbychests.mixin.AbstractContainerScreenAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
-public class PosUpdatableButtonWidget extends TexturedButtonWidget {
-    private final HandledScreen<?> parent;
-    private final Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater;
+public class PosUpdatableButtonWidget extends ImageButton {
+    private final AbstractContainerScreen<?> parent;
+    private final Optional<Function<AbstractContainerScreenAccessor, Vec2i>> posUpdater;
 
     private PosUpdatableButtonWidget(int width,
                                      int height,
-                                     ButtonTextures textures,
-                                     PressAction pressAction,
-                                     Text text,
-                                     HandledScreen<?> parent,
-                                     Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater) {
+                                     WidgetSprites textures,
+                                     OnPress pressAction,
+                                     Component text,
+                                     AbstractContainerScreen<?> parent,
+                                     Optional<Function<AbstractContainerScreenAccessor, Vec2i>> posUpdater) {
         super(0, 0, width, height, textures, pressAction, text);
         this.parent = parent;
         this.posUpdater = posUpdater;
@@ -36,8 +36,8 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        posUpdater.ifPresent(updater -> setPos(updater.apply((HandledScreenAccessor) parent)));
+    public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        posUpdater.ifPresent(updater -> setPos(updater.apply((AbstractContainerScreenAccessor) parent)));
         super.renderWidget(context, mouseX, mouseY, delta);
 //        Identifier identifier = this.textures.get(this.isNarratable(), this.isHovered());
 //        context.drawGuiTexture(identifier, this.getX(), this.getY(), this.width, this.height);
@@ -51,52 +51,52 @@ public class PosUpdatableButtonWidget extends TexturedButtonWidget {
     public static class Builder {
         private int width = 16;
         private int height = 16;
-        private ButtonTextures textures;
-        private PressAction pressAction = button -> {};
+        private WidgetSprites textures;
+        private OnPress pressAction = button -> {};
         @Nullable
         private Tooltip tooltip;
-        private Text text = ScreenTexts.EMPTY;
-        private final HandledScreen<?> parent;
-        private Optional<Function<HandledScreenAccessor, Vec2i>> posUpdater = Optional.empty();
+        private Component text = CommonComponents.EMPTY;
+        private final AbstractContainerScreen<?> parent;
+        private Optional<Function<AbstractContainerScreenAccessor, Vec2i>> posUpdater = Optional.empty();
 
-        public Builder(HandledScreen<?> parent) {
+        public Builder(AbstractContainerScreen<?> parent) {
             this.parent = parent;
         }
 
-        public Builder setSize(int width, int height) {
+        public io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget.Builder setSize(int width, int height) {
             this.width = width;
             this.height = height;
             return this;
         }
 
-        public Builder setTextures(ButtonTextures textures) {
+        public io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget.Builder setTextures(WidgetSprites textures) {
             this.textures = textures;
             return this;
         }
 
-        public Builder setPressAction(PressAction pressAction) {
+        public io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget.Builder setPressAction(OnPress pressAction) {
             this.pressAction = pressAction;
             return this;
         }
 
-        public Builder setTooltip(@Nullable Text content) {
+        public io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget.Builder setTooltip(@Nullable Component content) {
             if (content != null) {
-                this.tooltip = Tooltip.of(content);
+                this.tooltip = Tooltip.create(content);
             }
             return this;
         }
 
-        public Builder setTooltip(@Nullable Tooltip tooltip) {
+        public io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget.Builder setTooltip(@Nullable Tooltip tooltip) {
             this.tooltip = tooltip;
             return this;
         }
 
-        public Builder setText(Text text) {
+        public io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget.Builder setText(Component text) {
             this.text = text;
             return this;
         }
 
-        public Builder setPosUpdater(Function<HandledScreenAccessor, Vec2i> posUpdater) {
+        public io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget.Builder setPosUpdater(Function<AbstractContainerScreenAccessor, Vec2i> posUpdater) {
             this.posUpdater = Optional.ofNullable(posUpdater);
             return this;
         }

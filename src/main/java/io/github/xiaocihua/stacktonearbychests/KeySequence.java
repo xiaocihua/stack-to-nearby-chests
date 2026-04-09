@@ -1,13 +1,9 @@
 package io.github.xiaocihua.stacktonearbychests;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import io.github.xiaocihua.stacktonearbychests.event.OnKeyCallback;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.Window;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -15,6 +11,10 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 
 public final class KeySequence {
     public static final int MOUSE_BUTTON_CODE_OFFSET = 100;
@@ -36,12 +36,12 @@ public final class KeySequence {
     public static void init() {
         OnKeyCallback.PRESS.register(key -> {
             PRESSING_KEYS.add(key);
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         });
 
         OnKeyCallback.RELEASE.register(key -> {
             PRESSING_KEYS.rem(key);
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         });
     }
 
@@ -56,10 +56,10 @@ public final class KeySequence {
     }
 
     public static boolean isKeyPressed(int key) {
-        Window window = MinecraftClient.getInstance().getWindow();
+        Window window = Minecraft.getInstance().getWindow();
         return isMouseButton(key)
-                ? GLFW.glfwGetMouseButton(window.getHandle(), key + MOUSE_BUTTON_CODE_OFFSET) == GLFW.GLFW_PRESS
-                : InputUtil.isKeyPressed(window, key);
+                ? GLFW.glfwGetMouseButton(window.handle(), key + MOUSE_BUTTON_CODE_OFFSET) == GLFW.GLFW_PRESS
+                : InputConstants.isKeyDown(window, key);
     }
 
     private static boolean isMouseButton(int key) {
@@ -95,22 +95,22 @@ public final class KeySequence {
         keys = new ArrayList<>(defaultKeys);
     }
 
-    public Text getLocalizedText() {
+    public Component getLocalizedText() {
         if (keys.isEmpty()) {
-            return Text.translatable("key.keyboard.unknown");
+            return Component.translatable("key.keyboard.unknown");
         }
 
         String localized = keys.stream()
                 .map(key -> {
                     if (isMouseButton(key)) {
-                        return InputUtil.Type.MOUSE.createFromCode(key + MOUSE_BUTTON_CODE_OFFSET);
+                        return InputConstants.Type.MOUSE.getOrCreate(key + MOUSE_BUTTON_CODE_OFFSET);
                     } else {
-                        return InputUtil.Type.KEYSYM.createFromCode(key);
+                        return InputConstants.Type.KEYSYM.getOrCreate(key);
                     }
                 })
-                .map(key -> key.getLocalizedText().getString())
+                .map(key -> key.getDisplayName().getString())
                 .collect(Collectors.joining(" + "));
-        return Text.of(localized);
+        return Component.nullToEmpty(localized);
     }
 
     public boolean testThenRun(Runnable action) {
@@ -122,38 +122,38 @@ public final class KeySequence {
         return false;
     }
 
-    public KeySequence register(Supplier<ActionResult> action) {
+    public KeySequence register(Supplier<InteractionResult> action) {
         OnKeyCallback.PRESS.register(key -> {
             if (!keys.isEmpty() && PRESSING_KEYS.equals(keys)) {
                 return action.get();
             } else {
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
         });
 
         return this;
     }
 
-    public KeySequence registerOnScreen(Class<? extends Screen> screenClass, Consumer<Screen> action, ActionResult result) {
+    public KeySequence registerOnScreen(Class<? extends Screen> screenClass, Consumer<Screen> action, InteractionResult result) {
         return register(() -> {
-            Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+            Screen currentScreen = Minecraft.getInstance().screen;
             if (screenClass.isInstance(currentScreen)) {
                 action.accept(currentScreen);
                 return result;
             } else {
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
         });
     }
 
-    public KeySequence registerNotOnScreen(Runnable action, ActionResult result) {
+    public KeySequence registerNotOnScreen(Runnable action, InteractionResult result) {
         return register(() -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (client.world != null && client.currentScreen == null) {
+            Minecraft client = Minecraft.getInstance();
+            if (client.level != null && client.screen == null) {
                 action.run();
                 return result;
             } else {
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
         });
     }

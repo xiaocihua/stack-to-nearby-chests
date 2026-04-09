@@ -8,7 +8,7 @@ import com.google.gson.stream.JsonWriter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
@@ -46,7 +46,7 @@ public class ModOptions {
 
     private static ModOptions read() {
         try (BufferedReader reader = Files.newBufferedReader(OPTIONS_FILE, StandardCharsets.UTF_8)) {
-            return new GsonBuilder().registerTypeAdapter(Identifier.class, new IdentifierAdapter().nullSafe())
+            return new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new IdentifierAdapter().nullSafe())
                     .create()
                     .fromJson(reader, ModOptions.class);
         } catch (NoSuchFileException e) {
@@ -63,7 +63,7 @@ public class ModOptions {
     public void write() {
         try {
             Files.createDirectories(OPTIONS_FILE.getParent());
-            String json = new GsonBuilder().registerTypeAdapter(Identifier.class, new IdentifierAdapter().nullSafe())
+            String json = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new IdentifierAdapter().nullSafe())
                     .setPrettyPrinting()
                     .create()
                     .toJson(this);
@@ -93,7 +93,7 @@ public class ModOptions {
         public IntOption restockButtonPosX = new IntOption(6);
         public IntOption restockButtonPosY = new IntOption(10);
 
-        public Identifier favoriteItemStyle = Identifier.of(ModOptions.MOD_ID, "gold_badge");
+        public ResourceLocation favoriteItemStyle = ResourceLocation.fromNamespaceAndPath(ModOptions.MOD_ID, "gold_badge");
 
         public MutableBoolean alwaysShowMarkersForFavoritedItems = new MutableBoolean(true);
 
@@ -847,15 +847,15 @@ public class ModOptions {
         }
     }
 
-    public static class IdentifierAdapter extends TypeAdapter<Identifier> {
+    public static class IdentifierAdapter extends TypeAdapter<ResourceLocation> {
 
         @Override
-        public Identifier read(JsonReader in) throws IOException {
-            return Identifier.of(in.nextString());
+        public ResourceLocation read(JsonReader in) throws IOException {
+            return ResourceLocation.parse(in.nextString());
         }
 
         @Override
-        public void write(JsonWriter out, Identifier value) throws IOException {
+        public void write(JsonWriter out, ResourceLocation value) throws IOException {
             out.value(value.toString());
         }
     }

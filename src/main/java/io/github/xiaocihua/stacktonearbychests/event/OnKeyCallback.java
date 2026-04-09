@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResult;
 
 @Environment(EnvType.CLIENT)
 @FunctionalInterface
@@ -16,5 +16,5 @@ public interface OnKeyCallback {
     Event<OnKeyCallback> RELEASE = EventFactory.createArrayBacked(OnKeyCallback.class,
             callbacks -> key -> EventUtil.forEachCallbackWithResult(callbacks, callback -> callback.update(key)));
 
-    ActionResult update(int key);
+    InteractionResult update(int key);
 }

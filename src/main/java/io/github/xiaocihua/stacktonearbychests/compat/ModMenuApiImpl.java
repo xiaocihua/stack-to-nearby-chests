@@ -11,8 +11,8 @@ public class ModMenuApiImpl implements ModMenuApi {
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         return parent -> new ModOptionsScreen(new ModOptionsGui()) {
             @Override
-            public void close() {
-                client.setScreen(parent);
+            public void onClose() {
+                minecraft.setScreen(parent);
             }
         };
     }
