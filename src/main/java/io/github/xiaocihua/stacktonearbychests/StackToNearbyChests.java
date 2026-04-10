@@ -1,6 +1,7 @@
 package io.github.xiaocihua.stacktonearbychests;
 
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
+import io.github.xiaocihua.stacktonearbychests.compat.TravelersBackpackMod;
 import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsGui;
 import io.github.xiaocihua.stacktonearbychests.gui.ModOptionsScreen;
 import io.github.xiaocihua.stacktonearbychests.gui.PosUpdatableButtonWidget;
@@ -120,6 +121,19 @@ public class StackToNearbyChests implements ClientModInitializer {
         } else if (isContainerScreen(screen)) {
             AbstractContainerMenu screenHandler = ((AbstractContainerScreen<?>) screen).getMenu();
 
+            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, context) -> {
+                if (isTextFieldActive(scr) || isInventoryTabNotSelected(scr)) {
+                    return;
+                }
+
+                ModOptions.get().keymap.quickStackKey.testThenRun(() -> InventoryActions.quickStack(screenHandler));
+                ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryActions.restock(screenHandler));
+            });
+
+            if (TravelersBackpackMod.getInstance().isContainerScreen(screen)) {
+                return;
+            }
+
             if (ModOptions.get().appearance.showQuickStackButton.booleanValue()) {
                 new PosUpdatableButtonWidget.Builder((AbstractContainerScreen<?>) screen)
                         .setTextures(getButtonTextures("quick_stack_button"))
@@ -137,15 +151,6 @@ public class StackToNearbyChests implements ClientModInitializer {
                         .setPressAction(button -> InventoryActions.restock(screenHandler))
                         .build();
             }
-
-            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, context) -> {
-                if (isTextFieldActive(scr) || isInventoryTabNotSelected(scr)) {
-                    return;
-                }
-
-                ModOptions.get().keymap.quickStackKey.testThenRun(() -> InventoryActions.quickStack(screenHandler));
-                ModOptions.get().keymap.restockKey.testThenRun(() -> InventoryActions.restock(screenHandler));
-            });
         }
     }
 

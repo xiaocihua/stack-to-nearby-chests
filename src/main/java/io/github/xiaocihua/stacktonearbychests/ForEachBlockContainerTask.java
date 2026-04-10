@@ -119,9 +119,6 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
     private boolean canOpen(Level world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (!(blockEntity instanceof Container) && state.getBlock() != Blocks.ENDER_CHEST) {
-            return false;
-        }
         if (blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity
                 && !ShulkerBoxBlockInvoker.invokeCanOpen(state, world, pos, shulkerBoxBlockEntity)) {
             return false;
