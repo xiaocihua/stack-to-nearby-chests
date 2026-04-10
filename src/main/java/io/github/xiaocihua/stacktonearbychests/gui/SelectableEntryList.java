@@ -66,7 +66,7 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 
 	public void addData(Collection<D> data) {
 		this.data.addAll(data);
-		this.data = this.data.stream().distinct().collect(Collectors.toList());
+		this.data = this.data.stream().distinct().sorted().collect(Collectors.toList());
 		onChanged();
 		layout();
 	}
@@ -185,7 +185,7 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 					if (unconfigured.isEmpty()) {
 						w = createChild(d);
 					} else {
-						w = unconfigured.remove(0);
+						w = unconfigured.removeFirst();
 					}
 					configured.put(d, w);
 				}

@@ -3,9 +3,8 @@ package io.github.xiaocihua.stacktonearbychests.gui;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,14 +21,15 @@ public class BlackWhiteList extends WBoxCustom {
                           Collection<String> data,
                           Function<ResourceLocation, SelectableEntryList.Entry<ResourceLocation>> entrySupplier,
                           Consumer<Consumer<List<ResourceLocation>>> onAddButtonClick,
-                          Consumer<Set<String>> dataChangeListener) {
+                          Consumer<SortedSet<String>> dataChangeListener) {
         super(Axis.VERTICAL);
 
         var titleLabel = new WLabel(title, TEXT_COLOR).setVerticalAlignment(VerticalAlignment.CENTER);
         add(titleLabel, 12);
 
         this.list = new SelectableEntryList<>(data.stream().map(ResourceLocation::parse).toList(), entrySupplier)
-                .setChangedListener(identifiers -> dataChangeListener.accept(identifiers.stream().map(ResourceLocation::toString).collect(Collectors.toSet())));
+                .setChangedListener(identifiers ->
+                        dataChangeListener.accept(identifiers.stream().map(ResourceLocation::toString).collect(Collectors.toCollection(TreeSet::new))));
 
         var buttons = new WBoxCustom(Axis.HORIZONTAL);
 

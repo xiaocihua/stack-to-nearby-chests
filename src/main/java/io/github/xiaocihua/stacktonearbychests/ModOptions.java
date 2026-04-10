@@ -19,8 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.LOGGER;
 
@@ -116,7 +115,8 @@ public class ModOptions {
         public MutableBoolean favoriteItemStacksCannotBeSwapped = new MutableBoolean(false);
         public MutableBoolean favoriteItemsCannotBeSwappedWithOffhand = new MutableBoolean(false);
 
-        public Set<String> stackingTargets = Set.of("minecraft:shulker_box",
+        //<editor-fold desc="stackingTargets">
+        public SortedSet<String> stackingTargets = new TreeSet<>(Set.of("minecraft:shulker_box",
                 "minecraft:brown_shulker_box",
                 "minecraft:yellow_shulker_box",
                 "minecraft:green_shulker_box",
@@ -409,8 +409,10 @@ public class ModOptions {
                 "reinfshulker:brown_netherite_shulker_box",
                 "reinfshulker:green_netherite_shulker_box",
                 "reinfshulker:red_netherite_shulker_box",
-                "reinfshulker:black_netherite_shulker_box");
-        public Set<String> stackingTargetEntities = Set.of("minecraft:oak_chest_boat",
+                "reinfshulker:black_netherite_shulker_box"));
+        //</editor-fold>
+        //<editor-fold desc="stackingTargetEntities">
+        public Set<String> stackingTargetEntities = new TreeSet<>(Set.of("minecraft:oak_chest_boat",
                 "minecraft:spruce_chest_boat",
                 "minecraft:birch_chest_boat",
                 "minecraft:jungle_chest_boat",
@@ -433,8 +435,10 @@ public class ModOptions {
                 "expandedstorage:gold_chest_minecart",
                 "expandedstorage:diamond_chest_minecart",
                 "expandedstorage:obsidian_chest_minecart",
-                "expandedstorage:netherite_chest_minecart");
-        public Set<String> itemsThatWillNotBeStacked = Set.of("minecraft:shulker_box",
+                "expandedstorage:netherite_chest_minecart"));
+        //</editor-fold>
+        //<editor-fold desc="itemsThatWillNotBeStacked">
+        public Set<String> itemsThatWillNotBeStacked = new TreeSet<>(Set.of("minecraft:shulker_box",
                 "minecraft:brown_shulker_box",
                 "minecraft:yellow_shulker_box",
                 "minecraft:green_shulker_box",
@@ -467,8 +471,10 @@ public class ModOptions {
                 "minecraft:cyan_bundle",
                 "minecraft:pink_bundle",
                 "minecraft:red_bundle",
-                "minecraft:light_blue_bundle");
-        public Set<String> restockingSources = Set.of("minecraft:shulker_box",
+                "minecraft:light_blue_bundle"));
+        //</editor-fold>
+        //<editor-fold desc="restockingSources">
+        public Set<String> restockingSources = new TreeSet<>(Set.of("minecraft:shulker_box",
                 "minecraft:brown_shulker_box",
                 "minecraft:yellow_shulker_box",
                 "minecraft:green_shulker_box",
@@ -761,8 +767,10 @@ public class ModOptions {
                 "reinfshulker:brown_netherite_shulker_box",
                 "reinfshulker:green_netherite_shulker_box",
                 "reinfshulker:red_netherite_shulker_box",
-                "reinfshulker:black_netherite_shulker_box");
-        public Set<String> restockingSourceEntities = Set.of("minecraft:oak_chest_boat",
+                "reinfshulker:black_netherite_shulker_box"));
+        //</editor-fold>
+        //<editor-fold desc="restockingSourceEntities">
+        public Set<String> restockingSourceEntities = new TreeSet<>(Set.of("minecraft:oak_chest_boat",
                 "minecraft:spruce_chest_boat",
                 "minecraft:birch_chest_boat",
                 "minecraft:jungle_chest_boat",
@@ -785,8 +793,10 @@ public class ModOptions {
                 "expandedstorage:gold_chest_minecart",
                 "expandedstorage:diamond_chest_minecart",
                 "expandedstorage:obsidian_chest_minecart",
-                "expandedstorage:netherite_chest_minecart");
-        public Set<String> itemsThatWillNotBeRestocked = Set.of("minecraft:shulker_box",
+                "expandedstorage:netherite_chest_minecart"));
+        //</editor-fold>
+        //<editor-fold desc="itemsThatWillNotBeRestocked">
+        public Set<String> itemsThatWillNotBeRestocked = new TreeSet<>(Set.of("minecraft:shulker_box",
                 "minecraft:brown_shulker_box",
                 "minecraft:yellow_shulker_box",
                 "minecraft:green_shulker_box",
@@ -819,7 +829,8 @@ public class ModOptions {
                 "minecraft:cyan_bundle",
                 "minecraft:pink_bundle",
                 "minecraft:red_bundle",
-                "minecraft:light_blue_bundle");
+                "minecraft:light_blue_bundle"));
+        //</editor-fold>
     }
 
     public static class Keymap {
