@@ -1,53 +1,52 @@
 package io.github.xiaocihua.stacktonearbychests;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.RideableInventory;
-import net.minecraft.entity.passive.AbstractDonkeyEntity;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.HasCustomInventoryScreen;
+import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
 
 import static io.github.xiaocihua.stacktonearbychests.MathUtil.getBox;
 
 public class ForEachEntityContainerTask extends ForEachContainerTask {
 
-    private final ClientPlayerInteractionManager interactionManager;
+    private final MultiPlayerGameMode interactionManager;
     private final double squaredReachDistance;
     private final Entity cameraEntity;
 
     private final Iterator<Entity> entities;
 
-    public ForEachEntityContainerTask(MinecraftClient client,
-                                      ClientPlayerEntity player,
-                                      Consumer<ScreenHandler> action,
+    public ForEachEntityContainerTask(Minecraft client,
+                                      LocalPlayer player,
+                                      Consumer<AbstractContainerMenu> action,
                                       Entity cameraEntity,
-                                      World world,
-                                      ClientPlayerInteractionManager interactionManager,
+                                      Level world,
+                                      MultiPlayerGameMode interactionManager,
                                       Collection<String> filter
                                       ) {
         super(client, player, action);
         this.interactionManager = interactionManager;
-        double reachDistance = player.getEntityInteractionRange();
-        this.squaredReachDistance = MathHelper.square(reachDistance);
+        double reachDistance = player.entityInteractionRange();
+        this.squaredReachDistance = Mth.square(reachDistance);
         this.cameraEntity = cameraEntity;
 
-        Predicate<Entity> entityPredicate = EntityPredicates.VALID_INVENTORIES
-                .or(entity -> entity instanceof RideableInventory)
-                .and(entity -> filter.contains(Registries.ENTITY_TYPE.getId(entity.getType()).toString()))
-                .and(entity -> !(entity instanceof AbstractDonkeyEntity donkey) || donkey.hasChest());
+        Predicate<Entity> entityPredicate = EntitySelector.CONTAINER_ENTITY_SELECTOR
+                .or(entity -> entity instanceof HasCustomInventoryScreen)
+                .and(entity -> filter.contains(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString()))
+                .and(entity -> !(entity instanceof AbstractChestedHorse donkey) || donkey.hasChest());
 
-        entities = world.getOtherEntities(cameraEntity, getBox(cameraEntity.getCameraPosVec(0), reachDistance), entityPredicate)
+        entities = world.getEntities(cameraEntity, getBox(cameraEntity.getEyePosition(0), reachDistance), entityPredicate)
                 .iterator();
     }
 
@@ -57,13 +56,13 @@ public class ForEachEntityContainerTask extends ForEachContainerTask {
             super.stop();
             return;
         }
-        client.options.sneakKey.setPressed(true);
+        client.options.keyShift.setDown(true);
         EndWorldTickExecutor.execute(super::start);
     }
 
     @Override
     protected void stop() {
-        client.options.sneakKey.setPressed(false);
+        client.options.keyShift.setDown(false);
         EndWorldTickExecutor.execute(super::stop);
     }
 
@@ -72,11 +71,11 @@ public class ForEachEntityContainerTask extends ForEachContainerTask {
         while (entities.hasNext()) {
             Entity entity = entities.next();
 
-            if (entity.squaredDistanceTo(cameraEntity.getCameraPosVec(0)) > squaredReachDistance) {
+            if (entity.distanceToSqr(cameraEntity.getEyePosition(0)) > squaredReachDistance) {
                 continue;
             }
 
-            interactionManager.interactEntity(player, entity, Hand.MAIN_HAND);
+            interactionManager.interact(player, entity, InteractionHand.MAIN_HAND);
 
             return true;
         }

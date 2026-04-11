@@ -4,7 +4,7 @@ import io.github.cottonmc.cotton.gui.widget.WPanel;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * Copy from {@link io.github.cottonmc.cotton.gui.widget.WClippedPanel}
@@ -16,7 +16,7 @@ import net.minecraft.client.gui.DrawContext;
 public class WClippedPanelCustom extends WPanel {
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 		if (getBackgroundPainter()!=null) getBackgroundPainter().paintBackground(context, x, y, this);
 
         context.enableScissor(x, y, x + width, y + height);

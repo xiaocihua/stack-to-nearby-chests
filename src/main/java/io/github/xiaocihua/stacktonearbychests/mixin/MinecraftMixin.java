@@ -4,28 +4,28 @@ import io.github.xiaocihua.stacktonearbychests.KeySequence;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import io.github.xiaocihua.stacktonearbychests.event.DisconnectCallback;
 import io.github.xiaocihua.stacktonearbychests.event.SetScreenCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.ActionResult;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.InteractionResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MinecraftClient.class)
-public abstract class MinecraftClientMixin {
+@Mixin(Minecraft.class)
+public abstract class MinecraftMixin {
 
-    @Inject(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/PlayerActionC2SPacket;<init>(Lnet/minecraft/network/packet/c2s/play/PlayerActionC2SPacket$Action;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;)V"), cancellable = true)
+    @Inject(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundPlayerActionPacket;<init>(Lnet/minecraft/network/protocol/game/ServerboundPlayerActionPacket$Action;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)V"), cancellable = true)
     private void onSwapItemWithOffhand(CallbackInfo ci) {
-        if (LockedSlots.onSwapItemWithOffhand() == ActionResult.FAIL) {
+        if (LockedSlots.onSwapItemWithOffhand() == InteractionResult.FAIL) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "setScreen(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "setScreen(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"), cancellable = true)
     private void onSetScreen(Screen screen, CallbackInfo ci) {
-        ActionResult result = SetScreenCallback.EVENT.invoker().update(screen);
-        if (result == ActionResult.FAIL) {
+        InteractionResult result = SetScreenCallback.EVENT.invoker().update(screen);
+        if (result == InteractionResult.FAIL) {
             ci.cancel();
         }
     }
@@ -35,7 +35,7 @@ public abstract class MinecraftClientMixin {
         KeySequence.reCheckPressedKeys();
     }
 
-    @Inject(method = "onDisconnected", at = @At("RETURN"))
+    @Inject(method = "clearDownloadedResourcePacks", at = @At("RETURN"))
     private void afterDisconnected(CallbackInfo ci) {
         DisconnectCallback.EVENT.invoker().update();
     }

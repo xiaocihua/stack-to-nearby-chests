@@ -1,26 +1,27 @@
 package io.github.xiaocihua.stacktonearbychests;
 
 import io.github.xiaocihua.stacktonearbychests.mixin.ShulkerBoxBlockInvoker;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.block.enums.ChestType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.mob.ShulkerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.*;
-import net.minecraft.world.World;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -29,8 +30,8 @@ import static io.github.xiaocihua.stacktonearbychests.MathUtil.getBox;
 
 public class ForEachBlockContainerTask extends ForEachContainerTask {
 
-    private final World world;
-    private final ClientPlayerInteractionManager interactionManager;
+    private final Level world;
+    private final MultiPlayerGameMode interactionManager;
     private final double squaredReachDistance;
     private final Entity cameraEntity;
 
@@ -40,21 +41,21 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
     private final Set<BlockPos> searchedBlocks = new HashSet<>();
     private boolean hasSearchedEnderChest = false;
 
-    public ForEachBlockContainerTask(MinecraftClient client,
+    public ForEachBlockContainerTask(Minecraft client,
                                      Entity cameraEntity,
-                                     World world,
-                                     ClientPlayerEntity player,
-                                     ClientPlayerInteractionManager interactionManager,
-                                     Consumer<ScreenHandler> action,
+                                     Level world,
+                                     LocalPlayer player,
+                                     MultiPlayerGameMode interactionManager,
+                                     Consumer<AbstractContainerMenu> action,
                                      Collection<String> filter
                                 ) {
         super(client, player, action);
         this.world = world;
         this.interactionManager = interactionManager;
-        double reachDistance = player.getBlockInteractionRange();
-        this.squaredReachDistance = MathHelper.square(reachDistance);
+        double reachDistance = player.blockInteractionRange();
+        this.squaredReachDistance = Mth.square(reachDistance);
         this.cameraEntity = cameraEntity;
-        this.blocks = getBlocksInBox(getBox(cameraEntity.getCameraPosVec(0), reachDistance))
+        this.blocks = getBlocksInBox(getBox(cameraEntity.getEyePosition(0), reachDistance))
                 .iterator();
         this.filter = filter;
     }
@@ -62,7 +63,7 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
     @Override
     protected boolean findAndOpenNextContainer() {
         while (blocks.hasNext()) {
-            BlockPos pos = blocks.next().toImmutable();
+            BlockPos pos = blocks.next().immutable();
 
             if (searchedBlocks.contains(pos)) {
                 continue;
@@ -71,13 +72,13 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
                 continue;
             }
             BlockState state = world.getBlockState(pos);
-            if (!filter.contains(Registries.BLOCK.getId(state.getBlock()).toString())) {
+            if (!filter.contains(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString())) {
                 continue;
             }
 
-            Vec3d origin = cameraEntity.getCameraPosVec(0);
-            Vec3d closestPos = MathUtil.getClosestPoint(pos, state.getOutlineShape(world, pos), origin);
-            if (closestPos.squaredDistanceTo(origin) > squaredReachDistance) {
+            Vec3 origin = cameraEntity.getEyePosition(0);
+            Vec3 closestPos = MathUtil.getClosestPoint(pos, state.getShape(world, pos), origin);
+            if (closestPos.distanceToSqr(origin) > squaredReachDistance) {
                 continue;
             }
 
@@ -88,17 +89,17 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
                 }
                 hasSearchedEnderChest = true;
             } else if (state.getBlock() == Blocks.SHULKER_BOX) {
-                Direction facing = state.get(ShulkerBoxBlock.FACING);
-                BlockPos facingBlockPos = pos.offset(facing);
+                Direction facing = state.getValue(ShulkerBoxBlock.FACING);
+                BlockPos facingBlockPos = pos.relative(facing);
                 for (var dir : Direction.values()) {
                     if (dir == facing || dir == facing.getOpposite()) {
                         continue;
                     }
 
-                    BlockPos adjacentBlockPos = facingBlockPos.offset(dir);
+                    BlockPos adjacentBlockPos = facingBlockPos.relative(dir);
                     BlockState adjacentBlockState = world.getBlockState(adjacentBlockPos);
                     if (adjacentBlockState.getBlock() == Blocks.SHULKER_BOX
-                            && adjacentBlockState.get(ShulkerBoxBlock.FACING) == dir.getOpposite()) {
+                            && adjacentBlockState.getValue(ShulkerBoxBlock.FACING) == dir.getOpposite()) {
                         searchedBlocks.add(adjacentBlockPos);
                     }
                 }
@@ -107,7 +108,7 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
             }
 
             var hitResult = new BlockHitResult(closestPos, MathUtil.getFacingDirection(closestPos.subtract(origin)).getOpposite(), pos, false);
-            interactionManager.interactBlock(player, Hand.MAIN_HAND, hitResult);
+            interactionManager.useItemOn(player, InteractionHand.MAIN_HAND, hitResult);
 
             return true;
         }
@@ -115,10 +116,10 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
         return false;
     }
 
-    private boolean canOpen(World world, BlockPos pos) {
+    private boolean canOpen(Level world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (!(blockEntity instanceof Inventory) && state.getBlock() != Blocks.ENDER_CHEST) {
+        if (!(blockEntity instanceof Container) && state.getBlock() != Blocks.ENDER_CHEST) {
             return false;
         }
         if (blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity
@@ -126,25 +127,25 @@ public class ForEachBlockContainerTask extends ForEachContainerTask {
             return false;
         }
         if (state.getBlock() instanceof ChestBlock || state.getBlock() == Blocks.ENDER_CHEST) {
-            if (ChestBlock.isChestBlocked(world, pos)){
+            if (ChestBlock.isChestBlockedAt(world, pos)){
                 return false;
             }
             return getTheOtherHalfOfLargeChest(world, pos)
-                    .map(offsetPos -> !ChestBlock.isChestBlocked(world, offsetPos))
+                    .map(offsetPos -> !ChestBlock.isChestBlockedAt(world, offsetPos))
                     .orElse(true);
         }
         return true;
     }
 
-    private Optional<BlockPos> getTheOtherHalfOfLargeChest(World world, BlockPos pos) {
+    private Optional<BlockPos> getTheOtherHalfOfLargeChest(Level world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        if (state.getBlock() instanceof ChestBlock && state.get(ChestBlock.CHEST_TYPE) != ChestType.SINGLE) {
+        if (state.getBlock() instanceof ChestBlock && state.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
             // getFacing(BlockState) returns the direction in which the other half of the chest is located
-            BlockPos offsetPos = pos.offset(ChestBlock.getFacing(state)); 
+            BlockPos offsetPos = pos.relative(ChestBlock.getConnectedDirection(state)); 
             BlockState theOtherHalf = world.getBlockState(offsetPos);
             if(theOtherHalf.getBlock() == state.getBlock()
-                    && state.get(ChestBlock.FACING) == theOtherHalf.get(ChestBlock.FACING)
-                    && ChestBlock.getFacing(state) == ChestBlock.getFacing(theOtherHalf).getOpposite()) {
+                    && state.getValue(ChestBlock.FACING) == theOtherHalf.getValue(ChestBlock.FACING)
+                    && ChestBlock.getConnectedDirection(state) == ChestBlock.getConnectedDirection(theOtherHalf).getOpposite()) {
                 return Optional.ofNullable(offsetPos);
             }
         }

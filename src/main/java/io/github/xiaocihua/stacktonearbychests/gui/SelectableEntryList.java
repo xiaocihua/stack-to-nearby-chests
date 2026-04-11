@@ -12,10 +12,9 @@ import io.github.cottonmc.cotton.gui.widget.data.Texture;
 import juuxel.libninepatch.NinePatch;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.resources.Identifier;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -102,7 +101,7 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 		ScreenDrawing.coloredRect(context, x, y, this.width, this.height, 0xFF_262626);
 
 		if (scrollBar.getValue() != lastScroll) {
@@ -221,8 +220,8 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 	public static abstract class Entry<D> extends WWidget {
 
 		protected static final int TEXT_COLOR = 0xFF_F5F5F5;
-		private static final BackgroundPainter UNSELECTED = BackgroundPainter.createNinePatch(Identifier.of(MOD_ID, "textures/background_dark.png"));
-		private static final BackgroundPainter SELECTED = BackgroundPainter.createNinePatch(new Texture(Identifier.of(MOD_ID, "textures/background_dark_selected.png")),
+		private static final BackgroundPainter UNSELECTED = BackgroundPainter.createNinePatch(Identifier.fromNamespaceAndPath(MOD_ID, "textures/background_dark.png"));
+		private static final BackgroundPainter SELECTED = BackgroundPainter.createNinePatch(new Texture(Identifier.fromNamespaceAndPath(MOD_ID, "textures/background_dark_selected.png")),
 				builder -> builder.mode(NinePatch.Mode.STRETCHING).cornerSize(4).cornerUv(0.25f));
 		protected Optional<SelectableEntryList<D>> parentList = Optional.empty();
 		protected boolean isSelected = false;
@@ -242,7 +241,7 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 		}
 
 		@Override
-		public InputResult onClick(Click click, boolean doubled) {
+		public InputResult onClick(MouseButtonEvent click, boolean doubled) {
 			this.isSelected = !this.isSelected;
 			if (isSelected) {
 				parentList.ifPresent(parent -> parent.select(data));
@@ -253,7 +252,7 @@ public class SelectableEntryList<D> extends WClippedPanelCustom {
 		}
 
 		@Override
-		public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+		public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 			if (isSelected) {
 				SELECTED.paintBackground(context, x, y, this);
 			} else {
