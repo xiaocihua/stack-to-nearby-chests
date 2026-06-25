@@ -1,7 +1,5 @@
-- Updated to Minecraft 26.1.1
+- Updated to Minecraft 26.2
 
-- Temporarily removed REI support
-
-- Temporarily removed EMI support
+- REI and EMI support remain temporarily removed
 
 **This version is not compatible with optifabric**

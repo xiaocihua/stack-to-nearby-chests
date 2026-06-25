@@ -8,6 +8,7 @@
     "AbstractContainerScreenAccessor",
     "AbstractContainerScreenMixin",
     "AbstractMountInventoryScreenMixin",
+    "GuiMixin",
     "InventoryMixin",
     "KeyboardHandlerMixin",
     "LocalPlayerMixin",
