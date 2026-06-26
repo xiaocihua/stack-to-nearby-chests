@@ -1,0 +1,29 @@
+[versions]
+minecraft = "26.2"
+loader = "0.19.3"
+loom = "1.17-SNAPSHOT"
+api = "0.158.0+26.2"
+
+# https://github.com/CottonMC/LibGui/releases
+libGui = "17.0.0+26.2"
+# https://github.com/TerraformersMC/ModMenu/releases
+modmenu = "20.0.1"
+# https://github.com/emilyploszaj/emi/releases
+emi = "1.1.22+1.21.1"
+# https://modrinth.com/mod/rei/versions
+rei = "26.2.820"
+
+[plugins]
+loom = { id = "net.fabricmc.fabric-loom", version.ref = "loom" }
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+loader = { module = "net.fabricmc:fabric-loader", version.ref = "loader" }
+api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "api" }
+libGui = { module = "io.github.cottonmc:LibGui", version.ref = "libGui" }
+modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }
+emi = { module = "dev.emi:emi-fabric", version.ref = "emi" }
+rei-api = { module = "me.shedaniel:RoughlyEnoughItems-api-fabric", version.ref = "rei" }
+rei-defaultPlugin = { module = "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric", version.ref = "rei" }
+rei = { module = "me.shedaniel:RoughlyEnoughItems-fabric", version.ref = "rei" }
+cloth-basicMath = { module = "me.shedaniel.cloth:basic-math", version = "+" }
