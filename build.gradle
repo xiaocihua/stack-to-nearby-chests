@@ -3,11 +3,11 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.mod_version
-group = project.maven_group
+version = mod_version
+group = maven_group
 
 base {
-    archivesName = "${project.archives_base_name}-mc${project.minecraft_version}"
+    archivesName = "${archives_base_name}-mc${minecraft_version}"
 }
 
 repositories {
@@ -39,9 +39,9 @@ repositories.named("Mojang", MavenArtifactRepository) {
 loom {
     runs {
         client {
-            runDir = "run${minecraft_version}"
-            vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar")
-            programArgs("--width=1280", "--height=720")
+            runDirectory = file("run${minecraft_version}")
+            jvmArguments = ["-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar"]
+            programArguments = ["--width=1280", "--height=720"]
         }
     }
 
@@ -57,33 +57,33 @@ loom {
 
 dependencies {
     // To change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     // Uncomment the following line to enable the deprecated Fabric API modules.
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
-    // implementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_api_version}"
+    // implementation "net.fabricmc.fabric-api:fabric-api-deprecated:${fabric_api_version}"
 
-    implementation include("io.github.cottonmc:LibGui:${project.LibGui_version}")
+    implementation include("io.github.cottonmc:LibGui:${LibGui_version}")
 
-    compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-    localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+    compileOnly "com.terraformersmc:modmenu:${modmenu_version}"
+    localRuntime "com.terraformersmc:modmenu:${modmenu_version}"
 
-//    compileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
-//    localRuntime "dev.emi:emi-fabric:${project.emi_version}"
+//    compileOnly "dev.emi:emi-fabric:${emi_version}:api"
+//    localRuntime "dev.emi:emi-fabric:${emi_version}"
 
-//    compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}"
 //    compileOnly "me.shedaniel.cloth:basic-math:+"
-//    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
-//    localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
+//    localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", version
 
     filesMatching("fabric.mod.json") {
         expand "version": inputs.properties.version
@@ -106,7 +106,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.base.archivesName.get()}" }
+        rename { "${it}_${base.archivesName.get()}" }
     }
 }
 
@@ -114,7 +114,7 @@ jar {
 publishing {
     publications {
         create("mavenJava", MavenPublication) {
-            artifactId = project.archives_base_name
+            artifactId = archives_base_name
             from components.java
         }
     }
