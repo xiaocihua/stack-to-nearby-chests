@@ -21,6 +21,9 @@
     ],
     "modmenu": [
       "io.github.xiaocihua.stacktonearbychests.compat.ModMenuApiImpl"
+    ],
+    "rei_client": [
+      "io.github.xiaocihua.stacktonearbychests.compat.ReiClientPluginImpl"
     ]
   },
   "mixins": [

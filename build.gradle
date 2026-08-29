@@ -76,9 +76,9 @@ dependencies {
 //    compileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
 //    localRuntime "dev.emi:emi-fabric:${project.emi_version}"
 
-//    compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
-//    compileOnly "me.shedaniel.cloth:basic-math:+"
-//    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+    compileOnly "me.shedaniel.cloth:basic-math:+"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
 //    localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 }
 
