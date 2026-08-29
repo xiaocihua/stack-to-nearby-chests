@@ -3,19 +3,16 @@ package io.github.xiaocihua.stacktonearbychests.gui;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
-import io.github.cottonmc.cotton.gui.widget.icon.TextureIcon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 
 import java.util.Optional;
 
