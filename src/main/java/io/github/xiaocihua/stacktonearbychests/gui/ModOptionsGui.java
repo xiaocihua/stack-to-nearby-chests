@@ -221,7 +221,7 @@ public class ModOptionsGui extends LightweightGuiDescription {
         WButton doneButton = new FlatColorButton(Component.translatable(PREFIX + "done")).setBorder()
                 .setOnClick(() -> {
                     options.write();
-                    Minecraft.getInstance().screen.onClose();
+                    Minecraft.getInstance().gui.screen().onClose();
                 });
         bottom.add(doneButton, 160);
 

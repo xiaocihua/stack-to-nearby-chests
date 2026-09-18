@@ -65,7 +65,7 @@ public class StackToNearbyChests implements ClientModInitializer {
         ModOptions.get().keymap.restockFromNearbyContainersKey.registerNotOnScreen(InventoryActions::restockFromNearbyContainers, InteractionResult.PASS);
 
         ModOptions.get().keymap.openModOptionsScreenKey.registerNotOnScreen(
-                () -> Minecraft.getInstance().setScreen(new ModOptionsScreen(new ModOptionsGui())), InteractionResult.FAIL);
+                () -> Minecraft.getInstance().gui.setScreen(new ModOptionsScreen(new ModOptionsGui())), InteractionResult.FAIL);
     }
 
     private void addButtonsAndKeys(Minecraft client, Screen screen, int scaledWidth, int scaledHeight) {

@@ -12,7 +12,7 @@ public class ModMenuApiImpl implements ModMenuApi {
         return parent -> new ModOptionsScreen(new ModOptionsGui()) {
             @Override
             public void onClose() {
-                minecraft.setScreen(parent);
+                minecraft.gui.setScreen(parent);
             }
         };
     }

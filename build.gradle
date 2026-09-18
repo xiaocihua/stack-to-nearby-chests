@@ -40,7 +40,6 @@ loom {
     runs {
         client {
             runDir = "run${minecraft_version}"
-            vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar")
             programArgs("--width=1280", "--height=720")
         }
     }

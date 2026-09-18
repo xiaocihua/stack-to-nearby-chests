@@ -136,7 +136,7 @@ public final class KeySequence {
 
     public KeySequence registerOnScreen(Class<? extends Screen> screenClass, Consumer<Screen> action, InteractionResult result) {
         return register(() -> {
-            Screen currentScreen = Minecraft.getInstance().screen;
+            Screen currentScreen = Minecraft.getInstance().gui.screen();
             if (screenClass.isInstance(currentScreen)) {
                 action.accept(currentScreen);
                 return result;
@@ -149,7 +149,7 @@ public final class KeySequence {
     public KeySequence registerNotOnScreen(Runnable action, InteractionResult result) {
         return register(() -> {
             Minecraft client = Minecraft.getInstance();
-            if (client.level != null && client.screen == null) {
+            if (client.level != null && client.gui.screen() == null) {
                 action.run();
                 return result;
             } else {
