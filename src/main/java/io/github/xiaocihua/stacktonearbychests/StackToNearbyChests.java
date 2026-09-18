@@ -31,7 +31,6 @@ import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,7 +95,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                 Slot focusedSlot = ((AbstractContainerScreenAccessor) screen).getFocusedSlot();
                 if (focusedSlot != null && focusedSlot.hasItem()) {
                     triggered = keymap.quickStackItemsOfTheSameTypeAsTheOneUnderTheCursorToNearbyContainersKey
-                            .testThenRun(() -> InventoryActions.stackToNearbyContainers(focusedSlot.getItem().getItem()));
+                            .testThenRun(() -> InventoryActions.stackToNearbyContainers(focusedSlot.getItem()));
                 }
 
                 if (!triggered) {
@@ -150,7 +149,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                         if (cursorStack.isEmpty()) {
                             InventoryActions.stackToNearbyContainers();
                         } else {
-                            Item item = cursorStack.getItem();
+                            ItemStack stackToMove = cursorStack.copyWithCount(1);
 
                             screenHandler.slots.stream()
                                     .filter(slot -> slot.container instanceof Inventory)
@@ -160,7 +159,7 @@ public class StackToNearbyChests implements ClientModInitializer {
                                     .peek(slot -> InventoryActions.pickup(screenHandler, slot))
                                     .anyMatch(slot -> cursorStack.isEmpty());
 
-                            InventoryActions.stackToNearbyContainers(item);
+                            InventoryActions.stackToNearbyContainers(stackToMove);
                         }
                     })
                     .build();

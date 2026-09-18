@@ -5,15 +5,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.lwjgl.glfw.GLFW;
 
@@ -21,14 +23,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.LOGGER;
 import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.currentStackToNearbyContainersButton;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.partitioningBy;
-import static java.util.stream.Collectors.toSet;
 
 public class InventoryActions {
 
@@ -48,8 +48,13 @@ public class InventoryActions {
         forEachContainer(InventoryActions::quickStack, ModOptions.get().behavior.stackingTargets, ModOptions.get().behavior.stackingTargetEntities);
     }
 
-    public static void stackToNearbyContainers(Item item) {
-        forEachContainer(screenHandler -> quickStack(screenHandler, item), ModOptions.get().behavior.stackingTargets, ModOptions.get().behavior.stackingTargetEntities);
+    public static void stackToNearbyContainers(ItemStack stack) {
+        if (!canQuickStack(stack)) {
+            return;
+        }
+
+        ItemStack stackToMove = storageIdentity(stack);
+        forEachContainer(screenHandler -> quickStack(screenHandler, stackToMove), ModOptions.get().behavior.stackingTargets, ModOptions.get().behavior.stackingTargetEntities);
     }
 
     public static void restockFromNearbyContainers() {
@@ -93,34 +98,80 @@ public class InventoryActions {
     public static void quickStack(AbstractContainerMenu screenHandler) {
         var slots = SlotsInScreenHandler.of(screenHandler);
 
-        Set<Item> itemsInContainer = slots.containerSlots().stream()
-                .map(slot -> slot.getItem().getItem())
-                .filter(item -> !ModOptions.get().behavior.itemsThatWillNotBeStacked.contains(BuiltInRegistries.ITEM.getKey(item).toString()))
-                .collect(toSet());
+        List<ItemStack> itemsInContainer = slots.containerSlots().stream()
+                .filter(Slot::hasItem)
+                .map(Slot::getItem)
+                .filter(InventoryActions::canQuickStack)
+                .filter(stack -> !ModOptions.get().behavior.itemsThatWillNotBeStacked.contains(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()))
+                .map(InventoryActions::storageIdentity)
+                .toList();
 
         moveAll(screenHandler, slots.playerSlots, itemsInContainer);
     }
 
-    public static void quickStack(AbstractContainerMenu screenHandler, Item item) {
+    public static void quickStack(AbstractContainerMenu screenHandler, ItemStack stackToMove) {
+        if (!canQuickStack(stackToMove)) {
+            return;
+        }
+
         var slots = SlotsInScreenHandler.of(screenHandler);
 
         boolean hasSameTypeItems = slots.containerSlots.stream()
-                .anyMatch(slot -> slot.getItem().is(item));
+                .filter(Slot::hasItem)
+                .map(Slot::getItem)
+                .map(InventoryActions::storageIdentity)
+                .anyMatch(stack -> ItemStack.isSameItemSameComponents(stack, stackToMove));
 
         if (hasSameTypeItems) {
-            moveAll(screenHandler, slots.playerSlots(), Set.of(item));
+            moveAll(screenHandler, slots.playerSlots(), List.of(stackToMove));
         }
     }
 
-    private static void moveAll(AbstractContainerMenu screenHandler, List<Slot> playerSlots, Set<Item> itemsToBeMoved) {
+    private static void moveAll(AbstractContainerMenu screenHandler, List<Slot> playerSlots, List<ItemStack> itemsToBeMoved) {
         playerSlots.stream()
                 .filter(slot -> !(ModOptions.get().behavior.doNotQuickStackItemsFromTheHotbar.booleanValue()
                         && Inventory.isHotbarSlot(slot.getContainerSlot())))
                 .filter(not(InventoryActions::isSlotLocked))
-                .filter(slot -> itemsToBeMoved.contains(slot.getItem().getItem()))
-                .filter(slot -> slot.mayPickup(Minecraft.getInstance().player))
                 .filter(Slot::hasItem)
+                .filter(slot -> canQuickStack(slot.getItem()))
+                .filter(slot -> {
+                    ItemStack candidate = storageIdentity(slot.getItem());
+                    return itemsToBeMoved.stream()
+                            .anyMatch(stack -> ItemStack.isSameItemSameComponents(stack, candidate));
+                })
+                .filter(slot -> slot.mayPickup(Minecraft.getInstance().player))
                 .forEach(slot -> quickMove(screenHandler, slot));
+    }
+
+    private static boolean canQuickStack(ItemStack stack) {
+        // 命名物品通常是纪念品或重要装备，完全排除比自动猜测收纳位置更安全。
+        return !stack.has(DataComponents.CUSTOM_NAME);
+    }
+
+    private static ItemStack storageIdentity(ItemStack stack) {
+        ItemStack identity = stack.copyWithCount(1);
+
+        // 仓储分类只忽略不影响收纳位置的状态；名称、Lore、模型和自定义数据仍参与匹配。
+        if (stack.isDamageableItem()) {
+            identity.remove(DataComponents.DAMAGE);
+            identity.remove(DataComponents.ENCHANTMENTS);
+            identity.remove(DataComponents.REPAIR_COST);
+        }
+
+        if (stack.is(ItemTags.CAULDRON_CAN_REMOVE_DYE)) {
+            identity.remove(DataComponents.DYED_COLOR);
+        }
+
+        if (stack.is(Items.ENCHANTED_BOOK)) {
+            identity.remove(DataComponents.STORED_ENCHANTMENTS);
+        }
+
+        if (stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION)) {
+            identity.remove(DataComponents.POTION_CONTENTS);
+            identity.remove(DataComponents.POTION_DURATION_SCALE);
+        }
+
+        return identity;
     }
 
     public static void restock(AbstractContainerMenu screenHandler) {
