@@ -1,6 +1,4 @@
-- Updated to Minecraft 26.1.1
-
-- Temporarily removed REI support
+- Updated to Minecraft 26.2
 
 - Temporarily removed EMI support
 
