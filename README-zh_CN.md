@@ -5,6 +5,8 @@
 
 遍历附近所有容器的代码来自 [clientcommands](https://github.com/Earthcomputer/clientcommands) 模组。 
 
+**我们不再接受 AI 生成的贡献**
+
 ## 安装
 1. [安装 Fabric Loader](https://fabricmc.net/wiki/player:tutorials:start#installing_fabric_loader)
 2. 下载 [Fabric API](https://minecraft.curseforge.com/projects/fabric) 

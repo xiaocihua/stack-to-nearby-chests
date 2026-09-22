@@ -4,6 +4,8 @@ A client-side ONLY mod, adds the quick stacking and restocking features from Ter
 
 The code to iterate over all nearby containers is from [clientcommands](https://github.com/Earthcomputer/clientcommands) mod.
 
+**We no longer accept AI-generated contributions.**
+
 ## Installation
 1. [Install Fabric Loader](https://fabricmc.net/wiki/player:tutorials:start#installing_fabric_loader)
 2. Download the [Fabric API](https://github.com/FabricMC/fabric/releases)
