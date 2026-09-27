@@ -1,11 +1,6 @@
 name: Publish on Github, Curseforge & Modrinth
 
-on: [ workflow_dispatch ]
-
-env:
-  RELEASE_NAME: 0.5.19 for Minecraft 26.2
-  VERSION: 0.5.19
-  MC_VERSION: mc26.2
+on: [workflow_dispatch]
 
 permissions:
   contents: write
@@ -13,48 +8,13 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/openjdk/jdk:25-ubuntu
+      options: --user root
     steps:
-      - name: Check Environment Variables
-        run: env
-
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-        with:
-          submodules: true
-
-      - name: Setup Java
-        uses: actions/setup-java@v6
-        with:
-          distribution: "temurin"
-          java-version: 25
-
-      - name: Make Gradle Wrapper Executable
-        if: ${{ runner.os != 'Windows' }}
-        run: chmod +x ./gradlew
-
-      - name: Build
-        run: ./gradlew clean build
-
-      - name: Publish (CurseForge/Modrinth/Github)
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          github-tag: "${{env.MC_VERSION}}-${{env.VERSION}}"
-          github-token: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
-
-          modrinth-id: HtGckJVc
-          modrinth-token: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
-
-          curseforge-id: 693995
-          curseforge-token: ${{ secrets.PUBLISH_CURSEFORGE_TOKEN }}
-
-          name: "${{env.RELEASE_NAME}}"
-          version: "${{env.VERSION}}"
-          changelog-file: CHANGELOG.md
-          files: build/libs/!(*-@(dev|sources|javadoc)).jar
-
-          loaders: fabric
-          game-versions: |
-            26.2
-          java: |
-            25
-            26
+      - uses: actions/checkout@v7
+      - run: ./gradlew build publishMods
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+          MODRINTH_API_KEY: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
+          CURSEFORGE_API_KEY: ${{ secrets.PUBLISH_CURSEFORGE_TOKEN }}

@@ -12,9 +12,12 @@ modmenu = "20.0.1"
 emi = "1.1.22+1.21.1"
 # https://modrinth.com/mod/rei/versions
 rei = "26.2.820"
+# https://github.com/modmuss50/mod-publish-plugin
+modPublish = "2.2.1"
 
 [plugins]
 loom = { id = "net.fabricmc.fabric-loom", version.ref = "loom" }
+modPublish = { id = "me.modmuss50.mod-publish-plugin", version.ref = "modPublish"}
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }

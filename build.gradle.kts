@@ -1,8 +1,13 @@
 plugins {
     alias(libs.plugins.loom)
+    alias(libs.plugins.modPublish)
 }
 
 val archivesBaseName = "stack-to-nearby-chests"
+version = "0.5.19"
+val minecraftVersionRangeStart = "26.2"
+val minecraftVersionRangeEnd = "26.2"
+val supportedJavaVersions = listOf(JavaVersion.VERSION_25, JavaVersion.VERSION_26)
 
 base {
     archivesName = "${archivesBaseName}-mc${libs.versions.minecraft.get()}"
@@ -84,4 +89,53 @@ tasks.jar {
     from("LICENSE") {
         rename { "${it}_$projectName" }
     }
+}
+
+publishMods {
+    changelog.set(file("CHANGELOG.md").readText())
+    type.set(STABLE)
+    file.set(tasks.jar.get().archiveFile)
+    modLoaders.add("fabric")
+    displayName = "${version.get()} for Minecraft $minecraftVersionRangeStart" +
+            if (minecraftVersionRangeStart != minecraftVersionRangeEnd)
+                " - $minecraftVersionRangeEnd" else ""
+
+    github {
+        accessToken.set(providers.environmentVariable("GITHUB_TOKEN"))
+        repository.set("xiaocihua/stack-to-nearby-chests")
+        commitish.set("master")
+    }
+
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_API_KEY")
+        projectId = "HtGckJVc"
+        environment = CLIENT_ONLY
+        minecraftVersionRange {
+            start = minecraftVersionRangeStart
+            end = minecraftVersionRangeEnd
+        }
+
+        requires("fabric-api")
+        optional("modmenu")
+    }
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
+        projectId = "693995"
+        client = true
+        server = false
+        minecraftVersionRange {
+            start = minecraftVersionRangeStart
+            end = minecraftVersionRangeEnd
+        }
+
+        requires("fabric-api")
+        optional("modmenu")
+        incompatible("optifabric")
+        embeds("libgui")
+    }
+
+    dryRun = providers.environmentVariable("GITHUB_TOKEN").getOrNull() == null
+            || providers.environmentVariable("MODRINTH_API_KEY").getOrNull() == null
+            || providers.environmentVariable("CURSEFORGE_API_KEY").getOrNull() == null
 }
