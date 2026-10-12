@@ -15,7 +15,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.lwjgl.glfw.GLFW;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -146,12 +145,12 @@ public class InventoryActions {
 
     public static void quickMove(AbstractContainerMenu screenHandler, Slot slot) {
         Minecraft client = Minecraft.getInstance();
-        client.gameMode.handleContainerInput(screenHandler.containerId, slot.index, GLFW.GLFW_MOUSE_BUTTON_LEFT, ContainerInput.QUICK_MOVE, client.player);
+        client.gameMode.handleContainerInput(screenHandler.containerId, slot.index, 0, ContainerInput.QUICK_MOVE, client.player);
     }
 
     public static void pickup(AbstractContainerMenu screenHandler, Slot slot) {
         Minecraft client = Minecraft.getInstance();
-        client.gameMode.handleContainerInput(screenHandler.containerId, slot.index, GLFW.GLFW_MOUSE_BUTTON_LEFT, ContainerInput.PICKUP, client.player);
+        client.gameMode.handleContainerInput(screenHandler.containerId, slot.index, 0, ContainerInput.PICKUP, client.player);
     }
 
     private record SlotsInScreenHandler(List<Slot> playerSlots, List<Slot> containerSlots) {

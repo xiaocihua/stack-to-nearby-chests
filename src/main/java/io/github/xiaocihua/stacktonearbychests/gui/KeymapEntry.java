@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class KeymapEntry extends WBox {
     private static final int KEYBINDING_WIDTH = 165;
@@ -74,8 +74,8 @@ public class KeymapEntry extends WBox {
         @Override
         public InputResult onKeyPressed(KeyEvent input) {
             switch (input.key()) {
-                case GLFW.GLFW_KEY_ENTER -> releaseFocus();
-                case GLFW.GLFW_KEY_BACKSPACE -> keySequence.clear();
+                case InputConstants.KEY_RETURN -> releaseFocus();
+                case InputConstants.KEY_BACKSPACE -> keySequence.clear();
                 default -> keySequence.addKey(input.key());
             }
             setLabel();

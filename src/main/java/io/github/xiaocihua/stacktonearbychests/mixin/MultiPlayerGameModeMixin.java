@@ -3,6 +3,7 @@ package io.github.xiaocihua.stacktonearbychests.mixin;
 import io.github.xiaocihua.stacktonearbychests.LockedSlots;
 import io.github.xiaocihua.stacktonearbychests.event.ClickSlotCallback;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerInput;
@@ -27,6 +28,18 @@ public abstract class MultiPlayerGameModeMixin {
         if (ClickSlotCallback.AFTER.invoker().update(syncId, slotId, button, actionType, player) == InteractionResult.FAIL) {
             ci.cancel();
         }
+    }
+
+    @Inject(method = "dropItem(Lnet/minecraft/client/player/LocalPlayer;Z)V", at = @At("HEAD"), cancellable = true)
+    private void beforeDropSelectedItem(LocalPlayer player, boolean entireStack, CallbackInfo ci) {
+        if (LockedSlots.beforeDropSelectedItem(player.getInventory().getSelectedSlot()) == InteractionResult.FAIL) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "dropItem(Lnet/minecraft/client/player/LocalPlayer;Z)V", at = @At("TAIL"))
+    private void afterDropSelectedItem(LocalPlayer player, boolean entireStack, CallbackInfo ci) {
+        LockedSlots.afterDropSelectedItem(player.getInventory().getSelectedSlot());
     }
 
     @Inject(method = "setLocalMode(Lnet/minecraft/world/level/GameType;)V", at = @At("TAIL"))

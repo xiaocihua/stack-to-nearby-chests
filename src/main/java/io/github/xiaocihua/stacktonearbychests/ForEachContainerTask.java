@@ -11,7 +11,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +55,7 @@ public abstract class ForEachContainerTask {
 
         OnKeyCallback.PRESS.register(key -> {
             if (isRunning()) {
-                if (key == GLFW.GLFW_KEY_ESCAPE) {
+                if (key == InputConstants.KEY_ESCAPE) {
                     currentTask.interrupt();
                 }
 

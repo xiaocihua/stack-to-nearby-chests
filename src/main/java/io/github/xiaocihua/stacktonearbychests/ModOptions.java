@@ -11,7 +11,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -828,9 +828,9 @@ public class ModOptions {
         public KeySequence restockFromNearbyContainersKey = KeySequence.empty();
         public KeySequence quickStackKey = KeySequence.empty();
         public KeySequence restockKey = KeySequence.empty();
-        public KeySequence showMarkersForFavoritedItemsKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_ALT));
-        public KeySequence markAsFavoriteKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_ALT, GLFW.GLFW_MOUSE_BUTTON_2 - KeySequence.MOUSE_BUTTON_CODE_OFFSET));
-        public KeySequence openModOptionsScreenKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_CONTROL, GLFW.GLFW_KEY_S, GLFW.GLFW_KEY_C));
+        public KeySequence showMarkersForFavoritedItemsKey = new KeySequence(List.of(InputConstants.KEY_LALT));
+        public KeySequence markAsFavoriteKey = new KeySequence(List.of(InputConstants.KEY_LALT, InputConstants.MOUSE_BUTTON_RIGHT - KeySequence.MOUSE_BUTTON_CODE_OFFSET));
+        public KeySequence openModOptionsScreenKey = new KeySequence(List.of(InputConstants.KEY_LCONTROL, InputConstants.KEY_S, InputConstants.KEY_C));
     }
 
     public static class IntOption extends MutableInt {

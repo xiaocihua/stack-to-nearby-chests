@@ -1,17 +1,17 @@
 [versions]
-minecraft = "26.2"
-loader = "0.19.3"
+minecraft = "26.3"
+loader = "0.19.5"
 loom = "1.17-SNAPSHOT"
-api = "0.158.0+26.2"
+api = "0.162.0+26.3"
 
 # https://github.com/CottonMC/LibGui/releases
-libGui = "17.0.0+26.2"
+libGui = "18.0.1+26.3-rc-2"
 # https://github.com/TerraformersMC/ModMenu/releases
 modmenu = "20.0.1"
 # https://github.com/emilyploszaj/emi/releases
 emi = "1.1.22+1.21.1"
 # https://modrinth.com/mod/rei/versions
-rei = "26.2.820"
+rei = "26.3.822"
 
 [plugins]
 loom = { id = "net.fabricmc.fabric-loom", version.ref = "loom" }

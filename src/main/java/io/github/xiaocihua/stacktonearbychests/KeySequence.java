@@ -1,15 +1,15 @@
 package io.github.xiaocihua.stacktonearbychests;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import io.github.xiaocihua.stacktonearbychests.event.OnKeyCallback;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -56,10 +56,9 @@ public final class KeySequence {
     }
 
     public static boolean isKeyPressed(int key) {
-        Window window = Minecraft.getInstance().getWindow();
         return isMouseButton(key)
-                ? GLFW.glfwGetMouseButton(window.handle(), key + MOUSE_BUTTON_CODE_OFFSET) == GLFW.GLFW_PRESS
-                : InputConstants.isKeyDown(window, key);
+                ? (SDLMouse.SDL_GetMouseState((FloatBuffer) null, null) & (1 << (key + MOUSE_BUTTON_CODE_OFFSET - 1))) != 0
+                : InputConstants.isKeyDown(key);
     }
 
     private static boolean isMouseButton(int key) {
@@ -105,7 +104,7 @@ public final class KeySequence {
                     if (isMouseButton(key)) {
                         return InputConstants.Type.MOUSE.getOrCreate(key + MOUSE_BUTTON_CODE_OFFSET);
                     } else {
-                        return InputConstants.Type.KEYSYM.getOrCreate(key);
+                        return InputConstants.Type.KEYBOARD.getOrCreate(key);
                     }
                 })
                 .map(key -> key.getDisplayName().getString())
