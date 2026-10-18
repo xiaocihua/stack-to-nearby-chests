@@ -1,17 +1,18 @@
 [versions]
-minecraft = "26.2"
-loader = "0.19.3"
-loom = "1.17-SNAPSHOT"
-api = "0.158.0+26.2"
+# https://fabricmc.net/develop/
+minecraft = "26.3"
+loader = "0.19.5"
+loom = "1.18-SNAPSHOT"
+api = "0.163.0+26.3"
 
 # https://github.com/CottonMC/LibGui/releases
-libGui = "17.0.0+26.2"
+libGui = "18.0.1+26.3-rc-2"
 # https://github.com/TerraformersMC/ModMenu/releases
-modmenu = "20.0.1"
+modmenu = "21.0.0"
 # https://github.com/emilyploszaj/emi/releases
 emi = "1.1.22+1.21.1"
 # https://modrinth.com/mod/rei/versions
-rei = "26.2.820"
+rei = "26.3.824"
 # https://github.com/modmuss50/mod-publish-plugin
 modPublish = "2.2.1"
 

@@ -5,13 +5,13 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Set;
 
 import static io.github.xiaocihua.stacktonearbychests.StackToNearbyChests.LOGGER;
@@ -828,9 +827,9 @@ public class ModOptions {
         public KeySequence restockFromNearbyContainersKey = KeySequence.empty();
         public KeySequence quickStackKey = KeySequence.empty();
         public KeySequence restockKey = KeySequence.empty();
-        public KeySequence showMarkersForFavoritedItemsKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_ALT));
-        public KeySequence markAsFavoriteKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_ALT, GLFW.GLFW_MOUSE_BUTTON_2 - KeySequence.MOUSE_BUTTON_CODE_OFFSET));
-        public KeySequence openModOptionsScreenKey = new KeySequence(List.of(GLFW.GLFW_KEY_LEFT_CONTROL, GLFW.GLFW_KEY_S, GLFW.GLFW_KEY_C));
+        public KeySequence showMarkersForFavoritedItemsKey = new KeySequence(InputConstants.KEY_LALT);
+        public KeySequence markAsFavoriteKey = new KeySequence(InputConstants.KEY_LALT, InputConstants.MOUSE_BUTTON_RIGHT - KeySequence.MOUSE_BUTTON_CODE_OFFSET);
+        public KeySequence openModOptionsScreenKey = new KeySequence(InputConstants.KEY_LCONTROL, InputConstants.KEY_S, InputConstants.KEY_C);
     }
 
     public static class IntOption extends MutableInt {

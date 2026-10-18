@@ -1,14 +1,13 @@
 package io.github.xiaocihua.stacktonearbychests;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import io.github.xiaocihua.stacktonearbychests.event.OnKeyCallback;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +20,16 @@ public final class KeySequence {
 
     private static final IntArrayList PRESSING_KEYS = new IntArrayList();
 
-    private List<Integer> keys;
+    private ArrayList<Integer> keys;
     private final List<Integer> defaultKeys;
 
-    public KeySequence(List<Integer> keys) {
-        this.keys = new ArrayList<>(keys);
-        this.defaultKeys = new ArrayList<>(keys);
+    public KeySequence(Integer... scancodes) {
+        this.defaultKeys = List.of(scancodes);
+        this.keys = new ArrayList<>(defaultKeys);
     }
 
     public static KeySequence empty() {
-        return new KeySequence(new ArrayList<>());
+        return new KeySequence();
     }
 
     public static void init() {
@@ -56,14 +55,21 @@ public final class KeySequence {
     }
 
     public static boolean isKeyPressed(int key) {
-        Window window = Minecraft.getInstance().getWindow();
         return isMouseButton(key)
-                ? GLFW.glfwGetMouseButton(window.handle(), key + MOUSE_BUTTON_CODE_OFFSET) == GLFW.GLFW_PRESS
-                : InputConstants.isKeyDown(window, key);
+                ? isButtonDown(key + MOUSE_BUTTON_CODE_OFFSET)
+                : InputConstants.isKeyDown(key);
     }
 
     private static boolean isMouseButton(int key) {
         return key < -1;
+    }
+
+    /**
+     * @see SDLMouse#SDL_BUTTON_MASK(int)
+     */
+    private static boolean isButtonDown(int button) {
+        var mouseState = SDLMouse.SDL_GetMouseState(null, null);
+        return (mouseState & (1 << (button - 1))) != 0;
     }
 
     public void addKey(int key) {
@@ -101,13 +107,9 @@ public final class KeySequence {
         }
 
         String localized = keys.stream()
-                .map(key -> {
-                    if (isMouseButton(key)) {
-                        return InputConstants.Type.MOUSE.getOrCreate(key + MOUSE_BUTTON_CODE_OFFSET);
-                    } else {
-                        return InputConstants.Type.KEYSYM.getOrCreate(key);
-                    }
-                })
+                .map(key -> isMouseButton(key)
+                        ? InputConstants.Type.MOUSE.getOrCreate(key + MOUSE_BUTTON_CODE_OFFSET)
+                        : InputConstants.Type.KEYBOARD.getOrCreate(key))
                 .map(key -> key.getDisplayName().getString())
                 .collect(Collectors.joining(" + "));
         return Component.nullToEmpty(localized);
@@ -123,17 +125,11 @@ public final class KeySequence {
     }
 
     public KeySequence register(Supplier<InteractionResult> action) {
-        OnKeyCallback.PRESS.register(key -> {
-            if (!keys.isEmpty() && PRESSING_KEYS.equals(keys)) {
-                return action.get();
-            } else {
-                return InteractionResult.PASS;
-            }
-        });
-
+        OnKeyCallback.PRESS.register(_ -> !keys.isEmpty() && PRESSING_KEYS.equals(keys) ? action.get() : InteractionResult.PASS);
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public KeySequence registerOnScreen(Class<? extends Screen> screenClass, Consumer<Screen> action, InteractionResult result) {
         return register(() -> {
             Screen currentScreen = Minecraft.getInstance().gui.screen();
@@ -146,6 +142,7 @@ public final class KeySequence {
         });
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public KeySequence registerNotOnScreen(Runnable action, InteractionResult result) {
         return register(() -> {
             Minecraft client = Minecraft.getInstance();

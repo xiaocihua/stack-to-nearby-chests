@@ -1,5 +1,6 @@
 package io.github.xiaocihua.stacktonearbychests.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import io.github.cottonmc.cotton.gui.widget.WBox;
 import io.github.cottonmc.cotton.gui.widget.WButton;
 import io.github.cottonmc.cotton.gui.widget.WText;
@@ -11,7 +12,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
+import org.jspecify.annotations.NonNull;
 
 public class KeymapEntry extends WBox {
     private static final int KEYBINDING_WIDTH = 165;
@@ -60,7 +61,7 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public InputResult onClick(MouseButtonEvent click, boolean doubled) {
+        public @NonNull InputResult onClick(@NonNull MouseButtonEvent click, boolean doubled) {
             if (isFocused()) {
                 keySequence.addMouseButton(click.button());
             } else {
@@ -72,10 +73,10 @@ public class KeymapEntry extends WBox {
         }
 
         @Override
-        public InputResult onKeyPressed(KeyEvent input) {
+        public @NonNull InputResult onKeyPressed(KeyEvent input) {
             switch (input.key()) {
-                case GLFW.GLFW_KEY_ENTER -> releaseFocus();
-                case GLFW.GLFW_KEY_BACKSPACE -> keySequence.clear();
+                case InputConstants.KEY_RETURN -> releaseFocus();
+                case InputConstants.KEY_BACKSPACE -> keySequence.clear();
                 default -> keySequence.addKey(input.key());
             }
             setLabel();

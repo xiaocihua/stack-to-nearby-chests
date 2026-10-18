@@ -1,5 +1,6 @@
 package io.github.xiaocihua.stacktonearbychests;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import io.github.xiaocihua.stacktonearbychests.event.OnKeyCallback;
 import io.github.xiaocihua.stacktonearbychests.event.SetScreenCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -11,7 +12,6 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +55,7 @@ public abstract class ForEachContainerTask {
 
         OnKeyCallback.PRESS.register(key -> {
             if (isRunning()) {
-                if (key == GLFW.GLFW_KEY_ESCAPE) {
+                if (key == InputConstants.KEY_ESCAPE) {
                     currentTask.interrupt();
                 }
 
@@ -64,7 +64,7 @@ public abstract class ForEachContainerTask {
             return InteractionResult.PASS;
         });
 
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+        ClientReceiveMessageEvents.GAME.register((message, _) -> {
             if (isRunning()
                     && message.getContents() instanceof TranslatableContents translatable
                     && translatable.getKey().equals("container.isLocked")) {
