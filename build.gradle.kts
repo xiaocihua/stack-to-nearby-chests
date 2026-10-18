@@ -4,9 +4,9 @@ plugins {
 }
 
 val archivesBaseName = "stack-to-nearby-chests"
-version = "0.5.19"
-val minecraftVersionRangeStart = "26.2"
-val minecraftVersionRangeEnd = "26.2"
+version = "0.5.20"
+val minecraftVersionRangeStart = "26.3"
+val minecraftVersionRangeEnd = "26.3"
 val supportedJavaVersions = listOf(JavaVersion.VERSION_25, JavaVersion.VERSION_26)
 
 base {
