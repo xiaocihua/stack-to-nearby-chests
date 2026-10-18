@@ -1,10 +1,10 @@
+## We no longer accept AI-generated contributions.
+
 **English** | [简体中文](README-zh_CN.md)
 # Quick Stack to Nearby Chests
 A client-side ONLY mod, adds the quick stacking and restocking features from Terraria into Minecraft.
 
 The code to iterate over all nearby containers is from [clientcommands](https://github.com/Earthcomputer/clientcommands) mod.
-
-**We no longer accept AI-generated contributions.**
 
 ## Installation
 1. [Install Fabric Loader](https://fabricmc.net/wiki/player:tutorials:start#installing_fabric_loader)
